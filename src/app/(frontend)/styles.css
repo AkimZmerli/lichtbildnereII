@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
+
+
+@font-face {
+  font-family: gurmukhi;
+  src: url("../../../public/fonts/gurmukhi-mn.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@theme {
+  --color-hot-pink: #FEAAC0;
+  --color-hot-red: #FA265C;
+  --color-white-rose: #F7EEEE;
+  --color-black-almost: #2A2323;
+
+  --font-logo: "gurmukhi", sans-serif;
+  --font-lato: 'Lato', sans-serif;
+}
+
+.bg-grainy {
+  background-image: url('/images/Grainy_texture.png');
+  background-repeat: repeat;
+  background-position: center;
+  background-size: 200px 200px;
+}
