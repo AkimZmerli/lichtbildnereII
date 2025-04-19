@@ -1,44 +1,81 @@
-# dependencies
+cat > .gitignore << 'EOL'
+# Dependencies
 /node_modules
 /.pnp
 .pnp.js
 /.pnpm-store
 
-# package managers
+# Package managers
 bun.lockb
 .yarnrc
 
-# testing
+# Testing
 /coverage
 
-# next.js
+# Next.js
 /.next/
 /out/
 
-# production
+# Production
 /build
 /dist
 
-# misc
-.DS_Store
-*.pem
+# Media and uploads
+/media/*
+!/media/.gitkeep
+/public/uploads
+/public/media
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.tif
+*.tiff
+*.psd
+*.ai
+*.eps
+*.raw
+*.cr2
+*.nef
+*.heic
 
-# debug
+# Environment
+.env
+.env.*
+!.env.example
+
+# Debug
 npm-debug.log*
 yarn-debug.log*
 pnpm-debug.log*
+.pnpm-debug.log*
 
-# local env files
-.env*.local
-.env
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# System
+.DS_Store
+*.pem
+Thumbs.db
 
 # IDE
-/.vscode
-/.ideamedia/*
+.idea
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+*.sublime-*
+*.swp
+*.swo
+
+# Logs
+logs
+*.log
+
+# Cache
+.cache
+.temp
+.tmp
+EOL
+
+# Add and commit the new .gitignore
+git add .gitignore
+git commit -m "Update gitignore with comprehensive rules for media files"
+git push
