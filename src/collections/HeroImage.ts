@@ -2,6 +2,9 @@ import type { CollectionConfig } from 'payload'
 
 export const HeroImage: CollectionConfig = {
   slug: 'hero-image',
+  access: {
+    read: () => true,
+  },
   fields: [
     {
       name: 'mobileImage',
