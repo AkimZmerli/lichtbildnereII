@@ -2,6 +2,11 @@
 /node_modules
 /.pnp
 .pnp.js
+/.pnpm-store
+
+# package managers
+bun.lockb
+.yarnrc
 
 # testing
 /coverage
@@ -33,4 +38,7 @@ pnpm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-EOL
+
+# IDE
+/.vscode
+/.idea
