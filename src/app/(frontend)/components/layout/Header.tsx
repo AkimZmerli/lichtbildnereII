@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 function Header() {
   return (
-    <header className="w-full px-5 py-6">
+    <header className="w-full px-5 py-6 bg-grainy">
       <div className="flex items-center justify-between">
         <Link href="/" className="font-logo text-white rose text-bold text-4xl">
           VALENTIN MICI
