@@ -11,7 +11,7 @@ export default function SocialBook() {
         <h2 className="uppercase tracking-widest mb-12 text-base">The Social Book</h2>
         <div className="flex justify-center">
           <Image
-            src="/placeholderSocial.png"
+            src="/images/placeholderSocial.png"
             alt="The Social Book"
             width={500}
             height={300}
