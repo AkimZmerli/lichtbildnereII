@@ -11,7 +11,7 @@ export default function HiddenGem() {
           <p className="text-lg mb-12">Here's a little present for you:</p>
 
           <Link
-            href="/hidden-video"
+            href="/zwoelftausend"
             className="inline-block text-hot-pink hover:text-white-rose transition-colors text-lg underline underline-offset-4"
           >
             press play ↗
