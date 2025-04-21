@@ -7,7 +7,7 @@ export default function SocialBook() {
   }
   return (
     <section>
-      <div className="text-center bg-white-rose text-hot-red px-4 py-20">
+      <div className="text-center bg-white-rose text-hot-red px-4 py-20 md: py-60">
         <h2 className="uppercase tracking-widest mb-12 text-base">The Social Book</h2>
         <div className="flex justify-center">
           <Image
