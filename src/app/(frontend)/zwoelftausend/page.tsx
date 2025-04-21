@@ -20,7 +20,10 @@ export default function DisplayScan() {
           ></iframe>
         </div>
 
-        <Link href="/" className="inline-block mt-8 text-hot-pink hover:underline text-lg">
+        <Link
+          href="/about-exhibition"
+          className="inline-block mt-8 text-hot-pink hover:underline text-lg"
+        >
           ← go back
         </Link>
       </div>
