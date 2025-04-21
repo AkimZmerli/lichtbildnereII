@@ -25,7 +25,7 @@ const DesktopGallery = ({ images, title }: GalleryProps) => {
         style={{ x }}
         className="fixed top-0 left-0 h-screen w-fit flex items-center pt-24"
       >
-        <div className="flex gap-8">
+        <div className="flex gap-4">
           {images.map((image, index) => (
             <div
               key={index}
