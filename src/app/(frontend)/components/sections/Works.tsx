@@ -3,7 +3,10 @@ import Link from 'next/link'
 
 export default function Works() {
   return (
-    <section className="bg-black text-white px-6 py-16 md:py-24 space-y-24 h-full md:pb-96">
+    <section
+      id="works"
+      className="bg-grainy text-white-rose px-6 py-16 md:py-24 space-y-24 h-full md:pb-96"
+    >
       {/* WORKS */}
       <div className="text-center">
         <h2 className="uppercase tracking-widest mb-12 text-2xl text-white border-t border-white pt-6 inline-block">

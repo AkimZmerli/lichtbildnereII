@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export default function About() {
   return (
-    <section className="bg-grainy text-white-rose min-h-screen">
+    <section id="about" className="bg-grainy text-white-rose min-h-screen">
       <div className="max-w-4xl mx-auto px-6 py-16 md:py-24">
         {/* ABOUT HEADING */}
         <h2 className="uppercase tracking-widest mb-12 text-lg text-center">About</h2>
