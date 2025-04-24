@@ -33,7 +33,7 @@ export default function Footer() {
         <Image src="/images/heart.png" alt="heart icon" width={17} height={17} />
         <span>by</span>
         <a
-          href="https://webdev4live.com"
+          href="https://akimzmerli.site"
           target="_blank"
           rel="noopener noreferrer"
           className="underline underline-offset-2 hover:opacity-80"
