@@ -7,9 +7,9 @@ const MasonryGallery = ({ images, title }: MasonryGalleryProps) => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="bg-black min-h-screen p-4"
+      className="bg-grainy min-h-screen p-4"
     >
-      <h2 className="text-white text-2xl mb-6 tracking-wider">{title} Gallery</h2>
+      <h2 className="text-white-rose text-2xl mb-6 tracking-wider">{title} Gallery</h2>
       <div className="columns-2 gap-4">
         {images.map((image, index) => (
           <motion.div

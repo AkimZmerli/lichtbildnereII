@@ -3,7 +3,7 @@ import { NavigationProps } from '../../types/gallery'
 const GalleryNavigation = ({ currentIndex, totalImages, onNext, onPrev }: NavigationProps) => {
   return (
     <div className="absolute bottom-8 left-0 w-full px-8">
-      <div className="flex justify-between items-center text-white">
+      <div className="flex justify-between items-center text-white-rose">
         <span className="text-lg font-light tracking-wider">
           {currentIndex + 1} / {totalImages}
         </span>
