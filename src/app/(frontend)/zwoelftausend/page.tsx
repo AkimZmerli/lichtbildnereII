@@ -7,7 +7,7 @@ export default function DisplayScan() {
     <div>
       <Header />
       <div className="min-h-screen bg-grainy text-white-rose p-8">
-        <h1 className="text-2xl text-center tracking-[0.5em] font-normal font-lato mb-8">
+        <h1 className="text-2xl text-center tracking-[0.2em] font-normal font-lato mb-8">
           Z W Ö L F T A U S E N D
         </h1>
         <div className="w-full max-w-[1200px] mx-auto aspect-video relative">

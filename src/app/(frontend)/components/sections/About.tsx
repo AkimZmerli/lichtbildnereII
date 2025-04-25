@@ -4,14 +4,14 @@ import Link from 'next/link'
 export default function About() {
   return (
     <section id="about" className="bg-grainy text-white-rose min-h-screen">
-      <div className="max-w-4xl mx-auto px-6 py-16 md:py-24">
+      <div className="max-w-4xl mx-auto px-6 py-5 md:py-24">
         {/* ABOUT HEADING */}
-        <h2 className="uppercase tracking-widest mb-12 text-lg text-center">About</h2>
+        <h2 className="uppercase tracking-widest mb-12 text-2xl text-center">A B O U T</h2>
 
         {/* PROFILE IMAGE */}
         <div className="mb-12">
           <Image
-            src="/profile.jpg" // Make sure to add the correct image path
+            src="/images/gif.gif" // Make sure to add the correct image path
             alt="Profile"
             width={800}
             height={400}
@@ -20,7 +20,7 @@ export default function About() {
         </div>
 
         {/* BIO TEXT */}
-        <div className="space-y-6 text-sm leading-relaxed">
+        <div className="space-y-6  leading-relaxed">
           <p>
             My name is Valentin Mici. Born in Romania, raised in Gelenau, and since 2014, I have
             been living in Chemnitz, which has now become my home.
@@ -53,12 +53,12 @@ export default function About() {
             Some of my photos are for sale.
           </p>
 
-          <Link
-            href="/contact"
+          <a
+            href="mailto:mail@valentinmici.com"
             className="inline-block text-hot-pink hover:text-white transition-colors mt-4"
           >
             contact me →
-          </Link>
+          </a>
         </div>
       </div>
     </section>

@@ -10,8 +10,9 @@ export default function AboutExhibition() {
       <Header />
       <About />
       <Exhibition />
-      <HiddenGem />
+
       <Footer />
+      <HiddenGem />
     </div>
   )
 }
