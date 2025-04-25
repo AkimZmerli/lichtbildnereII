@@ -1,4 +1,4 @@
-import { GalleryImage, PayloadGalleryItem } from '../types/gallery'
+import { GalleryImage, PayloadGalleryItem } from '../components/galleries/types/gallery'
 
 // Test data
 const testHumanImages: GalleryImage[] = Array.from({ length: 4 }, (_, i) => ({

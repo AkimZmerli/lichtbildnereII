@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { MasonryGalleryProps } from '../../types/gallery'
+import { MasonryGalleryProps } from './types/gallery'
 
 const MasonryGallery = ({ images, title }: MasonryGalleryProps) => {
   return (

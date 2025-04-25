@@ -1,26 +1,31 @@
-import { NavigationProps } from '../../types/gallery'
+import Link from 'next/link'
+import { GalleryType } from './types/gallery'
 
-const GalleryNavigation = ({ currentIndex, totalImages, onNext, onPrev }: NavigationProps) => {
+interface GalleryNavigationProps {
+  type: GalleryType
+}
+
+const GalleryNavigation = ({ type }: GalleryNavigationProps) => {
+  const isHuman = type === 'human'
+  const title = isHuman ? 'H U M A N' : 'N O N   H U M A N'
+  const alternateLink = isHuman ? '/gallery/non-human' : '/gallery/human'
+  const alternateText = isHuman ? 'non-human' : 'human'
+
   return (
-    <div className="absolute bottom-8 left-0 w-full px-8">
-      <div className="flex justify-between items-center text-white-rose">
-        <span className="text-lg font-light tracking-wider">
-          {currentIndex + 1} / {totalImages}
-        </span>
-        <div className="flex gap-4">
-          <button
-            onClick={onPrev}
-            className="p-2 transition-opacity duration-200"
-            disabled={currentIndex === 0}
-            aria-label="Previous image"
+    <div className="fixed top-0 w-full z-20 bg-grainy backdrop-blur-sm">
+      <div className="max-w-7xl mx-auto px-8 py-12">
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-white-rose text-4xl tracking-[0.5em] mb-6">{title}</h1>
+            <p className="text-white-rose text-lg font-light">Scroll down to explore the gallery</p>
+          </div>
+          <Link
+            href={alternateLink}
+            className="text-hot-pink hover:text-white-rose transition-colors flex items-center gap-2 whitespace-nowrap"
           >
-            <span className={`text-2xl ${currentIndex === 0 ? 'opacity-50' : 'opacity-100'}`}>
-              ←
-            </span>
-          </button>
-          <button onClick={onNext} className="p-2" aria-label="Next image">
-            <span className="text-2xl">→</span>
-          </button>
+            View {alternateText} gallery
+            <span className="text-xl">→</span>
+          </Link>
         </div>
       </div>
     </div>
