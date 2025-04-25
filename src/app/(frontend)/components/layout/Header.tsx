@@ -5,18 +5,26 @@ import HeaderActive from './HeaderActive'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, useScroll } from 'framer-motion'
+import { usePathname } from 'next/navigation'
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
   const [isScrolled, setIsScrolled] = useState(false)
   const [lastScrollY, setLastScrollY] = useState(0)
+  const pathname = usePathname()
+  const isGalleryPage = pathname?.includes('gallery/')
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
   }
 
   useEffect(() => {
+    if (isGalleryPage) {
+      setIsVisible(true)
+      setIsScrolled(false)
+      return
+    }
     const handleScroll = () => {
       const currentScrollY = window.scrollY
       setIsVisible(currentScrollY < lastScrollY || currentScrollY < 50)
@@ -26,7 +34,7 @@ function Header() {
 
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY])
+  }, [lastScrollY, isGalleryPage])
 
   return (
     <>

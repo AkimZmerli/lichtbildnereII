@@ -4,7 +4,7 @@ import useSwipe from '../../hooks/useSwipe'
 import GalleryImage from './GalleryImage'
 import GalleryNavigation from './GalleryNavigation'
 import MasonryGallery from './MasonryGallery'
-import { GalleryProps } from '../../types/gallery'
+import { GalleryProps } from './types/gallery'
 import { div } from 'framer-motion/client'
 
 const MobileGallery = ({ images, title }: GalleryProps) => {

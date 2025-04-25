@@ -1,13 +1,3 @@
-export interface GalleryImage {
-  src: string
-  alt: string
-}
-
-export interface GalleryProps {
-  images: GalleryImage[]
-  title: string
-}
-
 export interface PayloadImage {
   filename: string
   alt: string
@@ -36,3 +26,26 @@ export interface MasonryGalleryProps {
   images: GalleryImage[]
   title: string
 }
+
+export interface GalleryImage {
+  url: string
+  alt: string
+  width: number
+  height: number
+}
+
+export interface GalleryHeaderProps {
+  title: string
+  alternateGalleryLink: string
+}
+
+export interface GalleryProps extends GalleryHeaderProps {
+  images: GalleryImage[]
+}
+
+export interface GalleryLayoutProps {
+  children: React.ReactNode
+  header: React.ReactNode
+}
+
+export type GalleryType = 'human' | 'non-human'

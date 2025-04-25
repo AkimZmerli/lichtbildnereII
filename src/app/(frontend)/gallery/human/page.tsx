@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import { getGalleryImages } from '../../lib/galleryData'
-import GalleryView from '../../components/galleries/GalleryView'
+import DesktopGallery from '../../components/galleries/DesktopGallery'
+import GalleryNavigation from '../../components/galleries/GalleryNavigation'
 import Header from '../../components/layout/Header'
 import Footer from '../../components/layout/Footer'
-import { GalleryImage } from '../../types/gallery'
+import { GalleryImage } from '../../components/galleries/types/gallery'
 
-export default function HumanGallery() {
+export default function HumanGalleryPage() {
   const [images, setImages] = useState<GalleryImage[]>([])
 
   useEffect(() => {
@@ -21,8 +22,9 @@ export default function HumanGallery() {
   return (
     <div className="min-h-screen flex flex-col bg-grainy">
       <Header />
-      <main className="flex-grow my-12">
-        <GalleryView images={images} title="HUMAN" />
+      <main className="flex-grow">
+        <GalleryNavigation type="human" />
+        <DesktopGallery images={images} />
       </main>
       <Footer />
     </div>

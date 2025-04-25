@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Image from 'next/image'
-import { GalleryImageProps } from '../../types/gallery'
+import { GalleryImageProps } from '../galleries/types/gallery'
 
 const ImageWithLoader = ({ image, priority = false, onLoad }: GalleryImageProps) => {
   const [isLoading, setIsLoading] = useState(true)
