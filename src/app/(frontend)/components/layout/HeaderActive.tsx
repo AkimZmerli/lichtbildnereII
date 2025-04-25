@@ -37,18 +37,18 @@ function HeaderActive({ isOpen, toggleMenu }: HeaderActiveProps) {
             W O R K S
           </Link>
           <Link
-            href="/about-exhibition#exhibition"
-            onClick={() => toggleMenu()}
-            className="hover:opacity-70 transition-opacity"
-          >
-            E X H I B I T I O N
-          </Link>
-          <Link
             href="/about-exhibition#about"
             onClick={() => toggleMenu()}
             className="hover:opacity-70 transition-opacity"
           >
             A B O U T
+          </Link>
+          <Link
+            href="/about-exhibition#exhibition"
+            onClick={() => toggleMenu()}
+            className="hover:opacity-70 transition-opacity"
+          >
+            E X H I B I T I O N S
           </Link>
         </nav>
       </div>

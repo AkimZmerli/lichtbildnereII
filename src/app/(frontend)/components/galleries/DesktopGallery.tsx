@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { GalleryProps } from '../../types/gallery'
 import GalleryImage from './GalleryImage'
+import Header from '../layout/Header'
 
 const DesktopGallery = ({ images, title }: GalleryProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -13,13 +14,10 @@ const DesktopGallery = ({ images, title }: GalleryProps) => {
   const opacity = useTransform(scrollYProgress, [0, 0.1], [1, 0])
 
   return (
-    <div ref={containerRef} className="min-h-[300vh] bg-grainy relative">
-      <motion.h1
-        style={{ opacity }}
-        className="text-white-rose text-4xl tracking-widest p-8 fixed top-0 w-full z-10 bg-black/80 backdrop-blur-sm"
-      >
+    <div ref={containerRef} className="min-h-[200vh] bg-grainy">
+      <h1 className="text-white-rose text-4xl tracking-widest p-8 mt-7 fixed top-0 w-full z-10 bg-grainy backdrop-blur-sm">
         {title}
-      </motion.h1>
+      </h1>
 
       <motion.div
         style={{ x }}

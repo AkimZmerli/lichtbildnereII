@@ -22,7 +22,7 @@ export default function Works() {
               <Image
                 src="/images/worksplaceholderII.jpg"
                 alt="Human Gallery"
-                width={400}
+                width={430}
                 height={350}
                 className="object-cover rounded-sm"
               />
