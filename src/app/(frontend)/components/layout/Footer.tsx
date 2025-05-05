@@ -4,14 +4,14 @@ import Link from 'next/link'
 
 export default function Footer() {
   return (
-    <footer className="bg-hot-pink text-hot-red py-7 text-center flex flex-col gap-6 items-center text-sm">
+    <footer className="bg-hot-pink text-hot-red py-7 text-center flex flex-col gap-2 items-center text-sm">
       <div className="w-full mb-4">
         <div className="flex items-center justify-center gap-4 w-full">
           <div className="h-[1px] bg-hot-red flex-1" />
           <h2 className="tracking-widest text-xl text-hot-red">MAIL@VALENTINMICI.COM</h2>
           <div className="h-[1px] bg-hot-red flex-1" />
         </div>
-        <a href="mailto:mail@valentinmici.com" className="text-sm mt-1">
+        <a href="mailto:mail@valentinmici.com" className="text-sm mt-1 hover:underline">
           <p>write me a loveletter</p>
         </a>
       </div>

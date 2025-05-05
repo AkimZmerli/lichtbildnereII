@@ -18,7 +18,7 @@ export default function Works() {
           <div className="flex flex-col md:flex-row justify-center items-center md:gap-36 gap-12">
             {/* HUMAN */}
             <div className="text-center space-y-4 ">
-              <h3 className="flex justify-start uppercase text-2xl tracking-wider">H U M A N</h3>
+              <h3 className="flex justify-start uppercase text-2xl  tracking-[0.5em]">HUMAN</h3>
               <Image
                 src="/images/worksplaceholderII.jpg"
                 alt="Human Gallery"
@@ -28,16 +28,14 @@ export default function Works() {
               />
               <Link
                 href="/gallery/human"
-                className="text-hot-pink underline underline-offset-4 flex justify-end"
+                className="text-hot-pink hover:underline underline-offset-4 flex justify-end"
               >
                 view gallery →
               </Link>
             </div>
             {/* NON-HUMAN */}
             <div className="text-center space-y-4 md:translate-y-50">
-              <h3 className="flex justify-start uppercase text-2xl tracking-wider">
-                N O N H U M A N
-              </h3>
+              <h3 className="flex justify-start uppercase text-2xl  tracking-[0.5em]">NON HUMAN</h3>
               <Image
                 src="/images/worksplaceholderI.jpg"
                 alt="Non-Human Gallery"
@@ -47,7 +45,7 @@ export default function Works() {
               />
               <Link
                 href="/gallery/non-human"
-                className="text-hot-pink underline underline-offset-4 flex justify-end"
+                className="text-hot-pink hover:underline underline-offset-4 flex justify-end"
               >
                 view gallery →
               </Link>

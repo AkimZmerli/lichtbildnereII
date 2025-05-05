@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { GalleryType } from './types/gallery'
+import HeaderDesktop from '../layout/HeaderDesktop'
 
 interface GalleryNavigationProps {
   type: GalleryType
@@ -13,6 +14,7 @@ const GalleryNavigation = ({ type }: GalleryNavigationProps) => {
 
   return (
     <div className="fixed top-0 w-full z-20 bg-grainy backdrop-blur-sm">
+      <HeaderDesktop />
       <div className="max-w-7xl mx-auto px-8 py-12">
         <div className="flex justify-between items-start">
           <div>
