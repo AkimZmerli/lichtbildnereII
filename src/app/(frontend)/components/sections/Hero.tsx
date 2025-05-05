@@ -25,7 +25,7 @@ export default async function Hero() {
     : heroImage.desktopImage?.url
 
   return (
-    <div className="relative w-full h-[50vh] md:h-[70vh] bg-gray-100">
+    <div className="relative w-full h-[50vh] md:h-[70vh] bg-gray-100 mb-10">
       {/* Mobile Image */}
       {mobileUrl && (
         <Image

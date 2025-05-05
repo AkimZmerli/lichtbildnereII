@@ -19,7 +19,7 @@ function HeaderActive({ isOpen, toggleMenu }: HeaderActiveProps) {
       transition={{ duration: 0.5, ease: 'easeInOut' }}
       className="fixed top-0 left-0 w-full px-5 py-6 bg-white-rose z-50"
     >
-      <div>
+      <div className="bg-white-rose">
         <div className="flex justify-between items-center">
           <Link href="/" className="font-logo text-grainy text-bold text-4xl">
             VALENTIN MICI
@@ -32,21 +32,21 @@ function HeaderActive({ isOpen, toggleMenu }: HeaderActiveProps) {
           <Link
             href="/#works"
             onClick={() => toggleMenu()}
-            className="hover:opacity-70 transition-opacity"
+            className="hover:underline hover:decoration-black-almost transition-opacity"
           >
             W O R K S
           </Link>
           <Link
             href="/about-exhibition#about"
             onClick={() => toggleMenu()}
-            className="hover:opacity-70 transition-opacity"
+            className="hover:underline hover:decoration-black-almost transition-opacity"
           >
             A B O U T
           </Link>
           <Link
             href="/about-exhibition#exhibition"
             onClick={() => toggleMenu()}
-            className="hover:opacity-70 transition-opacity"
+            className="hover:underline hover:decoration-black-almost transition-opacity"
           >
             E X H I B I T I O N S
           </Link>

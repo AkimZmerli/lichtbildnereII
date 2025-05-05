@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { getGalleryImages } from '../../lib/galleryData'
 import DesktopGallery from '../../components/galleries/DesktopGallery'
 import GalleryNavigation from '../../components/galleries/GalleryNavigation'
-import Header from '../../components/layout/Header'
 import Footer from '../../components/layout/Footer'
 import { GalleryImage } from '../../components/galleries/types/gallery'
 
@@ -21,7 +20,6 @@ export default function HumanGalleryPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-grainy">
-      <Header />
       <main className="flex-grow">
         <GalleryNavigation type="human" />
         <DesktopGallery images={images} />
