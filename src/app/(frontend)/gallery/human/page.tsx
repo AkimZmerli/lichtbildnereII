@@ -3,12 +3,36 @@
 import { useEffect, useState } from 'react'
 import { getGalleryImages } from '../../lib/galleryData'
 import DesktopGallery from '../../components/galleries/DesktopGallery'
-import GalleryNavigation from '../../components/galleries/GalleryNavigation'
-import Footer from '../../components/layout/Footer'
+import MobileGallery from '../../components/galleries/MobileGallery'
 import { GalleryImage } from '../../components/galleries/types/gallery'
 
 export default function HumanGalleryPage() {
   const [images, setImages] = useState<GalleryImage[]>([])
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return window.innerWidth < 768
+  })
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const width = window.innerWidth
+      setIsMobile(width < 768)
+    }
+
+    checkMobile()
+
+    let timeoutId: NodeJS.Timeout
+    const handleResize = () => {
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(checkMobile, 100)
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      clearTimeout(timeoutId)
+    }
+  }, [])
 
   useEffect(() => {
     const loadImages = async () => {
@@ -18,13 +42,9 @@ export default function HumanGalleryPage() {
     loadImages()
   }, [])
 
-  return (
-    <div className="min-h-screen flex flex-col bg-grainy">
-      <main className="flex-grow">
-        <GalleryNavigation type="human" />
-        <DesktopGallery images={images} />
-      </main>
-      <Footer />
-    </div>
+  return isMobile ? (
+    <MobileGallery images={images} title="Human" alternateGalleryLink="/gallery/non-human" />
+  ) : (
+    <DesktopGallery images={images} title="Human" alternateGalleryLink="/gallery/non-human" />
   )
 }

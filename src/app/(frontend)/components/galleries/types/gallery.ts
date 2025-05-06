@@ -9,6 +9,12 @@ export interface PayloadGalleryItem {
   image: PayloadImage
 }
 
+export interface GalleryProps {
+  images: GalleryImage[]
+  title: string
+  alternateGalleryLink: string
+}
+
 export interface NavigationProps {
   currentIndex: number
   totalImages: number

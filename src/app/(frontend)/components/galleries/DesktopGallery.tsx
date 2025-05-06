@@ -1,46 +1,196 @@
-import { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { useState, useEffect, useRef } from 'react'
+import Link from 'next/link'
 import { GalleryProps } from './types/gallery'
 import GalleryImage from './GalleryImage'
+import Header from '../layout/Header'
 
-const DesktopGallery = ({ images }: Pick<GalleryProps, 'images'>) => {
-  const galleryRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({
-    target: galleryRef,
-    offset: ['start start', 'end start'],
-  })
+const DesktopGallery = ({ images, title }: GalleryProps) => {
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [uiVisible, setUiVisible] = useState(true)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const scrollTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const touchStartX = useRef(0)
+  const touchStartScrollLeft = useRef(0)
+  const isScrollingRef = useRef(false)
+  const lastWheelTime = useRef(Date.now())
 
-  // Transform vertical scroll to horizontal movement only within gallery section
-  const x = useTransform(
-    scrollYProgress,
-    [0, 1], // Full scroll range for smoother movement
-    ['0%', `-${(images.length - 1) * 100}%`],
-  )
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current
+    if (!scrollContainer) return
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault()
+
+      // Debounce wheel events
+      const now = Date.now()
+      if (now - lastWheelTime.current < 50) return // Ignore events that are too close together
+      lastWheelTime.current = now
+
+      if (isScrollingRef.current) return // Prevent multiple scrolls while animating
+
+      // Calculate next index based on scroll direction
+      const nextIndex =
+        e.deltaY > 0 ? Math.min(currentIndex + 1, images.length - 1) : Math.max(currentIndex - 1, 0)
+
+      if (nextIndex !== currentIndex) {
+        isScrollingRef.current = true
+        setCurrentIndex(nextIndex)
+        scrollToImage(nextIndex)
+
+        // Reset scrolling lock after animation completes
+        setTimeout(() => {
+          isScrollingRef.current = false
+        }, 2000) // Increased to match slower transition
+      }
+
+      // Show UI
+      setUiVisible(true)
+
+      // Hide UI after delay
+      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current)
+      scrollTimerRef.current = setTimeout(() => setUiVisible(false), 2500)
+    }
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (isScrollingRef.current) return
+      touchStartX.current = e.touches[0].clientX
+      touchStartScrollLeft.current = scrollContainer.scrollLeft
+      setUiVisible(true)
+    }
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (isScrollingRef.current) return
+      const touchX = e.touches[0].clientX
+      const diffX = touchStartX.current - touchX
+      scrollContainer.scrollLeft = touchStartScrollLeft.current + diffX
+    }
+
+    const handleTouchEnd = () => {
+      if (isScrollingRef.current) return
+      const containerWidth = scrollContainer.clientWidth
+      const scrollLeft = scrollContainer.scrollLeft
+      const nextIndex = Math.round(scrollLeft / containerWidth)
+
+      isScrollingRef.current = true
+      setCurrentIndex(nextIndex)
+      scrollToImage(nextIndex)
+
+      setTimeout(() => {
+        isScrollingRef.current = false
+      }, 2000)
+
+      setTimeout(() => setUiVisible(false), 2500)
+    }
+
+    const scrollToImage = (index: number) => {
+      const containerWidth = scrollContainer.clientWidth
+      scrollContainer.scrollTo({
+        left: index * containerWidth,
+        behavior: 'smooth',
+      })
+    }
+
+    // Add event listeners
+    scrollContainer.addEventListener('wheel', handleWheel, { passive: false })
+    scrollContainer.addEventListener('touchstart', handleTouchStart)
+    scrollContainer.addEventListener('touchmove', handleTouchMove)
+    scrollContainer.addEventListener('touchend', handleTouchEnd)
+
+    return () => {
+      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current)
+      scrollContainer.removeEventListener('wheel', handleWheel)
+      scrollContainer.removeEventListener('touchstart', handleTouchStart)
+      scrollContainer.removeEventListener('touchmove', handleTouchMove)
+      scrollContainer.removeEventListener('touchend', handleTouchEnd)
+    }
+  }, [currentIndex, images.length])
+
+  if (!images.length) {
+    return (
+      <div className="h-screen flex flex-col bg-grainy">
+        <Header />
+        <main className="flex-1 flex flex-col">
+          <div className="py-6 pl-[146px]">
+            <div className="flex justify-between items-start">
+              <h1 className="text-white-rose text-4xl tracking-[0.5em] uppercase">{title}</h1>
+              <Link
+                href={`/gallery/${title.toLowerCase() === 'human' ? 'non-human' : 'human'}`}
+                className="text-hot-pink hover:underline"
+              >
+                View {title.toLowerCase() === 'human' ? 'non-human' : 'human'} gallery →
+              </Link>
+            </div>
+            <p className="text-white-rose/70 mt-4">Loading gallery...</p>
+          </div>
+          <div className="flex-1 flex items-center justify-center">
+            <div className="w-32 h-32 border-4 border-hot-pink rounded-full border-t-transparent animate-spin" />
+          </div>
+        </main>
+      </div>
+    )
+  }
 
   return (
-    <div className="relative">
-      {/* Gallery Section with fixed position */}
-      <div ref={galleryRef} className="h-[200vh]">
+    <div className="h-screen flex flex-col bg-grainy">
+      <Header />
+
+      <main className="flex-1 flex flex-col h-[calc(100vh-64px)]">
         {' '}
-        {/* Increased height for smoother scrolling */}
-        <motion.div
-          style={{ x }}
-          className="fixed top-[50%] -translate-y-1/2 left-0 w-fit flex items-center"
-        >
-          <div className="flex gap-8">
+        {/* Subtract header height */}
+        <div className="py-6 pl-[146px]">
+          <div className="flex justify-between items-start">
+            <h1 className="text-white-rose text-4xl tracking-[0.5em] uppercase">{title}</h1>
+            <Link
+              href={`/gallery/${title.toLowerCase() === 'human' ? 'non-human' : 'human'}`}
+              className="text-hot-pink hover:underline"
+            >
+              View {title.toLowerCase() === 'human' ? 'non-human' : 'human'} gallery →
+            </Link>
+          </div>
+          <p className="text-white-rose/70 mt-4">Scroll down to explore the image gallery.</p>
+        </div>
+        <div ref={scrollContainerRef} className="flex-1 overflow-hidden py-4">
+          <div
+            className="h-full flex transition-all duration-[2000ms] ease-in-out"
+            style={{
+              transform: `translateX(-${currentIndex * 100}%)`,
+            }}
+          >
             {images.map((image, index) => (
-              <div key={index} className="w-screen flex items-center justify-center px-12">
-                <div className="relative w-full h-[70vh] max-w-6xl">
-                  <GalleryImage image={image} priority={index === 0} />
+              <div
+                key={index}
+                className="h-full w-full flex-shrink-0 flex items-center justify-center px-12"
+              >
+                <div className="relative w-full max-w-6xl aspect-[16/9]">
+                  <GalleryImage
+                    image={image}
+                    priority={index === currentIndex || index === currentIndex + 1}
+                  />
                 </div>
               </div>
             ))}
           </div>
-        </motion.div>
-      </div>
-
-      {/* Footer spacer */}
-      <div className="h-screen bg-grainy relative z-10" />
+        </div>
+        {/* Progress bar */}
+        <div
+          className={`h-1 bg-gray-800 transition-opacity duration-1000 mb-4 ${
+            uiVisible ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          <div
+            className="h-full bg-hot-pink transition-all duration-2000"
+            style={{ width: `${(currentIndex / (images.length - 1)) * 100}%` }}
+          />
+        </div>
+        {/* Counter */}
+        <div
+          className={`absolute bottom-6 right-8 text-white-rose transition-opacity duration-1000 ${
+            uiVisible ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          {currentIndex + 1} / {images.length}
+        </div>
+      </main>
     </div>
   )
 }
