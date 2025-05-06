@@ -1,17 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import HeaderActive from './HeaderActive'
 import Link from 'next/link'
-import Image from 'next/image'
-import { motion, useScroll } from 'framer-motion'
+import { BurgerMenu } from './BurgerMenu'
+import { motion } from 'framer-motion'
 import { usePathname } from 'next/navigation'
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
   const [isScrolled, setIsScrolled] = useState(false)
-  const [lastScrollY, setLastScrollY] = useState(0)
+  const lastScrollYRef = useRef(0)
+  const ticking = useRef(false)
   const pathname = usePathname()
   const isGalleryPage = pathname?.includes('gallery/')
 
@@ -19,34 +20,37 @@ function Header() {
     setIsMenuOpen(!isMenuOpen)
   }
 
+  const handleScroll = useCallback(() => {
+    if (!ticking.current) {
+      window.requestAnimationFrame(() => {
+        const currentScrollY = window.scrollY
+        setIsVisible(currentScrollY < lastScrollYRef.current || currentScrollY < 50)
+        setIsScrolled(currentScrollY > 0)
+        lastScrollYRef.current = currentScrollY
+        ticking.current = false
+      })
+      ticking.current = true
+    }
+  }, [])
+
   useEffect(() => {
     if (isGalleryPage) {
       setIsVisible(true)
       setIsScrolled(false)
       return
     }
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      setIsVisible(currentScrollY < lastScrollY || currentScrollY < 50)
-      setIsScrolled(currentScrollY > 0)
-      setLastScrollY(currentScrollY)
-    }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY, isGalleryPage])
+  }, [isGalleryPage, handleScroll])
 
   return (
     <>
       <HeaderActive isOpen={isMenuOpen} toggleMenu={toggleMenu} />
-      {/* Placeholder div to prevent layout shift */}
-      <div className="h-[88px]" /> {/* Adjust height to match your header height */}
       <motion.header
-        initial={{ opacity: 1 }}
+        initial={{ y: 0 }}
         animate={{
-          opacity: 1,
           y: isScrolled ? (isVisible ? 0 : -100) : 0,
-          position: isScrolled ? 'fixed' : 'absolute',
         }}
         transition={{
           duration: 0.3,
@@ -57,7 +61,7 @@ function Header() {
           top: 0,
           left: 0,
           right: 0,
-          transform: isScrolled ? undefined : 'none',
+          willChange: 'transform',
         }}
         className={`w-full px-5 py-6 z-40 transition-colors duration-200 bg-grainy`}
       >
@@ -65,8 +69,8 @@ function Header() {
           <Link href="/" className="font-logo text-white-rose text-bold text-4xl">
             VALENTIN MICI
           </Link>
-          <button onClick={toggleMenu}>
-            <Image src="/images/BurgerPlaceholder.png" width={60} height={60} alt="burgermenu" />
+          <button onClick={toggleMenu} className="flex items-center justify-center">
+            <BurgerMenu isOpen={isMenuOpen} />
           </button>
         </div>
       </motion.header>
