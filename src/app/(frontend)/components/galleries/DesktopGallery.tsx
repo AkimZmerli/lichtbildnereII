@@ -147,7 +147,7 @@ const DesktopGallery = ({ images, title }: GalleryProps) => {
               View {title.toLowerCase() === 'human' ? 'non-human' : 'human'} gallery →
             </Link>
           </div>
-          <p className="text-white-rose/70 mt-4">Scroll down to explore the image gallery.</p>
+          <p className="text-white-rose mt-4">Scroll down to explore the image gallery.</p>
         </div>
         <div ref={scrollContainerRef} className="flex-1 overflow-hidden py-4">
           <div
