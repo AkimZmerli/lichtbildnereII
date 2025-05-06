@@ -1,9 +1,9 @@
 'use client'
-import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { BurgerMenu } from './BurgerMenu'
+import { useEffect, useRef } from 'react'
 
 interface HeaderActiveProps {
   isOpen: boolean
@@ -12,9 +12,26 @@ interface HeaderActiveProps {
 
 function HeaderActive({ isOpen, toggleMenu }: HeaderActiveProps) {
   const router = useRouter()
+  const headerRef = useRef<HTMLDivElement>(null)
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (headerRef.current && !headerRef.current.contains(event.target as Node) && isOpen) {
+        toggleMenu()
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isOpen, toggleMenu])
   return (
     <motion.header
+      ref={headerRef}
       initial={{ y: '-100%' }}
       animate={{ y: isOpen ? 0 : '-100%' }}
       transition={{ duration: 0.5, ease: 'easeInOut' }}
