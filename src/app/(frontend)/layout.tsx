@@ -12,8 +12,10 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <main>{children}</main>
+        <main className="pt-[70px]">{children}</main>
       </body>
     </html>
   )
 }
+
+// add padding to main so header doesn't hide section component

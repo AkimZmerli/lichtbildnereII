@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
+import { BurgerMenu } from './BurgerMenu'
 
 interface HeaderActiveProps {
   isOpen: boolean
@@ -24,11 +25,11 @@ function HeaderActive({ isOpen, toggleMenu }: HeaderActiveProps) {
           <Link href="/" className="font-logo text-grainy text-bold text-4xl">
             VALENTIN MICI
           </Link>
-          <button onClick={toggleMenu}>
-            <Image src="/images/BurgerPlaceholder.png" width={60} height={60} alt="burgermenu" />
+          <button onClick={toggleMenu} className="flex items-center justify-center">
+            <BurgerMenu isOpen={isOpen} isDark />
           </button>
         </div>
-        <nav className="flex flex-col items-end space-y-2 text-black-almost text-xl mt-4">
+        <nav className="flex flex-col items-end space-y-4 text-black-almost text-2xl mt-4">
           <Link
             href="/#works"
             onClick={() => toggleMenu()}
