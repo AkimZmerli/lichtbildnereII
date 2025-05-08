@@ -19,47 +19,43 @@ export default function About() {
           />
         </div>
 
-        {/* BIO TEXT */}
-        <div className="space-y-6  leading-relaxed">
-          <p>
-            My name is Valentin Mici. Born in Romania, raised in Gelenau, and since 2014, I have
-            been living in Chemnitz, which has now become my home.
-          </p>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+          {/* Column 1 */}
+          <div className="space-y-8">
+            <div className="text-lg text-white-rose leading-relaxed h-[200px] flex items-center p-4">
+              My name is Valentin Mici. Born in Romania, raised in Gelenau, and since 2014, I have
+              been living in Chemnitz, which has now become my home. For the past five years, I have
+              been deeply dedicated to black-and-white photography and the development process in
+              the photo lab.
+            </div>
 
-          <p>
-            For the past five years, I have been deeply dedicated to black-and-white photography and
-            the development process in the photo lab.
-          </p>
+            <div className="text-lg text-white-rose leading-relaxed h-[200px] flex items-center p-4">
+              I consciously chose against commissioned photography because I prefer to shape my work
+              freely and independently—in every sense.
+            </div>
+          </div>
 
-          <p>
-            I consciously chose against commissioned photography because I prefer to shape my work
-            freely and independently—in every sense.
-          </p>
+          {/* Column 2 */}
+          <div className="space-y-8">
+            <div className="text-lg text-white-rose leading-relaxed h-[200px] flex items-center p-4">
+              Discovering photography as a means of expression fills me with enthusiasm, as it gives
+              me the opportunity to influence my work. Not only at the moment I press the shutter
+              button but also in the photo lab, where I have the freedom to further refine my ideas
+              until the result matches my vision.
+            </div>
 
-          <p>
-            Discovering photography as a means of expression fills me with enthusiasm, as it gives
-            me the opportunity to influence my work in two different ways.
-          </p>
-
-          <p>
-            Not only at the moment I press the shutter button but also in the photo lab, where I
-            have the freedom to further refine and realize my ideas until the result matches my
-            vision.
-          </p>
-
-          <p>
-            I am open towards cooperation
-            <br />
-            Some of my photos are for sale.
-          </p>
-
-          <a
-            href="mailto:mail@valentinmici.com"
-            className="inline-block text-hot-pink hover:text-white transition-colors mt-4"
-          >
-            contact me →
-          </a>
+            <div className="text-lg text-white-rose leading-relaxed h-[200px] flex items-center p-4">
+              Lorem iPsum dolor hjhafsdkjfh ksjdhf I am open towards cooperation. Some of my photos
+              are for sale.
+            </div>
+          </div>
         </div>
+        <a
+          href="mailto:mail@valentinmici.com"
+          className="inline-block text-hot-pink hover:text-white transition-colors mt-4"
+        >
+          contact me →
+        </a>
       </div>
     </section>
   )
