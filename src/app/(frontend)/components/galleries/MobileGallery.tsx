@@ -27,7 +27,7 @@ const MobileGallery = ({ images, title, alternateGalleryLink }: GalleryProps) =>
       <Header />
 
       {/* Gallery Content */}
-      <div className="flex-1 flex flex-col">
+      <div className=" flex flex-col">
         {/* Title */}
         <div className="">
           <h1 className="text-white-rose text-2xl tracking-[0.5em] mt-8 uppercase text-center">
