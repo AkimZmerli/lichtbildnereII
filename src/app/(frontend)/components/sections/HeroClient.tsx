@@ -1,97 +1,231 @@
 'use client'
 
-import Image from 'next/image'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useEffect, useState } from 'react'
+import { motion, useScroll, useTransform, useSpring, useReducedMotion } from 'framer-motion'
 
 interface HeroClientProps {
-  mobileUrl?: string
-  desktopUrl?: string
-  altText?: string
+  mobileUrl: string
+  desktopUrl: string
+  altText: string
+  height?: string
+  // Optional overlay text content
+  title?: string
+  subtitle?: string
+  // Optional video background
+  videoUrl?: string
+  // Animation settings
+  scrollFactor?: number
+  revealDuration?: number
 }
 
-export default function HeroClient({ mobileUrl, desktopUrl, altText }: HeroClientProps) {
-  const containerRef = useRef(null)
-  const [canScroll, setCanScroll] = useState(false)
+const HeroClient: React.FC<HeroClientProps> = ({
+  mobileUrl,
+  desktopUrl,
+  altText,
+  height = '100vh',
+  title,
+  subtitle,
+  videoUrl,
+  scrollFactor = 1.0,
+  revealDuration = 1.0,
+}) => {
+  // Refs for scroll container and animation targets
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [isScrollUnlocked, setIsScrollUnlocked] = useState(false)
+  const prefersReducedMotion = useReducedMotion()
 
-  const { scrollY } = useScroll({
+  // Configure scroll animation range
+  const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ['start start', 'end start'],
+    offset: ['start', 'end start'],
   })
 
-  // Transform value for the mask width
-  const maskWidth = useTransform(scrollY, [0, 300], ['20%', '100%'])
+  // Create smooth animation with spring physics
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  })
 
-  // Handle scroll lock
+  // Create responsive transform values based on scroll progress
+  const scale = useTransform(smoothProgress, [0, 1], prefersReducedMotion ? [1, 1] : [1, 1.05])
+
+  const translateY = useTransform(smoothProgress, [0, 1], prefersReducedMotion ? [0, 0] : [0, -20])
+
+  const opacity = useTransform(smoothProgress, [0, 0.7, 1], [1, 0.3, 0])
+
+  const maskSize = useTransform(smoothProgress, [0, 0.8], ['100%', '0%'])
+
+  const parallaxForeground = useTransform(
+    smoothProgress,
+    [0, 1],
+    prefersReducedMotion ? [0, 0] : [0, -25 * scrollFactor],
+  )
+
+  const parallaxBackground = useTransform(
+    smoothProgress,
+    [0, 1],
+    prefersReducedMotion ? [0, 0] : [0, -50 * scrollFactor],
+  )
+
+  const contentOpacity = useTransform(smoothProgress, [0, 0.2, 0.3], [0, 0.8, 1])
+
+  const contentTranslateY = useTransform(
+    smoothProgress,
+    [0, 0.3],
+    prefersReducedMotion ? [0, 0] : [20, 0],
+  )
+
+  const indicatorOpacity = useTransform(smoothProgress, [0, 0.3], [1, 0])
+
+  // Handle scroll locking and unlocking
   useEffect(() => {
-    const unsubscribe = scrollY.onChange((latest) => {
-      if (latest >= 300 && !canScroll) {
-        setCanScroll(true)
-      } else if (latest < 300 && canScroll) {
-        setCanScroll(false)
+    // Initial setup - lock scrolling
+    document.body.style.overflow = 'hidden'
+
+    // Monitor scroll progress to unlock scrolling at the right time
+    const unsubscribe = smoothProgress.on('change', (latest) => {
+      if (latest >= 0.95 && !isScrollUnlocked) {
+        document.body.style.overflow = 'auto'
+        setIsScrollUnlocked(true)
+      } else if (latest < 0.95 && isScrollUnlocked) {
+        document.body.style.overflow = 'hidden'
+        setIsScrollUnlocked(false)
       }
     })
 
-    return () => unsubscribe()
-  }, [scrollY, canScroll])
-
-  // Prevent scroll until fully revealed
-  useEffect(() => {
-    if (!canScroll) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'unset'
-    }
+    // Reset on unmount
     return () => {
-      document.body.style.overflow = 'unset'
+      document.body.style.overflow = 'auto'
+      unsubscribe()
     }
-  }, [canScroll])
+  }, [smoothProgress, isScrollUnlocked])
 
   return (
-    <div ref={containerRef} className="relative w-full h-[200vh]">
-      <div className="fixed top-0 left-0 w-full h-screen">
-        {/* Container for image and mask */}
-        <div className="relative w-full h-full overflow-hidden">
-          {/* Mobile Image */}
-          {mobileUrl && (
-            <Image
-              src={mobileUrl}
-              alt={altText || 'Hero image'}
-              className="block md:hidden object-cover"
-              fill
-              sizes="100vw"
-              priority
-              quality={95}
-            />
+    <div
+      ref={containerRef}
+      className="relative w-full"
+      style={{ height: `calc(${height} + 100vh)` }}
+    >
+      {/* Sticky container for parallax elements */}
+      <div className="sticky top-0 w-full h-screen overflow-hidden">
+        {/* Background layer - moves faster */}
+        <motion.div
+          className="absolute inset-0 w-full h-full"
+          style={{
+            y: parallaxBackground,
+            scale,
+          }}
+        >
+          {/* Video background (if provided) */}
+          {videoUrl && (
+            <div className="absolute inset-0 w-full h-full">
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+              >
+                <source src={videoUrl} type="video/mp4" />
+              </video>
+            </div>
           )}
 
-          {/* Desktop Image */}
-          {desktopUrl && (
-            <Image
-              src={desktopUrl}
-              alt={altText || 'Hero image'}
-              className="hidden md:block object-cover"
-              fill
-              sizes="100vw"
-              priority
-              quality={95}
-            />
-          )}
+          {/* Image background with responsive sources */}
+          <picture className="block w-full h-full">
+            <source media="(min-width: 768px)" srcSet={desktopUrl} />
+            <source media="(max-width: 767px)" srcSet={mobileUrl} />
+            <img src={desktopUrl} alt={altText} className="w-full h-full object-cover" />
+          </picture>
 
-          {/* Mask overlay */}
-          <motion.div
-            className="absolute top-0 left-0 h-full bg-black"
-            style={
-              {
-                width: '100%',
-                clipPath: 'inset(0 0 0 var(--mask-width))',
-                WebkitClipPath: 'inset(0 0 0 var(--mask-width))',
-                '--mask-width': maskWidth,
-              } as any
-            }
+          {/* Overlay div for additional styling */}
+          <div
+            className="absolute inset-0 w-full h-full bg-center bg-no-repeat bg-cover"
+            style={{
+              backgroundImage: `url(${desktopUrl})`,
+            }}
+            aria-hidden="true"
           />
-        </div>
+        </motion.div>
+
+        {/* Mask overlay with gradient */}
+        <motion.div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            opacity,
+            background:
+              'radial-gradient(circle at center, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.95) 70%)',
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Vertical reveal mask (slides up) */}
+        <motion.div
+          className="absolute inset-0 bg-black transition-all ease-out"
+          style={{
+            height: maskSize,
+            opacity: opacity,
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Content layer - moves slower than background */}
+        <motion.div
+          className="absolute inset-0 w-full h-full flex items-center justify-center pointer-events-none"
+          style={{
+            y: parallaxForeground,
+          }}
+        >
+          {/* Optional content overlay */}
+          {(title || subtitle) && (
+            <motion.div
+              className="text-center text-white p-6 max-w-2xl mx-auto"
+              style={{
+                opacity: contentOpacity,
+                y: contentTranslateY,
+              }}
+            >
+              {title && (
+                <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tight">{title}</h1>
+              )}
+              {subtitle && <p className="text-xl md:text-2xl opacity-90">{subtitle}</p>}
+            </motion.div>
+          )}
+        </motion.div>
+
+        {/* Screen reader text */}
+        <span className="sr-only">{altText}</span>
+
+        {/* Custom scroll indicator */}
+        <motion.div
+          className="absolute bottom-12 left-1/2 transform -translate-x-1/2 text-white flex flex-col items-center"
+          style={{
+            opacity: indicatorOpacity,
+          }}
+          aria-hidden="true"
+        >
+          <span className="text-sm mb-2 font-light tracking-wider">SCROLL</span>
+          <div className="w-px h-16 bg-white/70 relative overflow-hidden">
+            <motion.div
+              className="absolute top-0 left-0 w-full h-full bg-white"
+              animate={{
+                y: ['-100%', '100%'],
+              }}
+              transition={{
+                repeat: Infinity,
+                duration: 1.5,
+                ease: 'easeInOut',
+              }}
+            />
+          </div>
+        </motion.div>
       </div>
+
+      {/* Spacer to create scrollable area */}
+      <div className="h-screen" aria-hidden="true" />
     </div>
   )
 }
+
+export default HeroClient
