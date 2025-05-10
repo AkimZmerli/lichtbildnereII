@@ -1,7 +1,7 @@
 'use server'
 
 import { getHeroImage } from '../services/hero/getHeroImage'
-import HeroClient from './HeroClient'
+import CinematicHero from './CinematicHero'
 
 interface HeroImage {
   mobileImage?: { url: string }
@@ -21,23 +21,36 @@ export default async function Hero() {
     )
   }
 
-  // Ensure URLs are absolute and handle TIF format
+  // Prepare URLs
   const mobileUrl = heroImage.mobileImage.url.startsWith('/')
-    ? `${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}${heroImage.mobileImage.url.replace('.tif', '.jpg')}`
+    ? `${process.env.NEXT_PUBLIC_SERVER_URL}${heroImage.mobileImage.url}`
     : heroImage.mobileImage.url
 
   const desktopUrl = heroImage.desktopImage.url.startsWith('/')
-    ? `${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}${heroImage.desktopImage.url}`
+    ? `${process.env.NEXT_PUBLIC_SERVER_URL}${heroImage.desktopImage.url}`
     : heroImage.desktopImage.url
 
-  console.log('Final URLs:', { mobileUrl, desktopUrl })
+  // Convert TIFF to JPG if needed
+  const finalMobileUrl =
+    mobileUrl.endsWith('.tif') || mobileUrl.endsWith('.tiff')
+      ? mobileUrl.replace(/\.tiff?$/, '.jpg')
+      : mobileUrl
+
+  console.log('Final URLs:', {
+    mobileUrl: finalMobileUrl,
+    desktopUrl,
+  })
 
   return (
-    <HeroClient
-      mobileUrl={mobileUrl}
+    <CinematicHero
+      mobileUrl={finalMobileUrl}
       desktopUrl={desktopUrl}
       altText={heroImage.altText || 'Hero image'}
-      scrollFactor={0.8}
+      initialViewportHeight="45vh"
+      initialViewportWidth="80%"
+      scrollFactor={1.2}
+      allowSkip={true} // Set to false to always show animation, even for returning visitors
+      storageKey="hero-animation-viewed" // localStorage key to remember if animation was played
     />
   )
 }
