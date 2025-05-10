@@ -34,7 +34,7 @@ const HeroClient: React.FC<HeroClientProps> = ({
   const [isScrollUnlocked, setIsScrollUnlocked] = useState(false)
   const prefersReducedMotion = useReducedMotion()
 
-  // Configure scroll animation range
+  // Configure scroll animation range with proper offset
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start', 'end start'],
@@ -80,26 +80,61 @@ const HeroClient: React.FC<HeroClientProps> = ({
 
   // Handle scroll locking and unlocking
   useEffect(() => {
+    if (!containerRef.current) return
+
+    // Ensure we're at the top when component mounts
+    window.scrollTo(0, 0)
+
     // Initial setup - lock scrolling
     document.body.style.overflow = 'hidden'
+
+    // Create a small invisible element to make scrolling possible
+    const scrollTrigger = document.createElement('div')
+    scrollTrigger.style.height = '1px'
+    scrollTrigger.style.width = '1px'
+    scrollTrigger.style.position = 'absolute'
+    scrollTrigger.style.top = '0'
+    scrollTrigger.style.left = '0'
+    scrollTrigger.style.zIndex = '-1'
+    document.body.appendChild(scrollTrigger)
+
+    // Allow scrolling programmatically
+    let lastScrollY = 0
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault()
+
+      // Only process if we haven't unlocked scrolling yet
+      if (!isScrollUnlocked) {
+        window.scrollBy(0, e.deltaY)
+      }
+    }
+
+    window.addEventListener('wheel', handleWheel, { passive: false })
 
     // Monitor scroll progress to unlock scrolling at the right time
     const unsubscribe = smoothProgress.on('change', (latest) => {
       if (latest >= 0.95 && !isScrollUnlocked) {
         document.body.style.overflow = 'auto'
         setIsScrollUnlocked(true)
+        window.removeEventListener('wheel', handleWheel)
       } else if (latest < 0.95 && isScrollUnlocked) {
         document.body.style.overflow = 'hidden'
         setIsScrollUnlocked(false)
+        window.addEventListener('wheel', handleWheel, { passive: false })
       }
     })
 
     // Reset on unmount
     return () => {
       document.body.style.overflow = 'auto'
+      document.body.removeChild(scrollTrigger)
+      window.removeEventListener('wheel', handleWheel)
       unsubscribe()
     }
   }, [smoothProgress, isScrollUnlocked])
+
+  console.log('Current scroll progress:', scrollYProgress.get())
+  console.log('Current smooth progress:', smoothProgress.get())
 
   return (
     <div
@@ -132,21 +167,14 @@ const HeroClient: React.FC<HeroClientProps> = ({
             </div>
           )}
 
-          {/* Image background with responsive sources */}
-          <picture className="block w-full h-full">
-            <source media="(min-width: 768px)" srcSet={desktopUrl} />
-            <source media="(max-width: 767px)" srcSet={mobileUrl} />
-            <img src={desktopUrl} alt={altText} className="w-full h-full object-cover" />
-          </picture>
-
-          {/* Overlay div for additional styling */}
-          <div
-            className="absolute inset-0 w-full h-full bg-center bg-no-repeat bg-cover"
-            style={{
-              backgroundImage: `url(${desktopUrl})`,
-            }}
-            aria-hidden="true"
-          />
+          {/* Image background with responsive sources - use img directly */}
+          <div className="absolute inset-0 w-full h-full">
+            <picture className="w-full h-full">
+              <source media="(min-width: 768px)" srcSet={desktopUrl} />
+              <source media="(max-width: 767px)" srcSet={mobileUrl} />
+              <img src={desktopUrl} alt={altText} className="w-full h-full object-cover" />
+            </picture>
+          </div>
         </motion.div>
 
         {/* Mask overlay with gradient */}
@@ -222,8 +250,8 @@ const HeroClient: React.FC<HeroClientProps> = ({
         </motion.div>
       </div>
 
-      {/* Spacer to create scrollable area */}
-      <div className="h-screen" aria-hidden="true" />
+      {/* Spacer to create scrollable area - increase height to ensure enough scroll room */}
+      <div className="h-screen md:h-[150vh]" aria-hidden="true" />
     </div>
   )
 }
