@@ -137,12 +137,12 @@ const DesktopGallery = ({ images, title }: GalleryProps) => {
       <main className="flex-1 flex flex-col h-[calc(100vh-64px)]">
         {' '}
         {/* Subtract header height */}
-        <div className="py-6 pl-[146px]">
+        <div className="py-10 pl-[140px]">
           <div className="flex justify-between items-start">
             <h1 className="text-white-rose text-4xl tracking-[0.5em] uppercase">{title}</h1>
             <Link
               href={`/gallery/${title.toLowerCase() === 'human' ? 'non-human' : 'human'}`}
-              className="text-hot-pink hover:underline"
+              className="text-hot-pink hover:underline px-7"
             >
               View {title.toLowerCase() === 'human' ? 'non-human' : 'human'} gallery →
             </Link>
@@ -173,7 +173,7 @@ const DesktopGallery = ({ images, title }: GalleryProps) => {
         </div>
         {/* Progress bar */}
         <div
-          className={`h-1 bg-gray-800 transition-opacity duration-1000 mb-4 ${
+          className={`h-1 bg-gray-800 transition-opacity duration-1000 mb-5 ${
             uiVisible ? 'opacity-100' : 'opacity-0'
           }`}
         >
