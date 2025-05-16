@@ -1,6 +1,7 @@
 'use server'
 
 import { getHeroImage } from '../services/hero/getHeroImage'
+import ClientHero from '../sections/ClientHero'
 import CinematicHero from './CinematicHero'
 
 interface HeroImage {
@@ -30,27 +31,11 @@ export default async function Hero() {
     ? `${process.env.NEXT_PUBLIC_SERVER_URL}${heroImage.desktopImage.url}`
     : heroImage.desktopImage.url
 
-  // Convert TIFF to JPG if needed
-  const finalMobileUrl =
-    mobileUrl.endsWith('.tif') || mobileUrl.endsWith('.tiff')
-      ? mobileUrl.replace(/\.tiff?$/, '.jpg')
-      : mobileUrl
-
-  console.log('Final URLs:', {
-    mobileUrl: finalMobileUrl,
-    desktopUrl,
-  })
-
   return (
-    <CinematicHero
-      mobileUrl={finalMobileUrl}
+    <ClientHero
+      mobileUrl={mobileUrl}
       desktopUrl={desktopUrl}
       altText={heroImage.altText || 'Hero image'}
-      initialViewportHeight="45vh"
-      initialViewportWidth="80%"
-      scrollFactor={1.2}
-      allowSkip={true} // Set to false to always show animation, even for returning visitors
-      storageKey="hero-animation-viewed" // localStorage key to remember if animation was played
     />
   )
 }
