@@ -8,7 +8,7 @@ const GalleryImage = ({ image, priority, onLoad }: GalleryImageProps) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="w-full h-[70vh] relative"
+      className="w-full h-full relative"
     >
       <ImageWithLoader image={image} priority={priority} onLoad={onLoad} />
     </motion.div>
