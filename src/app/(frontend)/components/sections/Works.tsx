@@ -37,7 +37,7 @@ export default function Works() {
             <div className="text-center space-y-4 md:translate-y-50">
               <h3 className="flex justify-start uppercase text-2xl  tracking-[0.5em]">NON HUMAN</h3>
               <Image
-                src="/images/worksplaceholderI.jpg"
+                src="/images/Hanoi.jpg"
                 alt="Non-Human Gallery"
                 width={300}
                 height={500}
