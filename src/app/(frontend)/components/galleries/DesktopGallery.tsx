@@ -137,9 +137,9 @@ const DesktopGallery = ({ images, title }: GalleryProps) => {
       <main className="flex-1 flex flex-col h-[calc(100vh-64px)]">
         {' '}
         {/* Subtract header height */}
-        <div className="py-10 pl-[140px]">
+        <div className="py-5 pl-[140px]">
           <div className="flex justify-between items-start">
-            <h1 className="text-white-rose text-4xl tracking-[0.5em] uppercase">{title}</h1>
+            <h1 className="text-white-rose text-2xl tracking-[0.5em] uppercase">{title}</h1>
             <Link
               href={`/gallery/${title.toLowerCase() === 'human' ? 'non-human' : 'human'}`}
               className="text-hot-pink hover:underline px-7"
@@ -147,9 +147,8 @@ const DesktopGallery = ({ images, title }: GalleryProps) => {
               View {title.toLowerCase() === 'human' ? 'non-human' : 'human'} gallery →
             </Link>
           </div>
-          <p className="text-white-rose mt-4">Scroll down to explore the image gallery.</p>
         </div>
-        <div ref={scrollContainerRef} className="flex-1 overflow-hidden py-4">
+        <div ref={scrollContainerRef} className="flex-1 overflow-hidden ">
           <div
             className="h-full flex transition-all duration-[2000ms] ease-in-out"
             style={{
@@ -161,7 +160,7 @@ const DesktopGallery = ({ images, title }: GalleryProps) => {
                 key={index}
                 className="h-full w-full flex-shrink-0 flex items-center justify-center px-12"
               >
-                <div className="relative w-full max-w-6xl aspect-[16/9]">
+                <div className="relative w-full h-full flex items-center justify-center">
                   <GalleryImage
                     image={image}
                     priority={index === currentIndex || index === currentIndex + 1}
@@ -171,24 +170,18 @@ const DesktopGallery = ({ images, title }: GalleryProps) => {
             ))}
           </div>
         </div>
-        {/* Progress bar */}
-        <div
-          className={`h-1 bg-gray-800 transition-opacity duration-1000 mb-5 ${
-            uiVisible ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
+        {/* Progress bar - positioned closer to images with full width */}
+        <div className="w-full px-0 mt-2">
           <div
-            className="h-full bg-hot-pink transition-all duration-2000"
-            style={{ width: `${(currentIndex / (images.length - 1)) * 100}%` }}
-          />
-        </div>
-        {/* Counter */}
-        <div
-          className={`absolute bottom-6 right-8 text-white-rose transition-opacity duration-1000 ${
-            uiVisible ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
-          {currentIndex + 1} / {images.length}
+            className={`h-1 bg-gray-800 transition-opacity duration-1000 ${
+              uiVisible ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            <div
+              className="h-full bg-hot-pink transition-all duration-2000"
+              style={{ width: `${(currentIndex / (images.length - 1)) * 100}%` }}
+            />
+          </div>
         </div>
       </main>
     </div>

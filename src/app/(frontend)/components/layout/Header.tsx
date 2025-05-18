@@ -11,6 +11,8 @@ function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [headerHeight, setHeaderHeight] = useState(0)
+  const headerRef = useRef<HTMLDivElement>(null)
   const lastScrollYRef = useRef(0)
   const ticking = useRef(false)
   const pathname = usePathname()
@@ -44,10 +46,30 @@ function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [isGalleryPage, handleScroll])
 
+  // Measure the header height when it mounts and when window resizes
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      if (headerRef.current) {
+        setHeaderHeight(headerRef.current.offsetHeight)
+      }
+    }
+
+    // Initial measurement
+    updateHeaderHeight()
+
+    // Update on resize
+    window.addEventListener('resize', updateHeaderHeight)
+
+    return () => {
+      window.removeEventListener('resize', updateHeaderHeight)
+    }
+  }, [])
+
   return (
     <>
       <HeaderActive isOpen={isMenuOpen} toggleMenu={toggleMenu} />
       <motion.header
+        ref={headerRef}
         initial={{ y: 0 }}
         animate={{
           y: isScrolled ? (isVisible ? 0 : -100) : 0,
@@ -63,7 +85,7 @@ function Header() {
           right: 0,
           willChange: 'transform',
         }}
-        className={`w-full px-5 py-6 z-40 transition-colors duration-200 bg-grainy`}
+        className={`w-full px-5 py-5 z-40 transition-colors duration-200 bg-grainy`}
       >
         <div className="flex items-center justify-between">
           <Link href="/" className="font-logo text-white-rose text-bold text-4xl">
