@@ -7,7 +7,7 @@ export default async function Exhibition() {
 
   return (
     <section id="exhibition" className="bg-grainy text-white-rose font- min-h-screen">
-      <div className="max-w-4xl mx-auto px-6 py-16 md:py-24">
+      <div className="max-w-4xl mx-auto px-6 py-10 md:py-10">
         <h2 className="uppercase tracking-widest mb-12 text-center text-2xl">
           E X H I B I T I O N S
         </h2>
@@ -15,11 +15,11 @@ export default async function Exhibition() {
         <Suspense fallback={<div>Loading...</div>}>
           <ExhibitionList slides={slides} />
         </Suspense>
-        <div className=" mt-7">
+        <div className=" mt-10">
           You can visit my first exhibition{' '}
           <Link
             href="/tankstelle"
-            className="font-lato underline underline-offset-4  text-hot-pink text-underline"
+            className="font-lato underline-offset-4  text-hot-pink hover:underline"
           >
             here
           </Link>

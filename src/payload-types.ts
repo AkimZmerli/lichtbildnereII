@@ -206,6 +206,13 @@ export interface Slide {
     };
     [k: string]: unknown;
   } | null;
+  images?:
+    | {
+        image: number | Media;
+        alt: string;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -377,6 +384,13 @@ export interface GalleryItemsSelect<T extends boolean = true> {
 export interface SlidesSelect<T extends boolean = true> {
   label?: T;
   content?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        alt?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

@@ -21,11 +21,7 @@ export default async function Hero() {
       </div>
     )
   }
-
-  // Prepare URLs
-  const mobileUrl = heroImage.mobileImage.url.startsWith('/')
-    ? `${process.env.NEXT_PUBLIC_SERVER_URL}${heroImage.mobileImage.url}`
-    : heroImage.mobileImage.url
+  const mobileUrl = '/images/worksplaceholderI.jpg'
 
   const desktopUrl = heroImage.desktopImage.url.startsWith('/')
     ? `${process.env.NEXT_PUBLIC_SERVER_URL}${heroImage.desktopImage.url}`

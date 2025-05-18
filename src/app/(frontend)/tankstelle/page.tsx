@@ -21,7 +21,10 @@ export default function DisplayScan() {
         </div>
 
         <div className="w-[896px] mx-auto mb-11">
-          <Link href="/" className="inline-block mt-8 text-hot-pink hover:underline text-lg">
+          <Link
+            href="/about-exhibition"
+            className="inline-block mt-8 text-hot-pink hover:underline text-lg"
+          >
             ← go back
           </Link>
         </div>
