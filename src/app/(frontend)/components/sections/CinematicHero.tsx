@@ -38,12 +38,14 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
   const [scrollingUnlocked, setScrollingUnlocked] = useState(false)
   const [animationComplete, setAnimationComplete] = useState(false)
   const [skipAnimation, setSkipAnimation] = useState(false)
+  // Add internal state to track whether to use allowSkip
+  const [internalAllowSkip, setInternalAllowSkip] = useState(allowSkip)
   const scrollProgress = motionValue(0)
   const prefersReducedMotion = useReducedMotion()
 
   // Check if we should skip animation (returning visitor)
   useEffect(() => {
-    if (allowSkip && typeof window !== 'undefined') {
+    if (internalAllowSkip && typeof window !== 'undefined') {
       const hasPlayed = localStorage.getItem(storageKey) === 'true'
       if (hasPlayed) {
         setSkipAnimation(true)
@@ -51,7 +53,7 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
         setScrollingUnlocked(true)
       }
     }
-  }, [allowSkip, storageKey])
+  }, [internalAllowSkip, storageKey])
 
   // Spring physics for smooth animation
   const smoothProgress = useSpring(scrollProgress, {
@@ -181,8 +183,11 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
           // Set completion flag
           setAnimationComplete(true)
 
+          // KEY CHANGE: Enable allowSkip after animation completes
+          setInternalAllowSkip(true)
+
           // Remember this visitor has seen the animation
-          if (allowSkip && typeof window !== 'undefined') {
+          if (typeof window !== 'undefined') {
             localStorage.setItem(storageKey, 'true')
           }
 
@@ -224,6 +229,10 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
       if (e.key === 'Escape' && !scrollingUnlocked) {
         scrollProgress.set(1) // Force animation to 100%
         setAnimationComplete(true)
+
+        // Enable allowSkip when forced to complete
+        setInternalAllowSkip(true)
+
         setTimeout(() => {
           setScrollingUnlocked(true)
           document.body.style.overflow = 'auto'
@@ -254,7 +263,7 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
         cancelAnimationFrame(animationFrameId)
       }
     }
-  }, [scrollProgress, scrollingUnlocked, animationComplete, skipAnimation, allowSkip, storageKey])
+  }, [scrollProgress, scrollingUnlocked, animationComplete, skipAnimation, storageKey])
 
   return (
     <>
