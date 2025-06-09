@@ -1,26 +1,134 @@
+'use client'
+import { motion } from 'framer-motion'
+import { useInView } from 'framer-motion'
+import { useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
 export default function Works() {
+  const sectionRef = useRef(null)
+  const isInView = useInView(sectionRef, { once: true, amount: 0.3 })
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.3,
+        delayChildren: 1.2, // Added 2 more seconds (was 0.2, now 2.2)
+      },
+    },
+  }
+
+  const mobileItemVariants = {
+    hidden: {
+      opacity: 0,
+      y: 60,
+      scale: 0.9,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.8,
+        ease: [0.25, 0.46, 0.45, 0.94],
+      },
+    },
+  }
+
+  const desktopLeftVariants = {
+    hidden: {
+      opacity: 0,
+      x: -100,
+      y: 30,
+    },
+    visible: {
+      opacity: 1,
+      x: 0,
+      y: 0,
+      transition: {
+        duration: 1.0,
+        ease: [0.25, 0.46, 0.45, 0.94],
+        delay: 1.0, // Added 2 more seconds delay for desktop left
+      },
+    },
+  }
+
+  const desktopRightVariants = {
+    hidden: {
+      opacity: 0,
+      x: 100,
+      y: -30,
+    },
+    visible: {
+      opacity: 1,
+      x: 0,
+      y: 0,
+      transition: {
+        duration: 1.0,
+        ease: [0.25, 0.46, 0.45, 0.94],
+        delay: 1.2, // Added 2 more seconds (was 0.2, now 2.2)
+      },
+    },
+  }
+
+  const headerVariants = {
+    hidden: {
+      opacity: 0,
+      y: -20,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: 'easeOut',
+      },
+    },
+  }
+
   return (
     <section
+      ref={sectionRef}
       id="works"
       className="bg-grainy text-white-rose py-16 md:py-24 space-y-24 h-full md:pb-96"
     >
       {/* WORKS */}
       <div className="text-center">
-        <div className="flex items-center justify-center gap-4 mb-12">
-          <div className="h-[1px] bg-white-rose flex-1" />
+        <motion.div
+          className="flex items-center justify-center gap-4 mb-12"
+          variants={headerVariants}
+          initial="hidden"
+          animate={isInView ? 'visible' : 'hidden'}
+        >
+          <motion.div
+            className="h-[1px] bg-white-rose flex-1"
+            initial={{ scaleX: 0 }}
+            animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          />
           <h2 className="tracking-widest text-2xl text-white-rose">W O R K S</h2>
-          <div className="h-[1px] bg-white-rose flex-1" />
-        </div>
+          <motion.div
+            className="h-[1px] bg-white-rose flex-1"
+            initial={{ scaleX: 0 }}
+            animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          />
+        </motion.div>
+
         <div className="px-6">
           {/* Mobile layout (visible only on small screens) */}
-          <div className="md:hidden">
+          <motion.div
+            className="md:hidden"
+            variants={containerVariants}
+            initial="hidden"
+            animate={isInView ? 'visible' : 'hidden'}
+          >
             <div className="flex flex-col gap-12">
-              {/* Container with fixed width to ensure alignment */}
-              <div className="w-full max-w-[430px] mx-auto">
-                {/* HUMAN */}
+              {/* HUMAN - Mobile */}
+              <motion.div className="w-full max-w-[430px] mx-auto" variants={mobileItemVariants}>
                 <div>
                   <div className="flex justify-center">
                     <Image
@@ -41,11 +149,10 @@ export default function Works() {
                     </Link>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Container with fixed width to ensure alignment */}
-              <div className="w-full max-w-[430px] mx-auto">
-                {/* NON-HUMAN */}
+              {/* NON-HUMAN - Mobile */}
+              <motion.div className="w-full max-w-[430px] mx-auto" variants={mobileItemVariants}>
                 <div>
                   <div className="flex justify-center">
                     <Image
@@ -68,14 +175,19 @@ export default function Works() {
                     </Link>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Desktop layout (hidden on small screens) */}
           <div className="hidden md:flex md:flex-row justify-center items-center md:gap-36">
-            {/* HUMAN */}
-            <div className="text-center space-y-4">
+            {/* HUMAN - Desktop */}
+            <motion.div
+              className="text-center space-y-4"
+              variants={desktopLeftVariants}
+              initial="hidden"
+              animate={isInView ? 'visible' : 'hidden'}
+            >
               <h3 className="flex justify-start uppercase text-2xl tracking-[0.5em]">HUMAN</h3>
               <Image
                 src="/images/worksplaceholderII.jpg"
@@ -90,10 +202,15 @@ export default function Works() {
               >
                 view gallery →
               </Link>
-            </div>
+            </motion.div>
 
-            {/* NON-HUMAN */}
-            <div className="text-center space-y-4 md:translate-y-50">
+            {/* NON-HUMAN - Desktop */}
+            <motion.div
+              className="text-center space-y-4 md:translate-y-50"
+              variants={desktopRightVariants}
+              initial="hidden"
+              animate={isInView ? 'visible' : 'hidden'}
+            >
               <h3 className="flex justify-start uppercase text-2xl tracking-[0.5em]">NON HUMAN</h3>
               <Image
                 src="/images/Hanoi.jpg"
@@ -108,7 +225,7 @@ export default function Works() {
               >
                 view gallery →
               </Link>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
