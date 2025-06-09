@@ -1,24 +1,52 @@
 'use client'
-
-import { useState, useRef } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import Link from 'next/link'
+import { useState, useCallback } from 'react'
 import GalleryImage from './GalleryImage'
 import MasonryGallery from './MasonryGallery'
 import Header from '../layout/Header'
-import { GalleryProps } from './types/gallery'
 import Footer from '../layout/Footer'
+import { GalleryProps } from './types/gallery'
 
 const MobileGallery = ({ images, title, alternateGalleryLink }: GalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [showMasonryView, setShowMasonryView] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const touchStartX = useRef(0)
-  const touchEndX = useRef(0)
-  const minSwipeDistance = 50
+  const [isTransitioning, setIsTransitioning] = useState(false)
+  const [touchStart, setTouchStart] = useState({ x: 0, y: 0, time: 0 })
 
+  // Navigation functions
+  const goToNext = useCallback(() => {
+    if (isTransitioning) return
+
+    if (currentIndex === images.length - 1) {
+      setShowMasonryView(true)
+      return
+    }
+
+    setIsTransitioning(true)
+    setCurrentIndex((prev) => prev + 1)
+    setTimeout(() => setIsTransitioning(false), 300)
+  }, [currentIndex, images.length, isTransitioning])
+
+  const goToPrevious = useCallback(() => {
+    if (isTransitioning || currentIndex === 0) return
+
+    setIsTransitioning(true)
+    setCurrentIndex((prev) => prev - 1)
+    setTimeout(() => setIsTransitioning(false), 300)
+  }, [currentIndex, isTransitioning])
+
+  // Show masonry view
   if (showMasonryView) {
-    return <MasonryGallery images={images} title={title} />
+    return (
+      <MasonryGallery
+        images={images}
+        title={title}
+        alternateGalleryLink={alternateGalleryLink}
+        onBack={() => {
+          setShowMasonryView(false)
+          setCurrentIndex(images.length - 1)
+        }}
+      />
+    )
   }
 
   return (
@@ -26,33 +54,76 @@ const MobileGallery = ({ images, title, alternateGalleryLink }: GalleryProps) =>
       {/* Header */}
       <Header />
 
-      {/* Gallery Content */}
-      <div className=" flex flex-col">
-        {/* Title */}
-        <div className="">
-          <h1 className="text-white-rose text-2xl tracking-[0.5em] mt-8 uppercase text-center">
-            {title}
-          </h1>
-        </div>
+      {/* Title */}
+      <div className="pt-8 pb-6">
+        <h1 className="text-white-rose text-2xl tracking-[0.5em] uppercase text-center">{title}</h1>
+      </div>
 
-        {/* Image Area */}
-        <div className="flex items-center justify-center p-5">
-          <div className="w-full bg-white-rose p-1">
-            <div className="w-full h-64 bg-white flex items-center justify-center">
-              Test Image Area
-            </div>
-          </div>
-        </div>
+      {/* Photo Area - Large and simple */}
+      <div className="px-6 pb-4" style={{ height: '60vh' }}>
+        <div
+          className="w-full h-full relative bg-gray-900 rounded-sm overflow-hidden"
+          onTouchStart={(e) => {
+            const touch = e.touches[0]
+            setTouchStart({ x: touch.clientX, y: touch.clientY, time: Date.now() })
+          }}
+          onTouchEnd={(e) => {
+            const touch = e.changedTouches[0]
+            const deltaX = touchStart.x - touch.clientX
+            const deltaTime = Date.now() - touchStart.time
 
-        {/* Navigation */}
-        <div className="p-4 flex justify-between items-center">
-          <span className="text-white-rose text-lg">1 / {images.length}</span>
-          <div className="flex gap-4">
-            <button className="text-white-rose p-4 rounded-full bg-black-almost/20">←</button>
-            <button className="text-white-rose p-4 rounded-full bg-black-almost/20">→</button>
-          </div>
+            if (Math.abs(deltaX) > 80 && deltaTime < 300) {
+              if (deltaX > 0) {
+                goToNext()
+              } else {
+                goToPrevious()
+              }
+            }
+          }}
+        >
+          {images[currentIndex] && <GalleryImage image={images[currentIndex]} priority={true} />}
         </div>
       </div>
+
+      {/* Navigation */}
+      <div className="px-6 pb-4 flex justify-between items-center">
+        <span className="text-white-rose text-lg font-light">
+          {currentIndex + 1} / {images.length}
+        </span>
+
+        <div className="flex gap-4">
+          <button
+            onClick={goToPrevious}
+            disabled={currentIndex === 0 || isTransitioning}
+            className={`p-3 rounded-full transition-all duration-200 ${
+              currentIndex === 0
+                ? 'bg-neutral-800 text-neutral-600 cursor-not-allowed'
+                : 'bg-neutral-700 text-white-rose hover:bg-neutral-600 active:scale-95'
+            }`}
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+
+          <button
+            onClick={goToNext}
+            disabled={isTransitioning}
+            className="p-3 rounded-full bg-neutral-700 text-white-rose hover:bg-neutral-600 active:scale-95 transition-all duration-200"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Footer */}
       <Footer />
     </div>
   )

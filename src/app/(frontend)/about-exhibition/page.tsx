@@ -10,6 +10,7 @@ export default function AboutExhibition() {
       <Header />
       <ScrollToSection />
       <About />
+      <ScrollToSection />
       <Exhibition />
       <Footer />
       <HiddenGem />
