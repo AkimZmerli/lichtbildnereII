@@ -42,6 +42,13 @@ function Header() {
       return
     }
 
+    const cinematicHero = document.querySelector('[data-cinematic-hero]')
+    if (cinematicHero) {
+      setIsVisible(true)
+      setIsScrolled(false)
+      return
+    }
+
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [isGalleryPage, handleScroll])
@@ -50,7 +57,9 @@ function Header() {
   useEffect(() => {
     const updateHeaderHeight = () => {
       if (headerRef.current) {
-        setHeaderHeight(headerRef.current.offsetHeight)
+        const height = headerRef.current.offsetHeight
+        setHeaderHeight(height)
+        document.documentElement.style.setProperty('--header-height', `${height}px`)
       }
     }
 

@@ -124,8 +124,18 @@ const DesktopGallery = ({ images, title }: GalleryProps) => {
     window.addEventListener('touchend', handleTouchEnd, { passive: true })
     window.addEventListener('keydown', handleKeyDown)
 
+    // Handle ESC key to return to main site
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        window.history.back()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyPress)
+
     return () => {
       if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current)
+      window.removeEventListener('keydown', handleKeyPress)
       window.removeEventListener('wheel', handleWheel)
       window.removeEventListener('touchstart', handleTouchStart)
       window.removeEventListener('touchmove', handleTouchMove)

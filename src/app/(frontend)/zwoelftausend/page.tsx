@@ -28,16 +28,16 @@ export default function DisplayScan() {
   }, [])
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       <Header />
-      <div className="bg-grainy text-white-rose p-4 md:p-8 pb-8">
+      <div className="bg-grainy text-white-rose p-4 md:p-8 pb-8 flex-1">
         <h1 className="text-xl md:text-2xl text-center tracking-[0.2em] font-normal font-lato mb-8">
           Z W Ö L F T A U S E N D
         </h1>
 
         {/* Responsive Video Container */}
         <div className="max-w-4xl mx-auto mb-8">
-          <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
+          <div className="relative w-full h-[270px] md:h-[400px] lg:h-[600px]">
             {/* @ts-ignore - Custom element, TypeScript doesn't recognize it */}
             <mux-player
               ref={videoRef}
@@ -46,8 +46,8 @@ export default function DisplayScan() {
               metadata-viewer-user-id="guest"
               stream-type="on-demand"
               controls
-              autoplay="false"
-              muted="false"
+              autoplay="true"
+              muted
               className="w-full h-full rounded-sm"
               style={
                 {
