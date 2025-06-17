@@ -270,6 +270,7 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
       <div
         ref={containerRef}
         className="relative w-full"
+        data-cinematic-hero
         style={{
           // Set height of container based on animation state
           height: skipAnimation ? '100vh' : '200vh',
@@ -388,36 +389,36 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
                   </motion.div>
                 )}
               </motion.div>
-
-              {/* Scroll indicator */}
-              <motion.div
-                className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white flex flex-col items-center z-10"
-                style={{
-                  opacity: indicatorOpacity,
-                }}
-                aria-hidden="true"
-              >
-                <span className="text-sm mb-2 font-light tracking-wider">SCROLL DOWN</span>
-                <div className="w-px h-16 bg-white/50 relative overflow-hidden">
-                  <motion.div
-                    className="absolute top-0 left-0 w-full h-full bg-white"
-                    animate={{
-                      y: ['-100%', '100%'],
-                    }}
-                    transition={{
-                      repeat: Infinity,
-                      duration: 1.8,
-                      ease: 'easeInOut',
-                    }}
-                  />
-                </div>
-              </motion.div>
             </motion.div>
           )}
 
           {/* Screen reader accessible text */}
           <span className="sr-only">{altText}</span>
         </div>
+        {!skipAnimation && (
+          <motion.div
+            className="fixed bottom-0 left-1/2 transform -translate-x-1/2 text-white flex flex-col items-center z-50"
+            style={{
+              opacity: indicatorOpacity,
+            }}
+            aria-hidden="true"
+          >
+            <span className="text-sm mb-2 font-light tracking-wider">SCROLL DOWN</span>
+            <div className="w-px h-16 bg-white/50 relative overflow-hidden">
+              <motion.div
+                className="absolute top-0 left-0 w-full h-full bg-white"
+                animate={{
+                  y: ['-100%', '100%'],
+                }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 1.8,
+                  ease: 'easeInOut',
+                }}
+              />
+            </div>
+          </motion.div>
+        )}
       </div>
 
       {/* This section contains content below the hero */}

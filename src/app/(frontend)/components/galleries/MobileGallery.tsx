@@ -56,13 +56,15 @@ const MobileGallery = ({ images, title, alternateGalleryLink }: GalleryProps) =>
 
       {/* Title */}
       <div className="pt-8 pb-6">
-        <h1 className="text-white-rose text-2xl tracking-[0.5em] uppercase text-center">{title}</h1>
+        <h1 className="text-white-rose text-2xl font-bold tracking-[0.5em] uppercase text-center">
+          {title}
+        </h1>
       </div>
 
       {/* Photo Area - Large and simple */}
       <div className="px-6 pb-4" style={{ height: '60vh' }}>
         <div
-          className="w-full h-full relative bg-gray-900 rounded-sm overflow-hidden"
+          className="w-full h-full relative  rounded-sm overflow-hidden"
           onTouchStart={(e) => {
             const touch = e.touches[0]
             setTouchStart({ x: touch.clientX, y: touch.clientY, time: Date.now() })

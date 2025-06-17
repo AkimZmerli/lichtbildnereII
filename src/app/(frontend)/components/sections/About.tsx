@@ -22,7 +22,7 @@ export default function About() {
         {/* TEXT BLOCKS - Responsive Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-12 md:mb-20">
           {/* Column 1 */}
-          <div className="bg-black-almost/20 p-6 rounded-sm">
+          <div className="p-6 rounded-sm">
             <p className="text-base md:text-lg text-white-rose leading-relaxed">
               My name is Valentin Mici. Born in Romania, raised in Gelenau, and since 2014, I have
               been living in Chemnitz, which has now become my home. For the past five years, I have
@@ -33,7 +33,7 @@ export default function About() {
           </div>
 
           {/* Column 2 */}
-          <div className="bg-black-almost/20 p-6 rounded-sm">
+          <div className="p-6 rounded-sm">
             <p className="text-base md:text-lg text-white-rose leading-relaxed">
               Discovering photography as a means of expression fills me with enthusiasm, as it gives
               me the opportunity to influence my work. Not only at the moment I press the shutter
@@ -48,7 +48,7 @@ export default function About() {
         <div className="text-center md:text-left">
           <a
             href="mailto:mail@valentinmici.com"
-            className="inline-block text-hot-pink hover:text-white transition-colors text-lg"
+            className="inline-block text-hot-pink hover:underline transition-colors text-lg"
           >
             contact me →
           </a>
