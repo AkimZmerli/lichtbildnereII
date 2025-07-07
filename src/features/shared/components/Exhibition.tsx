@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
-import { Slide, getSlides } from '../services/hero/getSlides'
-import ExhibitionList from '../sections/ExhibitionList'
+import { getSlides } from '../services/hero/getSlides'
+import ExhibitionList from './ExhibitionList'
 import Link from 'next/link'
 
 export default async function Exhibition() {

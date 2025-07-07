@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import ImageSlideshow from '../ImagesSlideshow'
+import ImageSlideshow from './ImagesSlideshow'
 import type { Slide } from '../services/hero/getSlides'
 
 interface SlideWithImages extends Slide {

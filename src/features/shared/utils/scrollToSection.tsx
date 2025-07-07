@@ -22,8 +22,8 @@ export default function ScrollToSection() {
 
         setTimeout(() => {
           // Try different ways to find the target element
-          let targetId = scrollTarget.replace('#', '')
-          let targetElement =
+          const targetId = scrollTarget.replace('#', '')
+          const targetElement =
             document.getElementById(targetId) ||
             document.querySelector(`#${targetId}`) ||
             document.querySelector(`section#${targetId}`)

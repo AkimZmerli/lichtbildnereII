@@ -8,7 +8,7 @@ export default function HiddenGem() {
 
         <div className="space-y-6 max-w-2xl mx-auto">
           <p className="">Thank you so much for taking your time to view my whole page.</p>
-          <p className=" mb-12">Here's a little present for you:</p>
+          <p className=" mb-12">Here&apos;s a little present for you:</p>
 
           <Link
             href="/zwoelftausend"

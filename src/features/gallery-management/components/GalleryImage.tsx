@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import ImageWithLoader from '../ui/ImageWithLoader'
+import ImageWithLoader from '@/features/shared/ui/ImageWithLoader'
 import { GalleryImageProps } from './types/gallery'
 
 const GalleryImage = ({ image, priority, onLoad }: GalleryImageProps) => {

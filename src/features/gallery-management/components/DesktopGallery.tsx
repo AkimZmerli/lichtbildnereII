@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { GalleryProps } from './types/gallery'
 import GalleryImage from './GalleryImage'
-import Header from '../layout/Header'
+import Header from '@/features/shared/components/Header'
 
 const DesktopGallery = ({ images, title }: GalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -205,7 +205,7 @@ const DesktopGallery = ({ images, title }: GalleryProps) => {
           >
             {images.map((image, index) => (
               <div
-                key={`${image.id || index}-${index}`}
+                key={`${image.url}-${index}`}
                 className="h-full flex-shrink-0 flex items-center justify-center"
                 style={{ width: `${100 / images.length}%` }}
               >

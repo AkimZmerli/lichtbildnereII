@@ -1,5 +1,4 @@
 'use client'
-import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
 import { useRef } from 'react'
 import Image from 'next/image'
@@ -10,25 +9,10 @@ export default function SocialBook() {
   const isInView = useInView(sectionRef, {
     once: true,
     amount: 0.8, // Changed back to 80% - more reliable
-    threshold: 0.8, // Additional threshold for better triggering
   })
 
   // Debug: Let's see what's happening
   console.log('Section in view:', isInView)
-  const linkVariants = {
-    hidden: {
-      opacity: 0,
-      y: 40,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: [0.25, 0.46, 0.45, 0.94],
-      },
-    },
-  }
 
   return (
     <section ref={sectionRef}>

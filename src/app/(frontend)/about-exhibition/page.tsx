@@ -1,9 +1,9 @@
-import Footer from '../components/layout/Footer'
-import Header from '../components/layout/Header'
-import About from '../components/sections/About'
-import Exhibition from '../components/sections/Exhibition'
-import HiddenGem from '../components/sections/HiddenGem'
-import ScrollToSection from '../components/utils/scrollToSection'
+import Footer from '@/features/shared/components/Footer'
+import Header from '@/features/shared/components/Header'
+import About from '@/features/shared/components/About'
+import Exhibition from '@/features/shared/components/Exhibition'
+import HiddenGem from '@/features/shared/components/HiddenGem'
+import ScrollToSection from '@/features/shared/utils/scrollToSection'
 export default function AboutExhibition() {
   return (
     <div>

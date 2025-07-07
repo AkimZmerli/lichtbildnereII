@@ -1,5 +1,5 @@
 import React from 'react'
-import ScrollHandler from './components/utils/scrollHandler'
+import ScrollHandlerWrapper from '@/features/shared/utils/ScrollHandlerWrapper'
 import './styles.css'
 
 export const metadata = {
@@ -13,7 +13,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <ScrollHandler />
+        <ScrollHandlerWrapper />
         <main className="pt-[70px]">{children}</main>
       </body>
     </html>

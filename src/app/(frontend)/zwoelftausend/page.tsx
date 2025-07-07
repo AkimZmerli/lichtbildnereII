@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useRef } from 'react'
-import Header from '../components/layout/Header'
-import Footer from '../components/layout/Footer'
+import Header from '@/features/shared/components/Header'
+import Footer from '@/features/shared/components/Footer'
 import Link from 'next/link'
 
 export default function DisplayScan() {
