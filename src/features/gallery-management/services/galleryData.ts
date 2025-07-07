@@ -1,21 +1,27 @@
-import { GalleryImage, PayloadGalleryItem } from '../components/galleries/types/gallery'
+import { GalleryImage, PayloadGalleryItem } from '../components/types/gallery'
 
 // Test data
 const testHumanImages: GalleryImage[] = Array.from({ length: 4 }, (_, i) => ({
-  src: `/images/human/${i + 1}.jpg`,
+  url: `/images/human/${i + 1}.jpg`,
   alt: `Human Gallery Image ${i + 1}`,
+  width: 800,
+  height: 600,
 }))
 
 const testNonHumanImages: GalleryImage[] = Array.from({ length: 4 }, (_, i) => ({
-  src: `/images/non-human/${i + 5}.jpg`,
+  url: `/images/non-human/${i + 5}.jpg`,
   alt: `Non-Human Gallery Image ${i + 1}`,
+  width: 800,
+  height: 600,
 }))
 
 // Transform Payload data to our GalleryImage format
 const transformPayloadToGalleryImages = (items: PayloadGalleryItem[]): GalleryImage[] => {
   return items.map((item) => ({
-    src: item.image.url,
+    url: item.image.url,
     alt: item.image.alt || item.image.filename,
+    width: 800, // Default width, should be updated with actual image dimensions
+    height: 600, // Default height, should be updated with actual image dimensions
   }))
 }
 

@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getGalleryImages } from '../../lib/galleryData'
-import DesktopGallery from '../../components/galleries/DesktopGallery'
-import MobileGallery from '../../components/galleries/MobileGallery'
-import { GalleryImage } from '../../components/galleries/types/gallery'
+import { getGalleryImages } from '@/features/gallery-management/services/galleryData'
+import DesktopGallery from '@/features/gallery-management/components/DesktopGallery'
+import MobileGallery from '@/features/gallery-management/components/MobileGallery'
+import { GalleryImage } from '@/features/gallery-management/components/types/gallery'
 
 export default function HumanGalleryPage() {
   const [images, setImages] = useState<GalleryImage[]>([])

@@ -1,8 +1,7 @@
 'use server'
 
 import { getHeroImage } from '../services/hero/getHeroImage'
-import ClientHero from '../sections/ClientHero'
-import CinematicHero from './CinematicHero'
+import ClientHero from './ClientHero'
 
 interface HeroImage {
   mobileImage?: { url: string }

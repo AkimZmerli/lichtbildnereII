@@ -1,5 +1,5 @@
 import payloadConfig from '../payload.config'
-import payload, { InitOptions } from 'payload'
+import { getPayload as getPayloadInstance } from 'payload'
 
 // This utility helps initialize Payload CMS client
 let cached = (global as any).payload
@@ -11,15 +11,7 @@ if (!cached) {
   }
 }
 
-interface Args {
-  initOptions?: InitOptions & {
-    local?: boolean
-    secret?: string
-    config?: any
-  }
-}
-
-export const getPayload = async ({ initOptions }: Args = {}) => {
+export const getPayload = async () => {
   if (!process.env.PAYLOAD_SECRET) {
     throw new Error('PAYLOAD_SECRET environment variable is required')
   }
@@ -29,10 +21,8 @@ export const getPayload = async ({ initOptions }: Args = {}) => {
   }
 
   if (!cached.promise) {
-    cached.promise = payload.init({
+    cached.promise = getPayloadInstance({
       config: payloadConfig,
-      secret: process.env.PAYLOAD_SECRET,
-      local: initOptions?.local || false,
     })
   }
 

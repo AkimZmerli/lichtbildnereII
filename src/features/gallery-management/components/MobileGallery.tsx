@@ -2,8 +2,8 @@
 import { useState, useCallback } from 'react'
 import GalleryImage from './GalleryImage'
 import MasonryGallery from './MasonryGallery'
-import Header from '../layout/Header'
-import Footer from '../layout/Footer'
+import Header from '@/features/shared/components/Header'
+import Footer from '@/features/shared/components/Footer'
 import { GalleryProps } from './types/gallery'
 
 const MobileGallery = ({ images, title, alternateGalleryLink }: GalleryProps) => {

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Image from 'next/image'
-import { GalleryImageProps } from '../galleries/types/gallery'
+import { GalleryImageProps } from '@/features/gallery-management/components/types/gallery'
 
 const ImageWithLoader = ({ image, priority = false, onLoad }: GalleryImageProps) => {
   const [isLoading, setIsLoading] = useState(true)
@@ -9,7 +9,7 @@ const ImageWithLoader = ({ image, priority = false, onLoad }: GalleryImageProps)
     <div className="relative w-full h-full">
       {isLoading && <div className="absolute inset-0 bg-gray-900 animate-pulse" />}
       <Image
-        src={image.src}
+        src={image.url}
         alt={image.alt}
         fill
         className={`object-contain transition-opacity duration-300 ${

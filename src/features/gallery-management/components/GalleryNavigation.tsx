@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { GalleryType } from './types/gallery'
-import HeaderDesktop from '../layout/HeaderDesktop'
+import HeaderDesktop from '@/features/shared/components/HeaderDesktop'
 
 interface GalleryNavigationProps {
   type: GalleryType

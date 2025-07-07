@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
-import Header from '../layout/Header'
-import Footer from '../layout/Footer'
+import Header from '@/features/shared/components/Header'
+import Footer from '@/features/shared/components/Footer'
 import { MasonryGalleryProps } from './types/gallery'
 
 interface ExtendedMasonryGalleryProps extends MasonryGalleryProps {
@@ -53,7 +53,7 @@ const MasonryGallery = ({
         >
           {images.map((image, index) => (
             <motion.div
-              key={image.id || index}
+              key={`${image.url}-${index}`}
               className="mb-4 break-inside-avoid"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -65,7 +65,7 @@ const MasonryGallery = ({
             >
               <div className="relative overflow-hidden rounded-sm bg-neutral-800">
                 <Image
-                  src={image.src || image.url}
+                  src={image.url}
                   alt={image.alt}
                   width={400}
                   height={400}
