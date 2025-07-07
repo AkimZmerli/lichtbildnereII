@@ -193,14 +193,31 @@ This project includes a comprehensive `/AI` directory with everything AI assista
 
 ```
 AI/
-├── README.md                    # AI collaboration hub
+├── .claude/
+│   └── README.md
 ├── docs/
-│   ├── ARCHITECTURE.md          # System design
-│   ├── API.md                   # Complete API reference
-│   ├── COMPONENT_LIBRARY.md     # Component usage guide
-│   └── BUSINESS_DOMAIN.md       # Project context
-└── migration/
-    └── VSA_DOCUMENTATION_PLAN.md # Architecture evolution guide
+│   ├── API.md
+│   ├── ARCHITECTURE.md
+│   ├── BUSINESS_DOMAIN.md
+│   ├── COMPONENT_LIBRARY.md
+│   ├── DEPLOYMENT.md 
+│   ├── documentation-evaluation.md
+│   ├── README.md
+│   └── SETUP.md
+├── specs/
+│   ├── 3d-exhibition-spec.md
+│   ├── gallery-system-spec.md
+│   ├── README.md
+│   ├── social-book-spec.md
+│   └── video-showcase-spec.md
+├── tasks/
+│   ├── CHANGE_LOG.md
+│   ├── CURRENT_WORK.md
+│   ├── DECISIONS.md
+│   ├── ISSUES_FOUND.md
+│   └── README.md
+├── MIGRATIONPLAN.md 
+└── REPO_OVERVIEW.md 
 ```
 
 **Key AI-Friendly Features:**
