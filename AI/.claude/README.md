@@ -20,6 +20,7 @@ Moving from horizontal layers to vertical slices organized by business capabilit
 - Ask questions about unclear business logic
 - Stay focused on one feature area at a time
 - Document any assumptions you make
+- update all changes in change_log.md
 
 ## Special Features
 - `/tankstelle` - 3D exhibition viewer (Sketchfab integration)

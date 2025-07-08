@@ -7,6 +7,13 @@ Track bugs, problems, and technical debt discovered during development. Include 
 
 ## Active Issues
 
+
+---
+
+## Resolved Issues
+
+### ✅ [Issues will move here when fixed]
+
 ### 🐛 Claude Code API Error with Empty Markdown Files
 **Severity**: Medium  
 **Found**: [Current Date]  
@@ -20,11 +27,6 @@ Track bugs, problems, and technical debt discovered during development. Include 
 **Root Cause**: Claude Code cannot process empty files  
 **Resolution**: Add content to placeholder files or exclude empty files from prompts
 
----
-
-## Resolved Issues
-
-### ✅ [Issues will move here when fixed]
 
 ---
 

@@ -8,9 +8,9 @@
 **Goal**: Transform repo to vertical slice architecture optimized for AI collaboration  
 **Current Step**: Setting up documentation folders and initial content  
 **Next Actions**:
-- [ ] Populate all four folders (.claude/, docs/, specs/, tasks/) with initial content
-- [ ] Test AI workflow with Claude Code
-- [ ] Identify first slice to migrate (likely gallery-management)
+- [x] Populate all four folders (.claude/, docs/, specs/, tasks/) with initial content
+- [x] Test AI workflow with Claude Code
+- [x] Identify first slice to migrate (likely gallery-management)
 
 ### 🔄 Documentation Foundation  
 **Priority**: High  
@@ -18,9 +18,9 @@
 **Goal**: Create comprehensive project documentation  
 **Current Step**: Basic business domain and setup docs created  
 **Next Actions**:
-- [ ] Complete .claude/readme.md with AI instructions
-- [ ] Add architecture overview to docs/
-- [ ] Create first feature spec in specs/
+- [x] Complete .claude/readme.md with AI instructions
+- [x] Add architecture overview to docs/
+- [x] Create first feature spec in specs/
 
 ---
 
@@ -57,6 +57,7 @@
 - **UPDATE** task status and current steps as you progress
 - Check off completed next actions
 - Add new next actions as they become clear
+- log all changes in change_log.md
 
 ### When Completing Tasks
 - **MOVE** completed tasks from "In Progress" to change_log.md
