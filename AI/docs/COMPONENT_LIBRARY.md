@@ -185,6 +185,7 @@ interface MasonryGalleryProps {
 - Framer Motion animations
 - Hover effects on images
 - Back navigation support
+- onClick revert to Gallery Mode
 
 ---
 
