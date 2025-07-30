@@ -277,7 +277,9 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
         }}
       >
         {/* Sticky container for the animation */}
-        <div className="sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center">
+        <div 
+          className="sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center"
+        >
           {/* Skip to completion if skipAnimation is true */}
           {skipAnimation ? (
             // Fully revealed state
