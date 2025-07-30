@@ -141,7 +141,7 @@ Manages items within photography galleries.
 ```
 
 ### Slides
-Manages content for homepage slideshows.
+Manages content for Exhibition entries
 
 **Endpoint**: `/api/slides`
 

@@ -53,26 +53,26 @@ function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [isGalleryPage, handleScroll])
 
-  // Measure the header height when it mounts and when window resizes
-  useEffect(() => {
-    const updateHeaderHeight = () => {
-      if (headerRef.current) {
-        const height = headerRef.current.offsetHeight
-        setHeaderHeight(height)
-        document.documentElement.style.setProperty('--header-height', `${height}px`)
-      }
-    }
+  // // Measure the header height when it mounts and when window resizes
+  // useEffect(() => {
+  //   const updateHeaderHeight = () => {
+  //     if (headerRef.current) {
+  //       const height = headerRef.current.offsetHeight
+  //       setHeaderHeight(height)
+  //       document.documentElement.style.setProperty('--header-height', `${height}px`)
+  //     }
+  //   }
 
-    // Initial measurement
-    updateHeaderHeight()
+  //   // Initial measurement
+  //   updateHeaderHeight()
 
-    // Update on resize
-    window.addEventListener('resize', updateHeaderHeight)
+  //   // Update on resize
+  //   window.addEventListener('resize', updateHeaderHeight)
 
-    return () => {
-      window.removeEventListener('resize', updateHeaderHeight)
-    }
-  }, [])
+  //   return () => {
+  //     window.removeEventListener('resize', updateHeaderHeight)
+  //   }
+  // }, [])
 
   return (
     <>
