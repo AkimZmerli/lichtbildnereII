@@ -194,7 +194,7 @@ const DesktopGallery = ({ images, title }: GalleryProps) => {
         {/* Gallery - FIXED 80% height, no flex grow */}
         <div
           ref={scrollContainerRef}
-          className="h-[80vh] overflow-hidden cursor-grab active:cursor-grabbing"
+          className="h-[75vh] overflow-hidden cursor-grab active:cursor-grabbing mb-4"
         >
           <div
             className="h-full flex transition-transform duration-[2000ms] ease-in-out will-change-transform"
@@ -220,7 +220,7 @@ const DesktopGallery = ({ images, title }: GalleryProps) => {
           </div>
         </div>
 
-        {/* Progress bar - absolute bottom edge */}
+        {/* Progress bar - absolute bottom edge with spacing */}
         <div className="fixed bottom-0 left-0 right-0 z-10">
           <div
             className={`h-1 bg-gray-800 transition-opacity duration-1000 ${

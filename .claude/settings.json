@@ -1,0 +1,55 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "#!/bin/bash\ntimestamp=$(date '+%Y-%m-%d %H:%M:%S')\nlog_file=\"$(pwd)/.claude/claude-code-actions.md\"\n\n# Ensure log file exists\nif [[ ! -f \"$log_file\" ]]; then\n  echo \"# Claude Code Action Log\" > \"$log_file\"\n  echo \"\" >> \"$log_file\"\n  echo \"Automated logging of all Claude Code tool usage.\" >> \"$log_file\"\n  echo \"\" >> \"$log_file\"\nfi\n\n# Smart tool detection using multiple strategies\ndetected_tool=\"Unknown\"\ndetected_action=\"\"\n\n# Check git for recent changes to infer tool type\nif git diff --quiet 2>/dev/null; then\n  if git status --porcelain 2>/dev/null | grep -q '^M'; then\n    detected_tool=\"Edit\"\n    detected_action=\"File modification detected in git\"\n  elif git status --porcelain 2>/dev/null | grep -q '^A'; then\n    detected_tool=\"Write\"\n    detected_action=\"New file creation detected in git\"\n  fi\nelse\n  detected_tool=\"Edit\"\n  detected_action=\"Unstaged changes detected\"\nfi\n\n# Check for recently modified files (last 30 seconds)\nrecent_files=$(find . -name '*.ts' -o -name '*.tsx' -o -name '*.js' -o -name '*.jsx' -o -name '*.json' -o -name '*.md' -type f -mmin -0.5 2>/dev/null | head -5)\nif [[ -n \"$recent_files\" ]]; then\n  if [[ \"$detected_tool\" == \"Unknown\" ]]; then\n    detected_tool=\"FileOperation\"\n  fi\n  detected_action=\"$detected_action; Recent files: $(echo \"$recent_files\" | tr '\\n' ' ')\"\nfi\n\n# Log the activity\n{\n  echo \"## $timestamp - $detected_tool\"\n  echo \"**Detection:** Hook-based activity monitoring\"\n  echo \"**Action:** $detected_action\"\n  echo \"**Working Directory:** $(pwd)\"\n  \n  # Show git status if available\n  if git status --porcelain 2>/dev/null | head -10 | grep -v '^??'; then\n    echo \"**Git Status:**\"\n    git status --porcelain 2>/dev/null | head -10 | grep -v '^??'\n  fi\n  \n  # Show recent file modifications\n  if [[ -n \"$recent_files\" ]]; then\n    echo \"**Recently Modified Files:**\"\n    echo \"$recent_files\" | while read -r file; do\n      if [[ -f \"$file\" ]]; then\n        echo \"- \\`$file\\` ($(stat -f '%Sm' -t '%H:%M:%S' \"$file\" 2>/dev/null || echo 'unknown time'))\"\n      fi\n    done\n  fi\n  \n  echo \"---\"\n  echo \"\"\n} >> \"$log_file\""
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "#!/bin/bash\ntimestamp=$(date '+%Y-%m-%d %H:%M:%S')\nlog_file=\"$(pwd)/.claude/claude-code-changes.md\"\n\n# Ensure log file exists\nif [[ ! -f \"$log_file\" ]]; then\n  echo \"# Claude Code File Changes Log\" > \"$log_file\"\n  echo \"\" >> \"$log_file\"\n  echo \"Automated tracking of file modifications by Claude Code.\" >> \"$log_file\"\n  echo \"\" >> \"$log_file\"\nfi\n\n# Capture the current state of changes\ncapture_changes() {\n  # Get git diff for staged and unstaged changes\n  local git_changes=$(git status --porcelain 2>/dev/null | head -10)\n  local diff_summary=$(git diff --stat 2>/dev/null | head -10)\n  local unstaged_files=$(git diff --name-only 2>/dev/null | head -5)\n  local staged_files=$(git diff --cached --name-only 2>/dev/null | head -5)\n  \n  echo \"Git Status: $git_changes\"\n  echo \"Diff Summary: $diff_summary\"\n  echo \"Unstaged Files: $unstaged_files\"\n  echo \"Staged Files: $staged_files\"\n  \n  # Find recently modified files (last minute)\n  find . -type f \\( -name '*.ts' -o -name '*.tsx' -o -name '*.js' -o -name '*.jsx' -o -name '*.json' -o -name '*.md' \\) -mmin -1 -not -path './.git/*' -not -path './node_modules/*' 2>/dev/null | head -5\n}\n\n# Log detailed file changes\n{\n  echo \"## $timestamp - File Change Event\"\n  echo \"**Hook:** Edit/Write/MultiEdit matcher triggered\"\n  echo \"**Detection Method:** PostToolUse file operation hook\"\n  \n  # Capture and display current changes\n  change_info=$(capture_changes)\n  echo \"**Change Analysis:**\"\n  echo \"$change_info\"\n  \n  # Show actual diff for modified files if available\n  modified_files=$(git diff --name-only 2>/dev/null | head -3)\n  if [[ -n \"$modified_files\" ]]; then\n    echo \"**Modified Files with Context:**\"\n    echo \"$modified_files\" | while read -r file; do\n      if [[ -f \"$file\" ]]; then\n        echo \"\\n**File:** \\`$file\\`\"\n        echo '```diff'\n        git diff \"$file\" 2>/dev/null | head -20 || echo \"Unable to show diff\"\n        echo '```'\n      fi\n    done\n  fi\n  \n  # Show file timestamps for recently changed files\n  recent_files=$(find . -name '*.ts' -o -name '*.tsx' -o -name '*.js' -o -name '*.jsx' -o -name '*.json' -o -name '*.md' -type f -mmin -1 2>/dev/null | head -3)\n  if [[ -n \"$recent_files\" ]]; then\n    echo \"**Recent File Activity:**\"\n    echo \"$recent_files\" | while read -r file; do\n      if [[ -f \"$file\" ]]; then\n        mod_time=$(stat -f '%Sm' -t '%H:%M:%S' \"$file\" 2>/dev/null || echo 'unknown')\n        size=$(stat -f '%z' \"$file\" 2>/dev/null || echo 'unknown')\n        echo \"- \\`$file\\` - Modified: $mod_time, Size: ${size} bytes\"\n      fi\n    done\n  fi\n  \n  echo \"---\"\n  echo \"\"\n} >> \"$log_file\""
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "#!/bin/bash\nif echo \"$TOOL_INPUT\" | jq -r '.command // empty' 2>/dev/null | grep -E \"(rm -rf|sudo|chmod 777|mv.*\\.env|cat.*\\.env|>.*\\.env)\" > /dev/null; then\n  echo '{\"decision\": \"block\", \"reason\": \"Dangerous command detected\"}'\n  exit 2\nfi"
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "#!/bin/bash\nif echo \"$TOOL_INPUT\" | jq -r '.file_path // .path // .paths[] // empty' 2>/dev/null | grep -E \"\\.(env|key|pem|p12|secret)$|/\\.git/|/\\.ssh/\" > /dev/null; then\n  echo '{\"decision\": \"block\", \"reason\": \"Access to sensitive file blocked\"}'\n  exit 2\nfi"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "say \"Subagent task completed\""
+          }
+        ]
+      }
+    ]
+  }
+}
