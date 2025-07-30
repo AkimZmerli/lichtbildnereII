@@ -194,7 +194,7 @@ const DesktopGallery = ({ images, title }: GalleryProps) => {
         {/* Gallery - FIXED 80% height, no flex grow */}
         <div
           ref={scrollContainerRef}
-          className="h-[75vh] overflow-hidden cursor-grab active:cursor-grabbing mb-4"
+          className="h-[76vh] overflow-hidden cursor-grab active:cursor-grabbing mb-4"
         >
           <div
             className="h-full flex transition-transform duration-[2000ms] ease-in-out will-change-transform"
