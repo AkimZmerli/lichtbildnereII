@@ -64,8 +64,8 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
 
   // Create transform animations based on scroll progress
 
-  // Initial scale of the image (creates a zoom effect)
-  const imageScale = useTransform(smoothProgress, [0, 1], prefersReducedMotion ? [1, 1] : [1, 1.1])
+  // Initial scale of the image (creates a subtle zoom effect)
+  const imageScale = useTransform(smoothProgress, [0, 1], prefersReducedMotion ? [1, 1] : [1, 1.02])
 
   // Parallax movement for different layers
   const parallaxBackground = useTransform(
@@ -85,11 +85,11 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
   const viewportHeightStart = parseInt(initialViewportHeight) / 100
   const viewportWidthStart = parseInt(initialViewportWidth) / 100
 
-  // Height animation - from letterbox to full screen
+  // Height animation - from letterbox to expanded but not full screen
   const viewportHeight = useTransform(
     smoothProgress,
     [0, 0.8, 1],
-    [`${viewportHeightStart * 100}vh`, '100vh', '100vh'], // End at full height
+    [`${viewportHeightStart * 100}vh`, '70vh', '70vh'], // End at 70% height instead of full
   )
 
   // Width animation - slightly expands from initial width
@@ -269,7 +269,7 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
     <>
       <div
         ref={containerRef}
-        className="relative w-full"
+        className="relative w-full z-40"
         data-cinematic-hero
         style={{
           // Set height of container based on animation state

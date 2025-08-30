@@ -48,7 +48,7 @@ export default function About() {
         <div className="text-center md:text-left">
           <a
             href="mailto:mail@valentinmici.com"
-            className="inline-block text-hot-pink hover:underline transition-colors text-lg"
+            className="inline-block text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px] text-lg"
           >
             contact me →
           </a>

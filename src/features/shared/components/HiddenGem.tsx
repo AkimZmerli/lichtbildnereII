@@ -12,7 +12,7 @@ export default function HiddenGem() {
 
           <Link
             href="/zwoelftausend"
-            className="inline-block text-hot-pink hover:underline transition-colors underline-offset-4"
+            className="inline-block text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px]"
           >
             press play
           </Link>

@@ -17,11 +17,11 @@ export default async function Exhibition() {
           <ExhibitionList slides={slides} />
         </Suspense>
 
-        <div className="mt-8 md:mt-12">
+        <div className="mt-16 md:mt-20">
           You can visit my first exhibition{' '}
           <Link
             href="/tankstelle"
-            className="font-lato underline-offset-4 text-hot-pink hover:underline"
+            className="font-lato underline-offset-4 text-hot-pink hover:underline transition-all duration-200 hover:translate-y-[-2px]"
           >
             here
           </Link>
