@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { FlipbookEngine, FlipbookEngineOptions } from '../services/FlipbookEngine';
 
 interface UseFlipbookOptions {
@@ -15,12 +15,25 @@ export const useFlipbook = (options: UseFlipbookOptions) => {
   
   const engineRef = useRef<FlipbookEngine | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Memoize images to prevent re-renders
+  const memoizedImages = useMemo(() => options.images, [JSON.stringify(options.images)]);
 
   const initializeEngine = () => {
-    if (!containerRef.current || options.images.length === 0) return;
+    console.log('🔧 Attempting to initialize engine...', {
+      hasContainer: !!containerRef.current,
+      imageCount: memoizedImages.length,
+      images: memoizedImages
+    });
+    
+    if (!containerRef.current || memoizedImages.length === 0) {
+      console.log('❌ Cannot initialize: missing container or images');
+      return;
+    }
 
     // Clean up existing engine
     if (engineRef.current) {
+      console.log('🧹 Cleaning up existing engine before initialization');
       engineRef.current.dispose();
       engineRef.current = null;
     }
@@ -28,7 +41,7 @@ export const useFlipbook = (options: UseFlipbookOptions) => {
     try {
       const engineOptions: FlipbookEngineOptions = {
         container: containerRef.current,
-        images: options.images,
+        images: memoizedImages,
         onPageChange: (page: number) => {
           setCurrentPage(page);
           options.onPageChange?.(page);
@@ -43,9 +56,10 @@ export const useFlipbook = (options: UseFlipbookOptions) => {
         }
       };
 
+      console.log('🚀 Starting FlipbookEngine initialization...');
       engineRef.current = new FlipbookEngine(engineOptions);
     } catch (error) {
-      console.error('Failed to initialize FlipbookEngine:', error);
+      console.error('❌ Failed to initialize FlipbookEngine:', error);
       setIsReady(false);
     }
   };
@@ -57,18 +71,34 @@ export const useFlipbook = (options: UseFlipbookOptions) => {
       clearTimeout(timer);
       if (engineRef.current) {
         try {
+          console.log('🧹 useFlipbook cleanup: disposing engine...');
           engineRef.current.dispose();
         } catch (error) {
-          console.error('Error disposing FlipbookEngine:', error);
+          console.error('❌ Error disposing FlipbookEngine:', error);
+        } finally {
+          engineRef.current = null;
         }
-        engineRef.current = null;
       }
       
       // Reset states
       setIsReady(false);
       setLoadProgress(0);
+      setIsAnimating(false);
+      setCurrentPage(0);
     };
-  }, [options.images]);
+  }, [memoizedImages]); // Use memoized images
+  
+  // Additional effect to retry initialization when container becomes available
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (containerRef.current && memoizedImages.length > 0 && !engineRef.current && !isReady) {
+        console.log('🔄 Container became available, retrying initialization...');
+        initializeEngine();
+      }
+    }, 50);
+    
+    return () => clearTimeout(timer);
+  }, [containerRef.current, memoizedImages.length, isReady]); // This is OK - not conditional
 
   const nextPage = () => {
     if (engineRef.current && !isAnimating) {
@@ -91,7 +121,7 @@ export const useFlipbook = (options: UseFlipbookOptions) => {
   return {
     containerRef,
     currentPage,
-    totalPages: options.images.length,
+    totalPages: memoizedImages.length,
     isAnimating,
     isReady,
     loadProgress,

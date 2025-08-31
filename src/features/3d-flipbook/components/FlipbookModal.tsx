@@ -16,9 +16,8 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
   onClose,
   title = "Portfolio Book",
   images = [
-    '/images/worksplaceholderII.jpg',
-    '/images/Hanoi.jpg',
-    '/flipbook-images/Mici_Lichtbildnerei_DRUCK.pdf.png'
+    '/flipbook-images/page1.png',
+    '/flipbook-images/page2.png'
   ]
 }) => {
   const {
@@ -34,9 +33,12 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
   } = useFlipbook({
     images,
     onPageChange: (page) => {
-      console.log('Page changed to:', page + 1);
+      console.log('✓ Flipbook page changed to:', page + 1);
     }
   });
+
+  // Debug logging
+  console.log('🔍 FlipbookModal render:', { isOpen, isReady, loadProgress, currentPage, totalPages, images });
 
   // Handle ESC key
   useEffect(() => {
@@ -104,7 +106,51 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
           style={{ 
             background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
           }}
-        />
+        >
+          {/* Temporary: Simple image display for testing */}
+          {!isReady && (
+            <div className="w-full h-full flex items-center justify-center text-white">
+              <div>
+                <div>Container Ref: {containerRef.current ? '✅' : '❌'}</div>
+                <div>Images: {images.length}</div>
+                <div>Ready: {isReady ? '✅' : '❌'}</div>
+                <div>Progress: {Math.round(loadProgress * 100)}%</div>
+              </div>
+            </div>
+          )}
+          {isReady && (
+            <div className="w-full h-full flex items-center justify-center p-4">
+              {/* Social Book: Two pages side by side */}
+              <div className="flex w-full h-full max-w-4xl gap-4">
+                {/* Left Page - Normal orientation for person on left */}
+                <div className="flex-1 flex items-center justify-center border-r border-gray-300">
+                  <img 
+                    src={images[Math.floor(currentPage / 2) * 2]} 
+                    alt={`Left page ${Math.floor(currentPage / 2) * 2 + 1}`}
+                    className="max-w-full max-h-full object-contain"
+                    onLoad={() => console.log('✅ Left page loaded:', images[Math.floor(currentPage / 2) * 2])}
+                    onError={() => console.log('❌ Left page failed:', images[Math.floor(currentPage / 2) * 2])}
+                  />
+                </div>
+                
+                {/* Right Page - Upside down for person on right */}
+                <div className="flex-1 flex items-center justify-center">
+                  {images[Math.floor(currentPage / 2) * 2 + 1] ? (
+                    <img 
+                      src={images[Math.floor(currentPage / 2) * 2 + 1]} 
+                      alt={`Right page ${Math.floor(currentPage / 2) * 2 + 2}`}
+                      className="max-w-full max-h-full object-contain transform rotate-180"
+                      onLoad={() => console.log('✅ Right page loaded (upside down):', images[Math.floor(currentPage / 2) * 2 + 1])}
+                      onError={() => console.log('❌ Right page failed:', images[Math.floor(currentPage / 2) * 2 + 1])}
+                    />
+                  ) : (
+                    <div className="text-white/60 text-lg">No second page</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Navigation Controls */}
         {isReady && (
@@ -129,7 +175,7 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
 
             {/* Page Counter */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-full text-sm">
-              {currentPage + 1} / {totalPages}
+              Spread {Math.floor(currentPage / 2) + 1} / {Math.ceil(totalPages / 2)}
             </div>
           </>
         )}

@@ -28,7 +28,7 @@ export class FlipbookEngine {
   private isAnimating = false;
   
   private options: FlipbookEngineOptions;
-  private animationController?: any; // Will implement animation controller
+  private animationId?: number;
   
   // Lighting
   private ambientLight?: THREE.AmbientLight;
@@ -133,13 +133,21 @@ export class FlipbookEngine {
         loader.load(
           imagePath,
           (texture) => {
-            console.log(`✓ Loaded image ${index + 1}:`, imagePath);
+            console.log(`✓ Loaded image ${index + 1}/${this.options.images.length}:`, imagePath);
+            
+            // Validate texture
+            if (!texture.image || texture.image.width === 0 || texture.image.height === 0) {
+              console.error(`✗ Invalid texture dimensions for ${imagePath}:`, texture.image);
+              reject(new Error(`Invalid image dimensions: ${imagePath}`));
+              return;
+            }
             
             // Optimize texture settings
             texture.minFilter = THREE.LinearFilter;
             texture.magFilter = THREE.LinearFilter;
-            texture.format = THREE.RGBFormat;
+            texture.format = THREE.RGBAFormat; // Use RGBA instead of RGB
             texture.generateMipmaps = false;
+            texture.flipY = false; // Prevent texture flipping issues
 
             const pageTexture: PageTexture = {
               texture,
@@ -154,16 +162,20 @@ export class FlipbookEngine {
             
             // Update loading progress
             const progress = (index + 1) / this.options.images.length;
-            console.log(`Loading progress: ${Math.round(progress * 100)}%`);
+            console.log(`🔄 Loading progress: ${Math.round(progress * 100)}% (${index + 1}/${this.options.images.length})`);
             this.options.onLoadProgress?.(progress);
           },
           (progress) => {
-            // Loading progress for individual image
-            console.log(`Loading ${imagePath}:`, Math.round((progress.loaded / progress.total) * 100) + '%');
+            // Loading progress for individual image  
+            if (progress.total > 0) {
+              const percent = Math.round((progress.loaded / progress.total) * 100);
+              console.log(`📥 Loading ${imagePath}: ${percent}%`);
+            }
           },
           (error) => {
-            console.error(`✗ Failed to load image ${index + 1}:`, imagePath, error);
-            reject(error);
+            console.error(`✗ Failed to load image ${index + 1}:`, imagePath);
+            console.error('Error details:', error);
+            reject(new Error(`Failed to load ${imagePath}: ${error instanceof Error ? error.message : 'Unknown error'}`));
           }
         );
       });
@@ -193,16 +205,9 @@ export class FlipbookEngine {
       // Create geometry with high subdivision for smooth bending
       const geometry = new THREE.PlaneGeometry(width, height, 32, 32);
       
-      // Create custom shader material for page bending effects
-      const material = new THREE.ShaderMaterial({
-        uniforms: {
-          uTexture: { value: pageTexture.texture },
-          uBend: { value: 0.0 },
-          uTime: { value: 0.0 },
-          uLightPosition: { value: new THREE.Vector3(5, 5, 5) }
-        },
-        vertexShader: this.getVertexShader(),
-        fragmentShader: this.getFragmentShader(),
+      // Use simple MeshBasicMaterial for testing - will switch back to shader later
+      const material = new THREE.MeshBasicMaterial({
+        map: pageTexture.texture,
         transparent: true,
         side: THREE.DoubleSide
       });
@@ -265,18 +270,19 @@ export class FlipbookEngine {
       void main() {
         vec4 textureColor = texture2D(uTexture, vUv);
         
-        // Calculate lighting
+        // Simple lighting calculation
         vec3 lightDirection = normalize(uLightPosition - vPosition);
-        float lightIntensity = max(dot(normalize(vNormal), lightDirection), 0.3);
+        float lightIntensity = max(dot(normalize(vNormal), lightDirection), 0.5);
         
-        // Add shadow effect during page turn
-        float shadow = 1.0 - (abs(uBend) * 0.2);
-        lightIntensity *= shadow;
+        // Ensure we don't make it too dark
+        lightIntensity = max(lightIntensity, 0.7);
         
-        // Add subtle paper texture effect
-        float paper = 1.0 + sin(vUv.x * 100.0) * sin(vUv.y * 100.0) * 0.02;
+        gl_FragColor = vec4(textureColor.rgb * lightIntensity, textureColor.a);
         
-        gl_FragColor = vec4(textureColor.rgb * lightIntensity * paper, textureColor.a);
+        // Debug: show solid color if texture fails
+        if (textureColor.a < 0.1) {
+          gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0); // Magenta for debugging
+        }
       }
     `;
   }
@@ -369,17 +375,29 @@ export class FlipbookEngine {
         // Hide previous page
         currentPageMesh.visible = false;
         
-        // Reset bend values
-        (currentPageMesh.material as THREE.ShaderMaterial).uniforms.uBend.value = 0;
+        // Reset bend values (only for shader materials)
+        if (currentPageMesh.material instanceof THREE.ShaderMaterial && currentPageMesh.material.uniforms?.uBend) {
+          currentPageMesh.material.uniforms.uBend.value = 0;
+        }
       }
     });
 
-    // Bend and rotate the current page
-    timeline.to((currentPageMesh.material as THREE.ShaderMaterial).uniforms.uBend, {
-      value: 1.0,
-      duration: 0.3,
-      ease: "power2.out"
-    });
+    // Simple page change for MeshBasicMaterial (no shader uniforms)
+    if (currentPageMesh.material instanceof THREE.ShaderMaterial && currentPageMesh.material.uniforms?.uBend) {
+      // Bend and rotate for shader material
+      timeline.to(currentPageMesh.material.uniforms.uBend, {
+        value: 1.0,
+        duration: 0.3,
+        ease: "power2.out"
+      });
+    } else {
+      // Simple fade for basic material
+      timeline.to(currentPageMesh, {
+        opacity: 0,
+        duration: 0.3,
+        ease: "power2.out"
+      });
+    }
 
     timeline.to(currentPageMesh.rotation, {
       y: -Math.PI,
@@ -412,17 +430,29 @@ export class FlipbookEngine {
         // Hide current page
         currentPageMesh.visible = false;
         
-        // Reset bend values
-        (prevPageMesh.material as THREE.ShaderMaterial).uniforms.uBend.value = 0;
+        // Reset bend values (only for shader materials)
+        if (prevPageMesh.material instanceof THREE.ShaderMaterial && prevPageMesh.material.uniforms?.uBend) {
+          prevPageMesh.material.uniforms.uBend.value = 0;
+        }
       }
     });
 
-    // Bend and rotate back
-    timeline.to((prevPageMesh.material as THREE.ShaderMaterial).uniforms.uBend, {
-      value: -1.0,
-      duration: 0.3,
-      ease: "power2.out"
-    });
+    // Simple page change for MeshBasicMaterial (no shader uniforms)  
+    if (prevPageMesh.material instanceof THREE.ShaderMaterial && prevPageMesh.material.uniforms?.uBend) {
+      // Bend and rotate for shader material
+      timeline.to(prevPageMesh.material.uniforms.uBend, {
+        value: -1.0,
+        duration: 0.3,
+        ease: "power2.out"
+      });
+    } else {
+      // Simple fade for basic material
+      timeline.to(prevPageMesh, {
+        opacity: 1,
+        duration: 0.3,
+        ease: "power2.out"
+      });
+    }
 
     timeline.to(prevPageMesh.rotation, {
       y: 0,
@@ -455,55 +485,123 @@ export class FlipbookEngine {
   }
 
   private animate(): void {
-    requestAnimationFrame(this.animate.bind(this));
+    this.animationId = requestAnimationFrame(this.animate.bind(this));
     
-    // Update time uniform for subtle animations
-    const time = Date.now() * 0.001;
-    this.pages.forEach(page => {
-      if (page.material instanceof THREE.ShaderMaterial) {
-        page.material.uniforms.uTime.value = time;
+    // Early exit if disposed
+    if (!this.renderer || !this.scene || !this.camera) {
+      return;
+    }
+    
+    try {
+      // Update time uniform for subtle animations (only for shader materials)
+      const time = Date.now() * 0.001;
+      this.pages.forEach(page => {
+        if (page.material instanceof THREE.ShaderMaterial && page.material.uniforms?.uTime) {
+          page.material.uniforms.uTime.value = time;
+        }
+      });
+      
+      this.renderer.render(this.scene, this.camera);
+    } catch (error) {
+      console.error('Animation error:', error);
+      // Stop animation on error
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
       }
-    });
-    
-    this.renderer.render(this.scene, this.camera);
+    }
   }
 
   public dispose(): void {
-    // Clean up resources
-    this.pages.forEach(page => {
-      if (page.material instanceof THREE.ShaderMaterial) {
-        page.material.dispose();
+    console.log('🧹 Disposing FlipbookEngine...');
+    
+    try {
+      // Stop animation loop first
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+        this.animationId = undefined;
       }
-      page.geometry.dispose();
-      this.scene.remove(page);
-    });
-    
-    this.textures.forEach(({ texture }) => {
-      texture.dispose();
-    });
-    
-    // Dispose renderer and remove DOM element safely
-    if (this.renderer) {
-      this.renderer.dispose();
+
+      // Clean up pages and materials
+      this.pages.forEach((page, index) => {
+        try {
+          if (page.material instanceof THREE.ShaderMaterial) {
+            // Dispose uniforms
+            Object.values(page.material.uniforms).forEach(uniform => {
+              if (uniform.value && typeof uniform.value.dispose === 'function') {
+                uniform.value.dispose();
+              }
+            });
+          }
+          // Dispose material (works for both ShaderMaterial and MeshBasicMaterial)
+          page.material.dispose();
+          page.geometry.dispose();
+          this.scene.remove(page);
+        } catch (error) {
+          console.warn(`Failed to dispose page ${index}:`, error);
+        }
+      });
       
-      // Check if the DOM element exists and is actually a child before removing
-      if (this.renderer.domElement && 
-          this.container && 
-          this.container.contains(this.renderer.domElement)) {
-        this.container.removeChild(this.renderer.domElement);
+      // Clean up textures
+      this.textures.forEach(({ texture }, index) => {
+        try {
+          texture.dispose();
+        } catch (error) {
+          console.warn(`Failed to dispose texture ${index}:`, error);
+        }
+      });
+      
+      // Clean up lights
+      if (this.ambientLight) {
+        this.scene.remove(this.ambientLight);
+        this.ambientLight = undefined;
       }
-    }
-    
-    // Remove event listeners using bound functions
-    if (this.container) {
-      this.container.removeEventListener('mousedown', this.boundMouseDown);
-      this.container.removeEventListener('mousemove', this.boundMouseMove);
-      this.container.removeEventListener('touchstart', this.boundTouchStart);
-      this.container.removeEventListener('touchmove', this.boundTouchMove);
-    }
-    
-    if (this.boundWindowResize) {
-      window.removeEventListener('resize', this.boundWindowResize);
+      
+      if (this.directionalLight) {
+        this.scene.remove(this.directionalLight);
+        if (this.directionalLight.shadow.map) {
+          this.directionalLight.shadow.map.dispose();
+        }
+        this.directionalLight = undefined;
+      }
+      
+      // Clear arrays
+      this.pages = [];
+      this.textures = [];
+      
+      // Dispose renderer and WebGL context
+      if (this.renderer) {
+        // Force context loss to prevent memory leaks
+        const gl = this.renderer.getContext();
+        if (gl && gl.getExtension('WEBGL_lose_context')) {
+          gl.getExtension('WEBGL_lose_context')?.loseContext();
+        }
+        
+        this.renderer.dispose();
+        this.renderer.forceContextLoss();
+        
+        // Remove DOM element safely
+        if (this.renderer.domElement && 
+            this.container && 
+            this.container.contains(this.renderer.domElement)) {
+          this.container.removeChild(this.renderer.domElement);
+        }
+      }
+      
+      // Remove event listeners
+      if (this.container) {
+        this.container.removeEventListener('mousedown', this.boundMouseDown);
+        this.container.removeEventListener('mousemove', this.boundMouseMove);
+        this.container.removeEventListener('touchstart', this.boundTouchStart);
+        this.container.removeEventListener('touchmove', this.boundTouchMove);
+      }
+      
+      if (this.boundWindowResize) {
+        window.removeEventListener('resize', this.boundWindowResize);
+      }
+      
+      console.log('✅ FlipbookEngine disposed successfully');
+    } catch (error) {
+      console.error('❌ Error during FlipbookEngine disposal:', error);
     }
   }
 
