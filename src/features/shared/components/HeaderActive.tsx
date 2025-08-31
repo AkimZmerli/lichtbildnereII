@@ -78,7 +78,7 @@ function HeaderActive({ isOpen, toggleMenu }: HeaderActiveProps) {
       initial={{ y: '-100%' }}
       animate={{ y: isOpen ? 0 : '-100%' }}
       transition={{ duration: 0.5, ease: 'easeInOut' }}
-      className="fixed top-0 left-0 w-full px-5 py-6 bg-white-rose z-50"
+      className="fixed top-0 left-0 w-full px-5 py-5 bg-white-rose z-[70]"
     >
       <div className="bg-white-rose">
         <div className="flex justify-between items-center">

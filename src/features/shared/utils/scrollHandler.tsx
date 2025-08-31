@@ -10,6 +10,14 @@ export default function ScrollHandler() {
   useEffect(() => {
     // Function to handle the scrolling
     const handleScroll = () => {
+      // Check if there's a cinematic hero on the page that should be respected
+      const cinematicHero = document.querySelector('[data-cinematic-hero]')
+      if (cinematicHero) {
+        // Don't interfere with cinematic hero animations on initial load
+        console.log('CinematicHero detected, skipping automatic scroll handling')
+        return
+      }
+
       // Check if there's a hash in the URL
       const hash = window.location.hash
 

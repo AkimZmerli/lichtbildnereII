@@ -13,6 +13,7 @@ function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [headerHeight, setHeaderHeight] = useState(0)
   const [hasScrolledDown, setHasScrolledDown] = useState(false)
+  const [cinematicHeroCompleted, setCinematicHeroCompleted] = useState(false)
   const headerRef = useRef<HTMLDivElement>(null)
   const lastScrollYRef = useRef(0)
   const ticking = useRef(false)
@@ -28,8 +29,15 @@ function Header() {
     if (!ticking.current) {
       window.requestAnimationFrame(() => {
         const currentScrollY = window.scrollY
-        const scrollingDown = currentScrollY > lastScrollYRef.current
-        const scrollingUp = currentScrollY < lastScrollYRef.current
+        const scrollDifference = Math.abs(currentScrollY - lastScrollYRef.current)
+        const scrollingDown = currentScrollY > lastScrollYRef.current + 5 // Add threshold to prevent tiny movements
+        const scrollingUp = currentScrollY < lastScrollYRef.current - 5
+        
+        // Only update if scroll difference is significant enough
+        if (scrollDifference < 5) {
+          ticking.current = false
+          return
+        }
         
         // Track if user has scrolled down past hero area
         if (currentScrollY > 100 && !hasScrolledDown) {
@@ -38,9 +46,20 @@ function Header() {
         
         // Header visibility logic for pages with cinematic hero
         if (hasCinematicHero.current) {
-          // Hide header initially and when scrolling down
-          // Only show when scrolling up AND user has scrolled down before
-          setIsVisible(scrollingUp && hasScrolledDown && currentScrollY > 50)
+          // Stay completely hidden until cinematic hero completes
+          if (!cinematicHeroCompleted) {
+            setIsVisible(false)
+            // Don't process any scroll events during opening animation
+            ticking.current = false
+            return
+          } else {
+            // After completion, same responsive behavior as other pages
+            if (scrollingDown && currentScrollY > 50) {
+              setIsVisible(false)
+            } else if (scrollingUp && currentScrollY > 50) {
+              setIsVisible(true)
+            }
+          }
         } else {
           // Original behavior for other pages
           setIsVisible(currentScrollY < lastScrollYRef.current || currentScrollY < 50)
@@ -52,7 +71,7 @@ function Header() {
       })
       ticking.current = true
     }
-  }, [hasScrolledDown])
+  }, [hasScrolledDown, cinematicHeroCompleted])
 
   useEffect(() => {
     // Short delay to ensure DOM is ready
@@ -87,6 +106,21 @@ function Header() {
     }
   }, [isGalleryPage, handleScroll])
 
+  // Listen for cinematic hero completion event
+  useEffect(() => {
+    const handleCinematicHeroComplete = () => {
+      setCinematicHeroCompleted(true)
+      // Show header immediately after animation completes
+      setIsVisible(true)
+    }
+
+    window.addEventListener('cinematicHeroComplete', handleCinematicHeroComplete)
+    
+    return () => {
+      window.removeEventListener('cinematicHeroComplete', handleCinematicHeroComplete)
+    }
+  }, [])
+
   return (
     <>
       <HeaderActive isOpen={isMenuOpen} toggleMenu={toggleMenu} />
@@ -107,7 +141,7 @@ function Header() {
           right: 0,
           willChange: 'transform',
         }}
-        className={`w-full px-5 py-5 ${hasCinematicHero.current && isVisible ? 'z-50' : 'z-40'} transition-colors duration-200 bg-grainy`}
+        className="w-full px-5 py-5 z-[60] transition-colors duration-200 bg-grainy"
       >
         <div className="flex items-center justify-between">
           <Link href="/" className="font-logo text-white-rose text-bold text-4xl">
