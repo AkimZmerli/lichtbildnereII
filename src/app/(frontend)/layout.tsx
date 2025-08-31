@@ -14,7 +14,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
     <html lang="en">
       <body>
         <ScrollHandlerWrapper />
-        <main className="pt-[70px]">{children}</main>
+        <main>{children}</main>
       </body>
     </html>
   )
