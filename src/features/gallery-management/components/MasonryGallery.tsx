@@ -48,7 +48,7 @@ const MasonryGallery = ({
     <div className="min-h-screen bg-grainy flex flex-col">
       <Header />
 
-      <div className="flex-1 p-6">
+      <div className="flex-1 p-6 pt-20"> {/* Added pt-20 to account for fixed header */}
         {/* Header with gallery switch button */}
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-white-rose text-2xl tracking-[0.5em] uppercase">{title}</h2>

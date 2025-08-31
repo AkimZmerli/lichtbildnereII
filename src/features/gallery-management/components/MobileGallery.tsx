@@ -24,10 +24,8 @@ const MobileGallery = ({ images, title, alternateGalleryLink }: GalleryProps) =>
 
   // Add keyboard listener
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      window.addEventListener('keydown', handleKeyDown)
-      return () => window.removeEventListener('keydown', handleKeyDown)
-    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
   }, [handleKeyDown])
 
   // Navigation functions
@@ -73,8 +71,10 @@ const MobileGallery = ({ images, title, alternateGalleryLink }: GalleryProps) =>
       <Header />
 
       {/* Title */}
-      <div className="pt-4 pb-2 pl-8 pr-4">
-        <h1 className="text-white-rose/60 text-lg tracking-[0.3em] uppercase text-center">
+      <div className="pt-22 pl-8 pr-4">
+        {' '}
+        {/* Increased pt-4 to pt-20 for header clearance */}
+        <h1 className="text-white-rose/60 pb-4text-lg tracking-[0.3em] uppercase text-center">
           {title}
         </h1>
       </div>
@@ -180,10 +180,7 @@ const MobileGallery = ({ images, title, alternateGalleryLink }: GalleryProps) =>
               )}
 
               <div className="pt-2 mt-4">
-                <Link
-                  href="/impressum"
-                  className="text-hot-pink/70 hover:text-hot-pink text-left"
-                >
+                <Link href="/impressum" className="text-hot-pink/70 hover:text-hot-pink text-left">
                   Impressum
                 </Link>
               </div>
