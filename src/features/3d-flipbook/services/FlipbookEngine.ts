@@ -77,8 +77,8 @@ export class FlipbookEngine {
 
   private setupCamera(): void {
     const aspect = this.container.clientWidth / this.container.clientHeight;
-    this.camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
-    this.camera.position.set(0, 0, 5);
+    this.camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
+    this.camera.position.set(0, 0, 8);
     this.camera.lookAt(0, 0, 0);
   }
 
@@ -193,14 +193,21 @@ export class FlipbookEngine {
   }
 
   private createPages(): void {
-    // Calculate optimal page size based on textures
-    const maxWidth = Math.max(...this.textures.map(t => t.dimensions.width));
-    const maxHeight = Math.max(...this.textures.map(t => t.dimensions.height));
-    const standardWidth = Math.min(3, maxWidth / 1000); // Scale down for 3D scene
+    // Calculate optimal page size based on container and textures
+    const containerAspect = this.container.clientWidth / this.container.clientHeight;
+    const baseWidth = 4; // Base width for pages
+    const baseHeight = 5; // Base height for pages
+    
+    // Create book structure with proper spreads
+    // Page 0: Cover (right side only)
+    // Page 1-2: First spread (left|right)
+    // Page 3-4: Second spread (left|right)
+    // etc.
 
     this.textures.forEach((pageTexture, index) => {
-      const width = standardWidth;
-      const height = width / pageTexture.aspectRatio;
+      // Cover page is wider
+      const width = index === 0 ? baseWidth * 1.2 : baseWidth;
+      const height = baseHeight;
 
       // Create geometry with high subdivision for smooth bending
       const geometry = new THREE.PlaneGeometry(width, height, 32, 32);
@@ -391,12 +398,8 @@ export class FlipbookEngine {
         ease: "power2.out"
       });
     } else {
-      // Simple fade for basic material
-      timeline.to(currentPageMesh, {
-        opacity: 0,
-        duration: 0.3,
-        ease: "power2.out"
-      });
+      // Simple rotation for basic material
+      // Skip opacity animation since MeshBasicMaterial doesn't have opacity property
     }
 
     timeline.to(currentPageMesh.rotation, {
@@ -446,12 +449,8 @@ export class FlipbookEngine {
         ease: "power2.out"
       });
     } else {
-      // Simple fade for basic material
-      timeline.to(prevPageMesh, {
-        opacity: 1,
-        duration: 0.3,
-        ease: "power2.out"
-      });
+      // Simple rotation for basic material
+      // Skip opacity animation since MeshBasicMaterial doesn't have opacity property
     }
 
     timeline.to(prevPageMesh.rotation, {

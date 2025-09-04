@@ -12,8 +12,8 @@ export default function AboutExhibition() {
       <About />
       <ScrollToSection />
       <Exhibition />
-      <Footer />
       <HiddenGem />
+      <Footer />
     </div>
   )
 }

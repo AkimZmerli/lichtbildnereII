@@ -20,7 +20,7 @@ export default function About() {
         </div>
 
         {/* TEXT BLOCKS - Responsive Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-12 md:mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 ">
           {/* Column 1 */}
           <div className="p-6 rounded-sm">
             <p className="text-base md:text-lg text-white-rose leading-relaxed">
@@ -42,16 +42,6 @@ export default function About() {
               are for sale.
             </p>
           </div>
-        </div>
-
-        {/* CONTACT LINK */}
-        <div className="text-center md:text-left">
-          <a
-            href="mailto:mail@valentinmici.com"
-            className="inline-block text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px] text-lg"
-          >
-            contact me →
-          </a>
         </div>
       </div>
     </section>
