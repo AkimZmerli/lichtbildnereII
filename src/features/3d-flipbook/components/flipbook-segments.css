@@ -1,0 +1,378 @@
+/* Segmented page flip for realistic paper curl effect */
+.flipbook-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.flipbook-container {
+  position: relative;
+  width: 100%;
+  height: calc(100% - 60px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 2000px;
+}
+
+.flipbook {
+  position: relative;
+  width: auto;
+  max-width: 90vw;
+  height: 100%;
+  transform-style: preserve-3d;
+  display: flex;
+  justify-content: center;
+}
+
+.book-spine {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to right, #666, #999, #666);
+  transform: translateX(-50%);
+  z-index: 10;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.spread {
+  display: flex;
+  width: auto;
+  height: 100%;
+  transform-style: preserve-3d;
+  aspect-ratio: 2 / 1.414;
+}
+
+.page {
+  width: 50%;
+  height: 100%;
+  position: relative;
+  background: transparent;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.page-left {
+  transform-origin: right center;
+}
+
+.page-right {
+  transform-origin: left center;
+}
+
+.page-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cover-page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+}
+
+/* Segmented flipping page container */
+.flipping-page-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  z-index: 50;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+
+.flipping-page-container-back {
+  right: auto;
+  left: 0;
+}
+
+/* Page segments wrapper */
+.page-segments {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  transform-style: preserve-3d;
+}
+
+/* Individual page segment */
+.page-segment {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform-origin: left center;
+  overflow: hidden;
+}
+
+.page-segment-back {
+  transform-origin: right center;
+}
+
+/* Front and back faces of each segment */
+.segment-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.segment-face-front {
+  z-index: 2;
+}
+
+.segment-face-back {
+  transform: rotateY(180deg);
+}
+
+/* Image positioning within segments */
+.segment-image {
+  position: absolute;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Calculate image offset for each segment */
+.page-segment:nth-child(1) .segment-image { left: 0; width: 700%; }
+.page-segment:nth-child(2) .segment-image { left: -100%; width: 700%; }
+.page-segment:nth-child(3) .segment-image { left: -200%; width: 700%; }
+.page-segment:nth-child(4) .segment-image { left: -300%; width: 700%; }
+.page-segment:nth-child(5) .segment-image { left: -400%; width: 700%; }
+.page-segment:nth-child(6) .segment-image { left: -500%; width: 700%; }
+.page-segment:nth-child(7) .segment-image { left: -600%; width: 700%; }
+
+/* Forward flip animation for segments */
+.page-segment.flip-forward {
+  animation: segmentFlipForward 0.7s cubic-bezier(0.35, 0.15, 0.65, 0.85) forwards;
+}
+
+.page-segment.flip-forward:nth-child(1) { animation-delay: 0ms; }
+.page-segment.flip-forward:nth-child(2) { animation-delay: 30ms; }
+.page-segment.flip-forward:nth-child(3) { animation-delay: 60ms; }
+.page-segment.flip-forward:nth-child(4) { animation-delay: 90ms; }
+.page-segment.flip-forward:nth-child(5) { animation-delay: 120ms; }
+.page-segment.flip-forward:nth-child(6) { animation-delay: 150ms; }
+.page-segment.flip-forward:nth-child(7) { animation-delay: 180ms; }
+
+/* Back flip animation for segments */
+.page-segment.flip-back {
+  animation: segmentFlipBack 0.7s cubic-bezier(0.35, 0.15, 0.65, 0.85) forwards;
+}
+
+.page-segment.flip-back:nth-child(7) { animation-delay: 0ms; }
+.page-segment.flip-back:nth-child(6) { animation-delay: 30ms; }
+.page-segment.flip-back:nth-child(5) { animation-delay: 60ms; }
+.page-segment.flip-back:nth-child(4) { animation-delay: 90ms; }
+.page-segment.flip-back:nth-child(3) { animation-delay: 120ms; }
+.page-segment.flip-back:nth-child(2) { animation-delay: 150ms; }
+.page-segment.flip-back:nth-child(1) { animation-delay: 180ms; }
+
+@keyframes segmentFlipForward {
+  0% {
+    transform: rotateY(0deg) translateZ(0px);
+  }
+  15% {
+    transform: rotateY(-15deg) translateZ(2px) scaleX(0.98);
+  }
+  30% {
+    transform: rotateY(-45deg) translateZ(8px) scaleX(0.95);
+  }
+  50% {
+    transform: rotateY(-90deg) translateZ(12px) scaleX(0.9);
+  }
+  70% {
+    transform: rotateY(-135deg) translateZ(8px) scaleX(0.95);
+  }
+  85% {
+    transform: rotateY(-165deg) translateZ(2px) scaleX(0.98);
+  }
+  100% {
+    transform: rotateY(-180deg) translateZ(0px);
+  }
+}
+
+@keyframes segmentFlipBack {
+  0% {
+    transform: rotateY(0deg) translateZ(0px);
+  }
+  15% {
+    transform: rotateY(15deg) translateZ(2px) scaleX(0.98);
+  }
+  30% {
+    transform: rotateY(45deg) translateZ(8px) scaleX(0.95);
+  }
+  50% {
+    transform: rotateY(90deg) translateZ(12px) scaleX(0.9);
+  }
+  70% {
+    transform: rotateY(135deg) translateZ(8px) scaleX(0.95);
+  }
+  85% {
+    transform: rotateY(165deg) translateZ(2px) scaleX(0.98);
+  }
+  100% {
+    transform: rotateY(180deg) translateZ(0px);
+  }
+}
+
+/* Dynamic lighting overlay */
+.page-lighting-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 20%,
+    rgba(0, 0, 0, 0.05) 50%,
+    rgba(0, 0, 0, 0.1) 80%,
+    transparent 100%
+  );
+  animation: lightingMove 0.7s cubic-bezier(0.35, 0.15, 0.65, 0.85) forwards;
+}
+
+@keyframes lightingMove {
+  0% { opacity: 0; transform: translateX(-100%); }
+  30% { opacity: 0.6; transform: translateX(-30%); }
+  50% { opacity: 0.8; transform: translateX(0%); }
+  70% { opacity: 0.6; transform: translateX(30%); }
+  100% { opacity: 0; transform: translateX(100%); }
+}
+
+/* Shadow that follows the page curl */
+.page-curl-shadow {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.1) 10%,
+    rgba(0, 0, 0, 0.2) 30%,
+    rgba(0, 0, 0, 0.1) 50%,
+    transparent 60%
+  );
+  animation: shadowCurl 0.7s cubic-bezier(0.35, 0.15, 0.65, 0.85) forwards;
+}
+
+.page-curl-shadow-left {
+  left: 0;
+  transform-origin: left center;
+}
+
+.page-curl-shadow-right {
+  right: 0;
+  transform-origin: right center;
+}
+
+@keyframes shadowCurl {
+  0% { 
+    opacity: 0; 
+    transform: scaleX(0.1);
+  }
+  30% { 
+    opacity: 0.4; 
+    transform: scaleX(0.3);
+  }
+  50% { 
+    opacity: 0.6; 
+    transform: scaleX(0.5);
+  }
+  70% { 
+    opacity: 0.4; 
+    transform: scaleX(0.3);
+  }
+  100% { 
+    opacity: 0; 
+    transform: scaleX(0.1);
+  }
+}
+
+/* Navigation buttons */
+.nav-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 30;
+}
+
+.nav-button:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.nav-button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.nav-button-prev {
+  left: 2rem;
+}
+
+.nav-button-next {
+  right: 2rem;
+}
+
+/* Page indicator */
+.page-indicator {
+  margin-top: 1rem;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .flipbook {
+    width: 95%;
+  }
+  
+  .nav-button {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .nav-button-prev {
+    left: 1rem;
+  }
+  
+  .nav-button-next {
+    right: 1rem;
+  }
+}

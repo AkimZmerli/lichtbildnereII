@@ -60,7 +60,7 @@ export class FlipbookEngine {
     this.scene = new THREE.Scene();
     this.setupCamera();
     this.setupRenderer();
-    this.setupLighting();
+    // Removed lighting setup - not needed for MeshBasicMaterial
     this.bindEvents();
     
     this.loadTextures()
@@ -77,49 +77,39 @@ export class FlipbookEngine {
 
   private setupCamera(): void {
     const aspect = this.container.clientWidth / this.container.clientHeight;
-    this.camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
-    this.camera.position.set(0, 0, 8);
+    this.camera = new THREE.PerspectiveCamera(35, aspect, 0.1, 1000); // Reduced FOV for larger pages
+    this.camera.position.set(0, 0, 10); // Optimal distance for viewing
     this.camera.lookAt(0, 0, 0);
   }
 
   private setupRenderer(): void {
     this.renderer = new THREE.WebGLRenderer({ 
       antialias: true, 
-      alpha: true,
-      powerPreference: "high-performance" 
+      alpha: false, // Changed to false for opaque rendering
+      powerPreference: "high-performance",
+      preserveDrawingBuffer: true, // Preserve buffer for accurate colors
+      premultipliedAlpha: false // Disable premultiplied alpha
     });
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.0;
+    // Disabled shadows - not needed for MeshBasicMaterial
+    this.renderer.shadowMap.enabled = false;
+    // No tone mapping to maintain original photo colors
+    this.renderer.toneMapping = THREE.NoToneMapping;
+    // Don't apply any color space conversion
+    // @ts-ignore - Disable color management completely
+    this.renderer.outputEncoding = THREE.LinearEncoding;
+    
+    // Set clear color to pure black
+    this.renderer.setClearColor(0x000000, 1);
     
     this.container.appendChild(this.renderer.domElement);
   }
 
-  private setupLighting(): void {
-    // Ambient light for overall illumination
-    this.ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
-    this.scene.add(this.ambientLight);
-
-    // Directional light for realistic shadows and highlights
-    this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
-    this.directionalLight.position.set(5, 5, 5);
-    this.directionalLight.castShadow = true;
-    
-    // Shadow settings
-    this.directionalLight.shadow.mapSize.width = 2048;
-    this.directionalLight.shadow.mapSize.height = 2048;
-    this.directionalLight.shadow.camera.near = 0.1;
-    this.directionalLight.shadow.camera.far = 50;
-    this.directionalLight.shadow.camera.left = -10;
-    this.directionalLight.shadow.camera.right = 10;
-    this.directionalLight.shadow.camera.top = 10;
-    this.directionalLight.shadow.camera.bottom = -10;
-    
-    this.scene.add(this.directionalLight);
-  }
+  // Removed lighting setup - MeshBasicMaterial doesn't need lights
+  // private setupLighting(): void {
+  //   Lighting removed to preserve original image colors
+  // }
 
   private async loadTextures(): Promise<void> {
     console.log('Starting to load textures:', this.options.images);
@@ -146,8 +136,12 @@ export class FlipbookEngine {
             texture.minFilter = THREE.LinearFilter;
             texture.magFilter = THREE.LinearFilter;
             texture.format = THREE.RGBAFormat; // Use RGBA instead of RGB
+            // Set encoding to linear to avoid gamma correction
+            // @ts-ignore
+            texture.encoding = THREE.LinearEncoding;
             texture.generateMipmaps = false;
             texture.flipY = false; // Prevent texture flipping issues
+            texture.needsUpdate = true; // Force update
 
             const pageTexture: PageTexture = {
               texture,
@@ -195,8 +189,8 @@ export class FlipbookEngine {
   private createPages(): void {
     // Calculate optimal page size based on container and textures
     const containerAspect = this.container.clientWidth / this.container.clientHeight;
-    const baseWidth = 4; // Base width for pages
-    const baseHeight = 5; // Base height for pages
+    const baseWidth = 7; // Much larger base width for pages
+    const baseHeight = 9; // Much larger base height for pages
     
     // Create book structure with proper spreads
     // Page 0: Cover (right side only)
@@ -212,19 +206,45 @@ export class FlipbookEngine {
       // Create geometry with high subdivision for smooth bending
       const geometry = new THREE.PlaneGeometry(width, height, 32, 32);
       
-      // Use simple MeshBasicMaterial for testing - will switch back to shader later
-      const material = new THREE.MeshBasicMaterial({
-        map: pageTexture.texture,
+      // Use custom unlit shader to bypass color management
+      const material = new THREE.ShaderMaterial({
+        uniforms: {
+          uTexture: { value: pageTexture.texture }
+        },
+        vertexShader: `
+          varying vec2 vUv;
+          void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform sampler2D uTexture;
+          varying vec2 vUv;
+          
+          void main() {
+            vec4 texColor = texture2D(uTexture, vUv);
+            
+            // Apply a darkening factor to match HTML rendering
+            // This compensates for WebGL's inherent brightening
+            float darkenFactor = 0.85; // Adjust this value as needed
+            texColor.rgb *= darkenFactor;
+            
+            gl_FragColor = texColor;
+          }
+        `,
         transparent: true,
-        side: THREE.DoubleSide
+        side: THREE.DoubleSide,
+        depthWrite: true
       });
 
       const page = new THREE.Mesh(geometry, material);
       
       // Position pages in a stack
       page.position.z = -index * 0.001; // Slight offset for depth
-      page.castShadow = true;
-      page.receiveShadow = true;
+      // Shadows disabled - not needed for MeshBasicMaterial
+      page.castShadow = false;
+      page.receiveShadow = false;
       
       // Initially hide all pages except the first
       if (index > 0) {
@@ -549,19 +569,7 @@ export class FlipbookEngine {
         }
       });
       
-      // Clean up lights
-      if (this.ambientLight) {
-        this.scene.remove(this.ambientLight);
-        this.ambientLight = undefined;
-      }
-      
-      if (this.directionalLight) {
-        this.scene.remove(this.directionalLight);
-        if (this.directionalLight.shadow.map) {
-          this.directionalLight.shadow.map.dispose();
-        }
-        this.directionalLight = undefined;
-      }
+      // Lights cleanup removed - no lights in use anymore
       
       // Clear arrays
       this.pages = [];

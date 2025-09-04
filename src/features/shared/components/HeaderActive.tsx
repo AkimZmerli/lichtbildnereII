@@ -41,6 +41,58 @@ function HeaderActive({ isOpen, toggleMenu }: HeaderActiveProps) {
     const targetPath = url.pathname
     const targetHash = url.hash
 
+    // Special handling for Works link
+    if (targetHash === '#works') {
+      // If we're on the home page already
+      if (pathname === '/') {
+        // Check if hero animation is active
+        const cinematicHero = document.querySelector('[data-cinematic-hero]')
+        const heroHeight = cinematicHero?.getBoundingClientRect().height || 0
+        const currentScroll = window.scrollY
+        
+        // If we're at the top and hero animation might be active
+        if (currentScroll < heroHeight * 0.5) {
+          // First, force skip the hero animation if it exists
+          window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+          
+          // Small delay to let the animation complete
+          setTimeout(() => {
+            // Scroll to top first
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+            
+            // Then scroll to works
+            setTimeout(() => {
+              const worksElement = document.querySelector('#works')
+              if (worksElement) {
+                worksElement.scrollIntoView({ 
+                  behavior: 'smooth',
+                  block: 'start'
+                })
+              }
+            }, 600)
+          }, 100)
+        } else {
+          // Hero animation is already done, just scroll to works
+          const worksElement = document.querySelector('#works')
+          if (worksElement) {
+            worksElement.scrollIntoView({ 
+              behavior: 'smooth',
+              block: 'start'
+            })
+          }
+        }
+      } else {
+        // Navigating from another page to home#works
+        // Set flag to skip hero animation
+        sessionStorage.setItem('skipHeroAnimation', 'true')
+        sessionStorage.setItem('scrollToWorks', 'true')
+        
+        // Navigate to home page with hash
+        router.push('/#works')
+      }
+      return
+    }
+
     // If we're already on the correct page, just scroll to the section
     if (pathname === targetPath || (pathname === '/' && targetPath === '/')) {
       // We're on the same page, just scroll to the section
