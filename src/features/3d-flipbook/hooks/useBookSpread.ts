@@ -1,27 +1,26 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { FlipbookEngine, FlipbookEngineOptions } from '../services/FlipbookEngine';
+import { BookSpreadEngine, BookSpreadEngineOptions } from '../services/BookSpreadEngine';
 
-interface UseFlipbookOptions {
+interface UseBookSpreadOptions {
   images: string[];
-  initialPage?: number;
   enabled?: boolean;
-  onPageChange?: (page: number) => void;
+  onPageChange?: (spread: number) => void;
 }
 
-export const useFlipbook = (options: UseFlipbookOptions) => {
-  const [currentPage, setCurrentPage] = useState(options.initialPage || 0);
+export const useBookSpread = (options: UseBookSpreadOptions) => {
+  const [currentSpread, setCurrentSpread] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [loadProgress, setLoadProgress] = useState(0);
   const [isReady, setIsReady] = useState(false);
   
-  const engineRef = useRef<FlipbookEngine | null>(null);
+  const engineRef = useRef<BookSpreadEngine | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Memoize images to prevent re-renders
   const memoizedImages = useMemo(() => options.images, [JSON.stringify(options.images)]);
 
   const initializeEngine = () => {
-    console.log('🔧 Attempting to initialize engine...', {
+    console.log('🔧 Attempting to initialize book spread engine...', {
       hasContainer: !!containerRef.current,
       imageCount: memoizedImages.length,
       images: memoizedImages
@@ -40,12 +39,12 @@ export const useFlipbook = (options: UseFlipbookOptions) => {
     }
 
     try {
-      const engineOptions: FlipbookEngineOptions = {
+      const engineOptions: BookSpreadEngineOptions = {
         container: containerRef.current,
         images: memoizedImages,
-        onPageChange: (page: number) => {
-          setCurrentPage(page);
-          options.onPageChange?.(page);
+        onPageChange: (spread: number) => {
+          setCurrentSpread(spread);
+          options.onPageChange?.(spread);
         },
         onAnimationStart: () => setIsAnimating(true),
         onAnimationEnd: () => setIsAnimating(false),
@@ -57,10 +56,10 @@ export const useFlipbook = (options: UseFlipbookOptions) => {
         }
       };
 
-      console.log('🚀 Starting FlipbookEngine initialization...');
-      engineRef.current = new FlipbookEngine(engineOptions);
+      console.log('🚀 Starting BookSpreadEngine initialization...');
+      engineRef.current = new BookSpreadEngine(engineOptions);
     } catch (error) {
-      console.error('❌ Failed to initialize FlipbookEngine:', error);
+      console.error('❌ Failed to initialize BookSpreadEngine:', error);
       setIsReady(false);
     }
   };
@@ -68,7 +67,7 @@ export const useFlipbook = (options: UseFlipbookOptions) => {
   useEffect(() => {
     // Don't initialize if not enabled
     if (!options.enabled) {
-      console.log('🔄 Flipbook not enabled, skipping initialization');
+      console.log('🔄 Book spread not enabled, skipping initialization');
       return;
     }
     
@@ -95,10 +94,10 @@ export const useFlipbook = (options: UseFlipbookOptions) => {
       clearTimeout(initTimer);
       if (engineRef.current) {
         try {
-          console.log('🧹 useFlipbook cleanup: disposing engine...');
+          console.log('🧹 useBookSpread cleanup: disposing engine...');
           engineRef.current.dispose();
         } catch (error) {
-          console.error('❌ Error disposing FlipbookEngine:', error);
+          console.error('❌ Error disposing BookSpreadEngine:', error);
         } finally {
           engineRef.current = null;
         }
@@ -108,10 +107,9 @@ export const useFlipbook = (options: UseFlipbookOptions) => {
       setIsReady(false);
       setLoadProgress(0);
       setIsAnimating(false);
-      setCurrentPage(0);
+      setCurrentSpread(0);
     };
-  }, [memoizedImages, options.enabled]); // Use memoized images and enabled flag
-  
+  }, [memoizedImages, options.enabled]);
 
   const nextPage = () => {
     if (engineRef.current && !isAnimating) {
@@ -125,21 +123,18 @@ export const useFlipbook = (options: UseFlipbookOptions) => {
     }
   };
 
-  const goToPage = (pageIndex: number) => {
-    if (engineRef.current && !isAnimating) {
-      engineRef.current.goToPage(pageIndex);
-    }
-  };
+  // Calculate total spreads based on images
+  // No cover - just pairs of pages
+  const totalSpreads = Math.ceil(memoizedImages.length / 2);
 
   return {
     containerRef,
-    currentPage,
-    totalPages: memoizedImages.length,
+    currentSpread,
+    totalSpreads,
     isAnimating,
     isReady,
     loadProgress,
     nextPage,
-    prevPage,
-    goToPage
+    prevPage
   };
 };

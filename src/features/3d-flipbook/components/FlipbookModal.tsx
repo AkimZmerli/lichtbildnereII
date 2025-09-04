@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useFlipbook } from '../hooks/useFlipbook';
+import { useBookSpread } from '../hooks/useBookSpread';
 
 interface FlipbookModalProps {
   isOpen: boolean;
@@ -15,30 +15,28 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
   isOpen,
   onClose,
   title = "Portfolio Book",
-  images = [
-    '/flipbook-images/page1.png',
-    '/flipbook-images/page2.png'
-  ]
+  images = Array.from({length: 63}, (_, i) => `/flipbook-images/${i + 1}.png`)
 }) => {
+  // Only initialize the flipbook when modal is open
   const {
     containerRef,
-    currentPage,
-    totalPages,
+    currentSpread,
+    totalSpreads,
     isAnimating,
     isReady,
     loadProgress,
     nextPage,
-    prevPage,
-    goToPage
-  } = useFlipbook({
+    prevPage
+  } = useBookSpread({
     images,
-    onPageChange: (page) => {
-      console.log('✓ Flipbook page changed to:', page + 1);
+    enabled: isOpen, // Add enabled flag
+    onPageChange: (spread) => {
+      console.log('✓ Book spread changed to:', spread);
     }
   });
 
   // Debug logging
-  console.log('🔍 FlipbookModal render:', { isOpen, isReady, loadProgress, currentPage, totalPages, images });
+  console.log('🔍 FlipbookModal render:', { isOpen, isReady, loadProgress, currentSpread, totalSpreads, images });
 
   // Handle ESC key
   useEffect(() => {
@@ -105,51 +103,10 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
           } transition-opacity duration-500`}
           style={{ 
             background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+            minHeight: '600px' // Ensure minimum height for Three.js
           }}
         >
-          {/* Temporary: Simple image display for testing */}
-          {!isReady && (
-            <div className="w-full h-full flex items-center justify-center text-white">
-              <div>
-                <div>Container Ref: {containerRef.current ? '✅' : '❌'}</div>
-                <div>Images: {images.length}</div>
-                <div>Ready: {isReady ? '✅' : '❌'}</div>
-                <div>Progress: {Math.round(loadProgress * 100)}%</div>
-              </div>
-            </div>
-          )}
-          {isReady && (
-            <div className="w-full h-full flex items-center justify-center p-4">
-              {/* Social Book: Two pages side by side */}
-              <div className="flex w-full h-full max-w-4xl gap-4">
-                {/* Left Page - Normal orientation for person on left */}
-                <div className="flex-1 flex items-center justify-center border-r border-gray-300">
-                  <img 
-                    src={images[Math.floor(currentPage / 2) * 2]} 
-                    alt={`Left page ${Math.floor(currentPage / 2) * 2 + 1}`}
-                    className="max-w-full max-h-full object-contain"
-                    onLoad={() => console.log('✅ Left page loaded:', images[Math.floor(currentPage / 2) * 2])}
-                    onError={() => console.log('❌ Left page failed:', images[Math.floor(currentPage / 2) * 2])}
-                  />
-                </div>
-                
-                {/* Right Page - Upside down for person on right */}
-                <div className="flex-1 flex items-center justify-center">
-                  {images[Math.floor(currentPage / 2) * 2 + 1] ? (
-                    <img 
-                      src={images[Math.floor(currentPage / 2) * 2 + 1]} 
-                      alt={`Right page ${Math.floor(currentPage / 2) * 2 + 2}`}
-                      className="max-w-full max-h-full object-contain transform rotate-180"
-                      onLoad={() => console.log('✅ Right page loaded (upside down):', images[Math.floor(currentPage / 2) * 2 + 1])}
-                      onError={() => console.log('❌ Right page failed:', images[Math.floor(currentPage / 2) * 2 + 1])}
-                    />
-                  ) : (
-                    <div className="text-white/60 text-lg">No second page</div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
+          {/* The Three.js canvas will be appended here by FlipbookEngine */}
         </div>
 
         {/* Navigation Controls */}
@@ -158,7 +115,7 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
             {/* Previous Page Button */}
             <button
               onClick={prevPage}
-              disabled={currentPage === 0 || isAnimating}
+              disabled={currentSpread === 0 || isAnimating}
               className="absolute left-8 top-1/2 transform -translate-y-1/2 p-3 bg-black/50 hover:bg-black/70 disabled:bg-black/20 disabled:cursor-not-allowed text-white rounded-full transition-all duration-200"
             >
               <ChevronLeft size={24} />
@@ -167,7 +124,7 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
             {/* Next Page Button */}
             <button
               onClick={nextPage}
-              disabled={currentPage === totalPages - 1 || isAnimating}
+              disabled={currentSpread === totalSpreads - 1 || isAnimating}
               className="absolute right-8 top-1/2 transform -translate-y-1/2 p-3 bg-black/50 hover:bg-black/70 disabled:bg-black/20 disabled:cursor-not-allowed text-white rounded-full transition-all duration-200"
             >
               <ChevronRight size={24} />
@@ -175,7 +132,7 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
 
             {/* Page Counter */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-full text-sm">
-              Spread {Math.floor(currentPage / 2) + 1} / {Math.ceil(totalPages / 2)}
+              Pages {currentSpread * 2 + 1}-{currentSpread * 2 + 2} | {currentSpread + 1} / {totalSpreads}
             </div>
           </>
         )}
