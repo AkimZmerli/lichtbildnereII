@@ -30,7 +30,8 @@ export default function ClientHero({
     const isInternalNavigation = sessionStorage.getItem('skipHeroAnimation') === 'true'
     const shouldScrollToWorks = sessionStorage.getItem('scrollToWorks') === 'true'
     
-    if (hasSeenAnimation || isInternalNavigation) {
+    // Only skip if coming from internal navigation, not for returning visitors
+    if (isInternalNavigation) {
       setShouldSkipAnimation(true)
       // Clear the session flag after using it
       sessionStorage.removeItem('skipHeroAnimation')
@@ -84,8 +85,9 @@ export default function ClientHero({
       initialViewportHeight="45vh"
       initialViewportWidth="80%"
       scrollFactor={1.2}
-      // Use the calculated skip value
-      allowSkip={shouldSkipAnimation}
+      // Start with allowSkip false - the component will automatically
+      // toggle this to true after animation completes
+      allowSkip={false}
       storageKey="hero-animation-viewed"
     />
   )
