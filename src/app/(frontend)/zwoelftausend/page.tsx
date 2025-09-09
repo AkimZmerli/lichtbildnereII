@@ -30,6 +30,10 @@ export default function DisplayScan() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
+      
+      {/* Spacer div to push content below fixed header */}
+      <div className="h-15"></div>
+      
       <div className="bg-grainy text-white-rose p-4 md:p-8 pb-8 flex-1">
         <h1 className="text-xl md:text-2xl text-center tracking-[0.2em] font-normal font-lato mb-8">
           Z W Ö L F T A U S E N D

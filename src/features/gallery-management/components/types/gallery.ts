@@ -38,6 +38,11 @@ export interface GalleryImage {
   alt: string
   width: number
   height: number
+  physicalWidth?: number
+  physicalHeight?: number
+  unit?: string
+  material?: string
+  fabrication?: string
 }
 
 export interface GalleryHeaderProps {
