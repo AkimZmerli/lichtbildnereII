@@ -143,7 +143,7 @@ export default function Works() {
                     <h3 className="uppercase text-2xl tracking-[0.3em]">HUMAN</h3>
                     <Link
                       href="/gallery/human"
-                      className="text-hot-pink hover:underline underline-offset-4"
+                      className="text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px]"
                     >
                       view gallery →
                     </Link>
@@ -169,13 +169,14 @@ export default function Works() {
                     </h3>
                     <Link
                       href="/gallery/non-human"
-                      className="text-hot-pink hover:underline underline-offset-4"
+                      className="text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px]"
                     >
                       view gallery →
                     </Link>
                   </div>
                 </div>
               </motion.div>
+
             </div>
           </motion.div>
 

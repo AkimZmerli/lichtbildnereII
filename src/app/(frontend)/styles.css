@@ -21,6 +21,7 @@
 }
 
 .bg-grainy {
+  background-color: #2A2323; /* black-almost as fallback */
   background-image: url('/images/Grainy_texture.png');
   background-repeat: repeat;
   background-position: center;

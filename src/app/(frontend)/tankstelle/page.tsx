@@ -7,6 +7,9 @@ export default function DisplayScan() {
     <div className="min-h-screen flex flex-col">
       <Header />
 
+      {/* Spacer div to push content below fixed header */}
+      <div className="h-15"></div>
+
       <div className="flex-1 bg-grainy text-white-rose p-4 md:p-8 pb-8">
         <h1 className="text-xl md:text-2xl text-center tracking-[0.3em] md:tracking-[0.5em] font-normal font-lato mb-6 md:mb-8">
           T A N K S T E L L E

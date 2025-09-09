@@ -7,14 +7,14 @@ import Works from '@/features/shared/components/Works'
 export default function Home() {
   return (
     <div className="bg-grainy min-h-screen">
+      <Header />
       <div>
         <main>
-          <Header />
           <Hero />
           <Works />
           <SocialBook />
+          <Footer />
         </main>
-        <Footer />
       </div>
     </div>
   )

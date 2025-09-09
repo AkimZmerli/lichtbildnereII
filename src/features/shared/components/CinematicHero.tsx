@@ -64,14 +64,14 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
 
   // Create transform animations based on scroll progress
 
-  // Initial scale of the image (creates a zoom effect)
-  const imageScale = useTransform(smoothProgress, [0, 1], prefersReducedMotion ? [1, 1] : [1, 1.1])
+  // Initial scale of the image (creates a subtle zoom effect)
+  const imageScale = useTransform(smoothProgress, [0, 1], prefersReducedMotion ? [1, 1] : [1, 1.02])
 
-  // Parallax movement for different layers
+  // Parallax movement for different layers - reduced to prevent cropping when letterbox opens fully
   const parallaxBackground = useTransform(
     smoothProgress,
     [0, 1],
-    prefersReducedMotion ? [0, 0] : [0, -100 * scrollFactor], // Increased for dramatic effect
+    prefersReducedMotion ? [0, 0] : [0, 0], // Disabled to prevent image escaping when letterbox opens fully
   )
 
   const parallaxForeground = useTransform(
@@ -178,8 +178,8 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
         // Update our motion value to drive all animations
         scrollProgress.set(progress)
 
-        // When animation is complete
-        if (progress >= 1 && !animationComplete) {
+        // When animation is 85% complete
+        if (progress >= 0.85 && !animationComplete) {
           // Set completion flag
           setAnimationComplete(true)
 
@@ -195,6 +195,9 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
           setTimeout(() => {
             setScrollingUnlocked(true)
             document.body.style.overflow = 'auto'
+
+            // Dispatch event to notify header that animation is complete
+            window.dispatchEvent(new CustomEvent('cinematicHeroComplete'))
 
             // Clean up all event listeners
             window.removeEventListener('wheel', handleWheel)
@@ -269,7 +272,7 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
     <>
       <div
         ref={containerRef}
-        className="relative w-full"
+        className="relative w-full z-40"
         data-cinematic-hero
         style={{
           // Set height of container based on animation state
