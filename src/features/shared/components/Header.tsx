@@ -110,8 +110,8 @@ function Header() {
   useEffect(() => {
     const handleCinematicHeroComplete = () => {
       setCinematicHeroCompleted(true)
-      // Show header immediately after animation completes
-      setIsVisible(true)
+      // Don't show header automatically - let scroll behavior handle it
+      // setIsVisible(true)
     }
 
     window.addEventListener('cinematicHeroComplete', handleCinematicHeroComplete)

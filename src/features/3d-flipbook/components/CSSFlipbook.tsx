@@ -19,6 +19,8 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
   const [flipDirection, setFlipDirection] = useState<'forward' | 'back' | null>(null);
   const [displaySpread, setDisplaySpread] = useState(0);
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
+  const [flippingPageImage, setFlippingPageImage] = useState<string | null>(null);
+  const [isBackFace, setIsBackFace] = useState(false);
   
   // Create spreads (pairs of pages)
   const spreads = [];
@@ -61,13 +63,24 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
       setIsFlipping(true);
       setFlipDirection('forward');
       setDisplaySpread(currentSpread + 1);
-      // Update state at peak of blur (when motion is fastest)
+      setIsBackFace(false);
+      
+      // Start with front face image (y)
+      setFlippingPageImage(spreads[currentSpread].right);
+      
+      // Swap to back face image (r) at 50% point and flip it
       setTimeout(() => {
-        onPageChange((currentSpread + 1) * 2);
-      }, 450);
+        setFlippingPageImage(spreads[currentSpread + 1]?.left || null);
+        setIsBackFace(true);
+      }, 450); // Half of 900ms animation
+      
+      // Update page state AFTER the flip animation completes
       setTimeout(() => {
         setIsFlipping(false);
         setFlipDirection(null);
+        setFlippingPageImage(null);
+        setIsBackFace(false);
+        onPageChange((currentSpread + 1) * 2);
       }, 900);
     }
   };
@@ -77,13 +90,24 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
       setIsFlipping(true);
       setFlipDirection('back');
       setDisplaySpread(currentSpread - 1);
-      // Update state at peak of blur (when motion is fastest)
+      setIsBackFace(false);
+      
+      // Start with front face image (x)
+      setFlippingPageImage(spreads[currentSpread].left);
+      
+      // Swap to back face image (w) at 50% point and flip it
       setTimeout(() => {
-        onPageChange((currentSpread - 1) * 2);
-      }, 450);
+        setFlippingPageImage(spreads[currentSpread - 1]?.right || null);
+        setIsBackFace(true);
+      }, 450); // Half of 900ms animation
+      
+      // Update page state AFTER the flip animation completes
       setTimeout(() => {
         setIsFlipping(false);
         setFlipDirection(null);
+        setFlippingPageImage(null);
+        setIsBackFace(false);
+        onPageChange((currentSpread - 1) * 2);
       }, 900);
     }
   };
@@ -97,9 +121,11 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
           
           {/* Current spread */}
           <div className="spread">
-            {/* Left page - stays on current when flipping forward, updates when flipping back */}
+            {/* Left page (x position) - stays as current left during forward flip, shows previous left during back flip */}
             <div className="page page-left">
               {(() => {
+                // Forward flip: keep showing x (current left)
+                // Back flip: show v (previous left) underneath
                 const leftSpread = isFlipping && flipDirection === 'back' ? displaySpread : currentSpread;
                 if (leftSpread === 0) {
                   return (
@@ -122,9 +148,11 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
               })()}
             </div>
             
-            {/* Right page - updates when flipping forward, stays on current when flipping back */}
+            {/* Right page (y position) - shows s (next right) during forward flip, stays as current right during back flip */}
             <div className="page page-right">
               {(() => {
+                // Forward flip: show s (next right) underneath
+                // Back flip: keep showing y (current right)
                 const rightSpread = isFlipping && flipDirection === 'forward' ? displaySpread : currentSpread;
                 return spreads[rightSpread]?.right && (
                   <img 
@@ -138,54 +166,42 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
           </div>
           
           {/* Flipping page for forward animation */}
-          {isFlipping && flipDirection === 'forward' && (
+          {isFlipping && flipDirection === 'forward' && flippingPageImage && (
             <div className="flipping-page-container">
               <div className="flipping-page flip-forward">
-                <div className="page-face page-face-front">
-                  {spreads[currentSpread]?.right && (
-                    <img 
-                      src={spreads[currentSpread].right}
-                      alt="Flipping page front"
-                      className="page-image"
-                    />
-                  )}
-                </div>
-                <div className="page-face page-face-back">
-                  {spreads[displaySpread]?.left && (
-                    <img 
-                      src={spreads[displaySpread].left}
-                      alt="Flipping page back"
-                      className="page-image"
-                    />
-                  )}
-                </div>
+                {/* Single image that swaps at 50% */}
+                <img 
+                  src={flippingPageImage}
+                  alt="Flipping page"
+                  className="page-image"
+                  style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    objectFit: 'contain',
+                    transform: isBackFace ? 'scaleX(-1)' : 'none'
+                  }}
+                />
               </div>
               <div className="page-shadow-overlay"></div>
             </div>
           )}
           
           {/* Flipping page for back animation */}
-          {isFlipping && flipDirection === 'back' && (
+          {isFlipping && flipDirection === 'back' && flippingPageImage && (
             <div className="flipping-page-container flipping-page-container-back">
               <div className="flipping-page flipping-page-back flip-back">
-                <div className="page-face page-face-front">
-                  {spreads[currentSpread]?.left && (
-                    <img 
-                      src={spreads[currentSpread].left}
-                      alt="Flipping page front"
-                      className="page-image"
-                    />
-                  )}
-                </div>
-                <div className="page-face page-face-back">
-                  {spreads[displaySpread]?.right && (
-                    <img 
-                      src={spreads[displaySpread].right}
-                      alt="Flipping page back"
-                      className="page-image"
-                    />
-                  )}
-                </div>
+                {/* Single image that swaps at 50% */}
+                <img 
+                  src={flippingPageImage}
+                  alt="Flipping page"
+                  className="page-image"
+                  style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    objectFit: 'contain',
+                    transform: isBackFace ? 'scaleX(-1)' : 'none'
+                  }}
+                />
               </div>
               <div className="page-shadow-overlay"></div>
             </div>
@@ -212,7 +228,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
       
       {/* Page indicator - now outside container */}
       <div className="page-indicator">
-        Page {currentSpread * 2 + 1}-{Math.min(currentSpread * 2 + 2, images.length)} / {images.length}
+        Page {currentSpread + 1} / {Math.ceil(images.length / 2)}
       </div>
     </div>
   );

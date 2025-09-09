@@ -12,7 +12,7 @@
 .flipbook-container {
   position: relative;
   width: 100%;
-  height: calc(100% - 60px);
+  height: calc(100% - 40px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -292,13 +292,17 @@
 
 /* Page indicator */
 .page-indicator {
-  margin-top: 1rem;
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
   background: rgba(0, 0, 0, 0.5);
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-size: 14px;
   text-align: center;
+  z-index: 100;
 }
 
 /* Responsive adjustments */
