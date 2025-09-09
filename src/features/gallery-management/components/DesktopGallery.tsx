@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
+import { motion, AnimatePresence } from 'framer-motion'
 import { GalleryProps } from './types/gallery'
 import GalleryImage from './GalleryImage'
 import Header from '@/features/shared/components/Header'
@@ -178,23 +179,15 @@ const DesktopGallery = ({ images, title }: GalleryProps) => {
         {/* Header - takes natural height */}
         <Header />
 
-        {/* Title section - with top margin to avoid header overlap */}
-        <div className="flex-shrink-0 pt-8 pb-3 pl-[140px] pr-7">
-          <div className="flex justify-between items-start">
-            <h1 className="text-white-rose text-2xl tracking-[0.5em] uppercase">{title}</h1>
-            <Link
-              href={`/gallery/${title.toLowerCase() === 'human' ? 'non-human' : 'human'}`}
-              className="text-hot-pink hover:underline"
-            >
-              View {title.toLowerCase() === 'human' ? 'non-human' : 'human'} gallery →
-            </Link>
-          </div>
+        {/* Title section - with proper top padding to account for fixed header */}
+        <div className="flex-shrink-0 pt-22 pb-2 pl-8 pr-7">
+          <h1 className="text-white-rose/60 text-lg tracking-[0.5em] uppercase">{title}</h1>
         </div>
 
-        {/* Gallery - FIXED 80% height, no flex grow */}
+        {/* Gallery - adjusted height to account for header and title */}
         <div
           ref={scrollContainerRef}
-          className="h-[76vh] overflow-hidden cursor-grab active:cursor-grabbing mb-4"
+          className="flex-1 overflow-hidden cursor-grab active:cursor-grabbing pb-2"
         >
           <div
             className="h-full flex transition-transform duration-[2000ms] ease-in-out will-change-transform"
@@ -220,8 +213,8 @@ const DesktopGallery = ({ images, title }: GalleryProps) => {
           </div>
         </div>
 
-        {/* Progress bar - absolute bottom edge with spacing */}
-        <div className="fixed bottom-0 left-0 right-0 z-10">
+        {/* Progress bar - positioned at the very bottom */}
+        <div className="flex-shrink-0">
           <div
             className={`h-1 bg-gray-800 transition-opacity duration-1000 ${
               uiVisible ? 'opacity-100' : 'opacity-0'
@@ -236,6 +229,63 @@ const DesktopGallery = ({ images, title }: GalleryProps) => {
             />
           </div>
         </div>
+
+        {/* Metadata panel - bottom left */}
+        {images[currentIndex] && (
+          <div
+            className={`fixed bottom-8 left-4 text-white-rose/70 text-xs space-y-1 transition-all duration-1000 ${
+              uiVisible ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            {images[currentIndex].physicalWidth && images[currentIndex].physicalHeight && (
+              <div>
+                {images[currentIndex].physicalWidth} × {images[currentIndex].physicalHeight}{' '}
+                {images[currentIndex].unit}
+              </div>
+            )}
+            {images[currentIndex].material && <div>{images[currentIndex].material}</div>}
+            <div className="text-white-rose/50">
+              <Link href="/impressum" className="text-hot-pink/70 hover:text-hot-pink underline">
+                Impressum
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {/* Sliding gallery link - bottom right (appears on last photo with 6s delay) */}
+        <AnimatePresence>
+          {currentIndex === images.length - 1 && (
+            <motion.div
+              className="fixed bottom-8 right-4"
+              initial={{ x: 300, opacity: 0 }}
+              animate={{
+                x: 0,
+                opacity: 1,
+              }}
+              exit={{ x: 300, opacity: 0 }}
+              transition={{
+                delay: 5,
+                duration: 0.8,
+                ease: [0.4, 0, 0.2, 1],
+              }}
+            >
+              <Link
+                href={`/gallery/${title.toLowerCase() === 'human' ? 'non-human' : 'human'}`}
+                className="inline-flex items-center gap-2 bg-grainy/80 backdrop-blur-sm px-4 py-2 rounded-lg text-hot-pink hover:text-white-rose transition-colors border border-hot-pink/30 hover:border-hot-pink/60"
+              >
+                View {title.toLowerCase() === 'human' ? 'non-human' : 'human'} gallery
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </Link>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </>
   )

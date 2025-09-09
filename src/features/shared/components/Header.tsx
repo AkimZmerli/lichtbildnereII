@@ -9,14 +9,17 @@ import { usePathname } from 'next/navigation'
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isVisible, setIsVisible] = useState(true)
+  const [isVisible, setIsVisible] = useState(false) // Start hidden, will be set by useEffect
   const [isScrolled, setIsScrolled] = useState(false)
   const [headerHeight, setHeaderHeight] = useState(0)
+  const [hasScrolledDown, setHasScrolledDown] = useState(false)
+  const [cinematicHeroCompleted, setCinematicHeroCompleted] = useState(false)
   const headerRef = useRef<HTMLDivElement>(null)
   const lastScrollYRef = useRef(0)
   const ticking = useRef(false)
   const pathname = usePathname()
   const isGalleryPage = pathname?.includes('gallery/')
+  const hasCinematicHero = useRef(false)
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
@@ -26,53 +29,97 @@ function Header() {
     if (!ticking.current) {
       window.requestAnimationFrame(() => {
         const currentScrollY = window.scrollY
-        setIsVisible(currentScrollY < lastScrollYRef.current || currentScrollY < 50)
+        const scrollDifference = Math.abs(currentScrollY - lastScrollYRef.current)
+        const scrollingDown = currentScrollY > lastScrollYRef.current + 5 // Add threshold to prevent tiny movements
+        const scrollingUp = currentScrollY < lastScrollYRef.current - 5
+        
+        // Only update if scroll difference is significant enough
+        if (scrollDifference < 5) {
+          ticking.current = false
+          return
+        }
+        
+        // Track if user has scrolled down past hero area
+        if (currentScrollY > 100 && !hasScrolledDown) {
+          setHasScrolledDown(true)
+        }
+        
+        // Header visibility logic for pages with cinematic hero
+        if (hasCinematicHero.current) {
+          // Stay completely hidden until cinematic hero completes
+          if (!cinematicHeroCompleted) {
+            setIsVisible(false)
+            // Don't process any scroll events during opening animation
+            ticking.current = false
+            return
+          } else {
+            // After completion, same responsive behavior as other pages
+            if (scrollingDown && currentScrollY > 50) {
+              setIsVisible(false)
+            } else if (scrollingUp && currentScrollY > 50) {
+              setIsVisible(true)
+            }
+          }
+        } else {
+          // Original behavior for other pages
+          setIsVisible(currentScrollY < lastScrollYRef.current || currentScrollY < 50)
+        }
+        
         setIsScrolled(currentScrollY > 0)
         lastScrollYRef.current = currentScrollY
         ticking.current = false
       })
       ticking.current = true
     }
-  }, [])
+  }, [hasScrolledDown, cinematicHeroCompleted])
 
   useEffect(() => {
-    if (isGalleryPage) {
-      setIsVisible(true)
-      setIsScrolled(false)
-      return
-    }
+    // Short delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      if (isGalleryPage) {
+        hasCinematicHero.current = false
+        setIsVisible(true)
+        setIsScrolled(false)
+        return
+      }
 
-    const cinematicHero = document.querySelector('[data-cinematic-hero]')
-    if (cinematicHero) {
-      setIsVisible(true)
-      setIsScrolled(false)
-      return
-    }
+      const cinematicHero = document.querySelector('[data-cinematic-hero]') || document.querySelector('[data-cinematic-hero-v2]')
+      if (cinematicHero) {
+        hasCinematicHero.current = true
+        const currentScrollY = window.scrollY
+        // If page is refreshed while scrolled down, show header
+        // If at top of page, hide header for cinematic experience
+        setIsVisible(currentScrollY > 50)
+        setIsScrolled(currentScrollY > 0)
+        setHasScrolledDown(currentScrollY > 100)
+      } else {
+        hasCinematicHero.current = false
+        setIsVisible(true)
+      }
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+      window.addEventListener('scroll', handleScroll, { passive: true })
+    }, 100)
+
+    return () => {
+      clearTimeout(timer)
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [isGalleryPage, handleScroll])
 
-  // // Measure the header height when it mounts and when window resizes
-  // useEffect(() => {
-  //   const updateHeaderHeight = () => {
-  //     if (headerRef.current) {
-  //       const height = headerRef.current.offsetHeight
-  //       setHeaderHeight(height)
-  //       document.documentElement.style.setProperty('--header-height', `${height}px`)
-  //     }
-  //   }
+  // Listen for cinematic hero completion event
+  useEffect(() => {
+    const handleCinematicHeroComplete = () => {
+      setCinematicHeroCompleted(true)
+      // Don't show header automatically - let scroll behavior handle it
+      // setIsVisible(true)
+    }
 
-  //   // Initial measurement
-  //   updateHeaderHeight()
-
-  //   // Update on resize
-  //   window.addEventListener('resize', updateHeaderHeight)
-
-  //   return () => {
-  //     window.removeEventListener('resize', updateHeaderHeight)
-  //   }
-  // }, [])
+    window.addEventListener('cinematicHeroComplete', handleCinematicHeroComplete)
+    
+    return () => {
+      window.removeEventListener('cinematicHeroComplete', handleCinematicHeroComplete)
+    }
+  }, [])
 
   return (
     <>
@@ -94,7 +141,7 @@ function Header() {
           right: 0,
           willChange: 'transform',
         }}
-        className={`w-full px-5 py-5 z-40 transition-colors duration-200 bg-grainy`}
+        className="w-full px-5 py-5 z-[60] transition-colors duration-200 bg-grainy"
       >
         <div className="flex items-center justify-between">
           <Link href="/" className="font-logo text-white-rose text-bold text-4xl">

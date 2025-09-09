@@ -6,6 +6,10 @@ const testHumanImages: GalleryImage[] = Array.from({ length: 4 }, (_, i) => ({
   alt: `Human Gallery Image ${i + 1}`,
   width: 800,
   height: 600,
+  physicalWidth: [120, 80, 150, 90][i],
+  physicalHeight: [80, 120, 100, 120][i],
+  unit: 'cm',
+  material: ['Oil on Canvas', 'Acrylic on Canvas', 'Mixed Media', 'Oil on Wood'][i],
 }))
 
 const testNonHumanImages: GalleryImage[] = Array.from({ length: 4 }, (_, i) => ({
@@ -13,6 +17,10 @@ const testNonHumanImages: GalleryImage[] = Array.from({ length: 4 }, (_, i) => (
   alt: `Non-Human Gallery Image ${i + 1}`,
   width: 800,
   height: 600,
+  physicalWidth: [100, 70, 130, 110][i],
+  physicalHeight: [70, 100, 90, 80][i],
+  unit: 'cm',
+  material: ['Photography', 'Digital Art', 'Mixed Media', 'Sculpture'][i],
 }))
 
 // Transform Payload data to our GalleryImage format
