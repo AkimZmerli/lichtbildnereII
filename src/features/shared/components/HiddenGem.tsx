@@ -4,7 +4,7 @@ export default function HiddenGem() {
   return (
     <section className="bg-grainy text-white-rose">
       <div className="max-w-4xl mx-auto px-6 py-16 md:py-24 text-center">
-        <h2 className="uppercase mb-12 text-2xl tracking-[0.5em]">HIDDEN CONTENT </h2>
+        <h2 className="uppercase mb-12 text-2xl tracking-[0.5em]">CLOSING WORDS</h2>
 
         <div className="space-y-6 max-w-2xl mx-auto">
           <p className="">Thank you so much for taking your time to view my whole page.</p>
