@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import CinematicHero from './CinematicHero'
+import CinematicHeroScroll from './CinematicHeroScroll'
 
 interface ClientHeroProps {
   mobileUrl: string
@@ -20,22 +20,23 @@ export default function ClientHero({
   subtitle,
   videoUrl,
 }: ClientHeroProps) {
-  const [shouldSkipAnimation, setShouldSkipAnimation] = useState(false)
+  const [imageUrl, setImageUrl] = useState(desktopUrl)
 
   useEffect(() => {
-    // Check if the user has already seen the animation
-    const hasSeenAnimation = localStorage.getItem('hero-animation-viewed') === 'true'
-    
-    // Check if we're coming from an internal navigation (like from Works link)
-    const isInternalNavigation = sessionStorage.getItem('skipHeroAnimation') === 'true'
-    const shouldScrollToWorks = sessionStorage.getItem('scrollToWorks') === 'true'
-    
-    // Only skip if coming from internal navigation, not for returning visitors
-    if (isInternalNavigation) {
-      setShouldSkipAnimation(true)
-      // Clear the session flag after using it
-      sessionStorage.removeItem('skipHeroAnimation')
+    // Check viewport width and set appropriate image
+    const checkViewport = () => {
+      if (window.innerWidth < 768) {
+        setImageUrl(mobileUrl)
+      } else {
+        setImageUrl(desktopUrl)
+      }
     }
+
+    checkViewport()
+    window.addEventListener('resize', checkViewport)
+
+    // Check if we're coming from an internal navigation (like from Works link)
+    const shouldScrollToWorks = sessionStorage.getItem('scrollToWorks') === 'true'
     
     // Handle scroll to works after page load
     if (shouldScrollToWorks) {
@@ -72,23 +73,17 @@ export default function ClientHero({
         }
       }, 1000)
     }
-  }, [])
+
+    return () => window.removeEventListener('resize', checkViewport)
+  }, [mobileUrl, desktopUrl])
 
   return (
-    <CinematicHero
-      mobileUrl={mobileUrl}
-      desktopUrl={desktopUrl}
+    <CinematicHeroScroll
+      imageUrl={imageUrl}
       altText={altText}
       title={title}
       subtitle={subtitle}
-      videoUrl={videoUrl}
-      initialViewportHeight="45vh"
-      initialViewportWidth="80%"
-      scrollFactor={1.2}
-      // Start with allowSkip false - the component will automatically
-      // toggle this to true after animation completes
-      allowSkip={false}
-      storageKey="hero-animation-viewed"
+      showScrollIndicator={true}
     />
   )
 }
