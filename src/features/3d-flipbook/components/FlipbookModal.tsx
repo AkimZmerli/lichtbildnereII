@@ -97,12 +97,14 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
 
         {/* CSS Flipbook Container */}
         {imagesLoaded && (
-          <div className="w-[90vw] h-[85vh] rounded-lg">
-            <CSSFlipbook
-              images={images}
-              currentPage={currentPage}
-              onPageChange={setCurrentPage}
-            />
+          <div className="w-full max-w-[90vw] h-[85vh] md:w-[90vw] md:h-[85vh] rounded-lg flex items-center justify-center">
+            <div className="w-full h-full max-h-[80vh] md:max-h-none flex items-center justify-center">
+              <CSSFlipbook
+                images={images}
+                currentPage={currentPage}
+                onPageChange={setCurrentPage}
+              />
+            </div>
           </div>
         )}
 
