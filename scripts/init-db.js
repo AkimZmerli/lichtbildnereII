@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { getPayload } from 'payload'
-import config from '../src/payload.config.js'
+import config from '@payload-config'
 
 const initDatabase = async () => {
   console.log('Initializing database...')
