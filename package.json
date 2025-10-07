@@ -5,7 +5,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "cross-env NODE_OPTIONS=--no-deprecation node scripts/init-db.js && next build",
+    "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
     "build:next": "cross-env NODE_OPTIONS=--no-deprecation next build",
     "init:db": "cross-env NODE_OPTIONS=--no-deprecation node scripts/init-db.js",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
