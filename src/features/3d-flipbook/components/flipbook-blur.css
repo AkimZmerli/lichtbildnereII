@@ -12,7 +12,7 @@
 .flipbook-container {
   position: relative;
   width: 100%;
-  height: calc(100% - 40px);
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -27,6 +27,7 @@
   transform-style: preserve-3d;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .book-spine {
@@ -37,16 +38,18 @@
   width: 2px;
   background: linear-gradient(to right, #666, #999, #666);
   transform: translateX(-50%);
-  z-index: 10;
+  z-index: 15;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .spread {
   display: flex;
   width: auto;
-  height: 100%;
+  height: auto;
+  max-height: 100%;
   transform-style: preserve-3d;
   aspect-ratio: 2 / 1.414;
+  position: relative;
 }
 
 .page {
@@ -56,6 +59,9 @@
   background: transparent;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .page-left {
@@ -76,6 +82,13 @@
   backface-visibility: hidden;
 }
 
+/* Mobile: Images should contain rather than cover */
+@media (max-width: 640px) {
+  .page-image {
+    object-fit: contain;
+  }
+}
+
 .cover-page {
   width: 100%;
   height: 100%;
@@ -83,6 +96,12 @@
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+}
+
+.page-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #f9f9f9;
 }
 
 /* Flipping page container */
@@ -306,21 +325,181 @@
 }
 
 /* Responsive adjustments */
+/* Tablet view */
 @media (max-width: 768px) {
+  .flipbook-container {
+    perspective: 1500px;
+    padding: 0 1rem;
+  }
+
   .flipbook {
     width: 95%;
+    max-width: 100%;
+  }
+  
+  .spread {
+    aspect-ratio: auto;
+    width: 100%;
+    max-height: 70vh;
+    position: relative;
+  }
+  
+  /* Adjust spine to match spread height on tablet */
+  .book-spine {
+    height: 100%;
+    top: 0;
+    transform: translateX(-50%);
   }
   
   .nav-button {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
+    background: rgba(0, 0, 0, 0.7);
   }
   
   .nav-button-prev {
-    left: 1rem;
+    left: 0.5rem;
   }
   
   .nav-button-next {
-    right: 1rem;
+    right: 0.5rem;
+  }
+
+  .page-indicator {
+    bottom: 0.5rem;
+    font-size: 12px;
+    padding: 0.4rem 0.8rem;
+  }
+}
+
+/* Mobile view - keep spread layout */
+@media (max-width: 640px) {
+  .flipbook-wrapper {
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
+  .flipbook-container {
+    perspective: 1200px;
+    height: 100vh;
+    width: 100vw;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .flipbook {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Mobile: Calculate optimal size */
+  .spread {
+    aspect-ratio: 2 / 1.414;
+    /* For portrait: prioritize width, but check height constraint */
+    width: min(100vw, calc(90vh * 1.414));
+    height: auto;
+    max-width: 100vw;
+    max-height: 90vh;
+    margin: 0;
+    position: relative;
+  }
+  
+  /* Keep spine visible on mobile */
+  .book-spine {
+    display: block;
+    height: 100%;
+    width: 1px;
+  }
+
+  /* Mobile navigation buttons - positioned at middle sides */
+  .nav-button {
+    width: 44px;
+    height: 44px;
+    background: rgba(0, 0, 0, 0.6);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+  }
+  
+  .nav-button-prev {
+    left: 0.5rem;
+  }
+  
+  .nav-button-next {
+    right: 0.5rem;
+  }
+
+
+  /* Page indicator for mobile */
+  .page-indicator {
+    bottom: 0.25rem;
+    font-size: 11px;
+    padding: 0.3rem 0.6rem;
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  /* Simplified animations for mobile performance */
+  .flipping-page.flip-forward,
+  .flipping-page.flip-back {
+    animation-duration: 0.7s;
+  }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 480px) {
+  .flipbook-container {
+    perspective: 1000px;
+  }
+
+  .spread {
+    height: calc(100vh - 4rem);
+    width: calc(100vw - 0.5rem);
+    max-width: none;
+    max-height: none;
+  }
+
+  .nav-button {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+  
+  .book-spine {
+    width: 1px;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (max-width: 640px) and (orientation: landscape) {
+  .spread {
+    height: calc(100vh - 3rem);
+    width: auto;
+    aspect-ratio: 2 / 1.414;
+  }
+
+  .nav-button {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .nav-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .nav-button:hover {
+    background: rgba(0, 0, 0, 0.7);
   }
 }

@@ -80,3 +80,4 @@ git add .gitignore
 git commit -m "Update gitignore with comprehensive rules for media files"
 git push
 .aider*
+.vercel

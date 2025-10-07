@@ -18,8 +18,8 @@ export interface PageTexture {
 
 export class FlipbookEngine {
   private scene: THREE.Scene;
-  private camera: THREE.PerspectiveCamera;
-  private renderer: THREE.WebGLRenderer;
+  private camera!: THREE.PerspectiveCamera;
+  private renderer!: THREE.WebGLRenderer;
   private container: HTMLElement;
   
   private pages: THREE.Mesh[] = [];
@@ -552,7 +552,12 @@ export class FlipbookEngine {
             });
           }
           // Dispose material (works for both ShaderMaterial and MeshBasicMaterial)
-          page.material.dispose();
+          const material = page.material;
+          if (Array.isArray(material)) {
+            material.forEach(mat => mat.dispose());
+          } else {
+            material.dispose();
+          }
           page.geometry.dispose();
           this.scene.remove(page);
         } catch (error) {

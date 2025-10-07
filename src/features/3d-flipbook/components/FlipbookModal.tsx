@@ -67,21 +67,22 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
         onClose();
       }
     }}>
-      <div className="absolute inset-0 flex items-center justify-center p-4" onClick={(e) => {
+      <div className="absolute inset-0 flex items-center justify-center p-0 md:p-4" onClick={(e) => {
         if (e.target === e.currentTarget) {
           onClose();
         }
       }}>
-        {/* Close Button */}
+        {/* Close Button - Mobile Optimized */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-60 p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+          className="absolute top-1 right-1 md:top-4 md:right-4 z-60 p-1 md:p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all min-w-[40px] min-h-[40px] flex items-center justify-center"
+          aria-label="Close flipbook"
         >
-          <X size={24} />
+          <X size={18} className="md:w-6 md:h-6" />
         </button>
 
-        {/* Title */}
-        <div className="absolute top-4 left-4 z-60">
+        {/* Title - Hidden on mobile to save space */}
+        <div className="hidden md:block absolute top-4 left-4 z-60">
           <h2 className="text-xl font-light text-white/90">Lichtbildnerei | The Social Book</h2>
         </div>
 
@@ -95,10 +96,10 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
           </div>
         )}
 
-        {/* CSS Flipbook Container */}
+        {/* CSS Flipbook Container - Responsive */}
         {imagesLoaded && (
-          <div className="w-full max-w-[90vw] h-[85vh] md:w-[90vw] md:h-[85vh] rounded-lg flex items-center justify-center">
-            <div className="w-full h-full max-h-[80vh] md:max-h-none flex items-center justify-center">
+          <div className="absolute inset-0 md:relative md:w-[90vw] md:h-[85vh] flex items-center justify-center">
+            <div className="w-full h-full flex items-center justify-center">
               <CSSFlipbook
                 images={images}
                 currentPage={currentPage}
@@ -108,8 +109,8 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
           </div>
         )}
 
-        {/* Navigation Hint */}
-        <div className="absolute bottom-4 right-4 text-white/60 text-xs text-right">
+        {/* Navigation Hint - Desktop Only */}
+        <div className="hidden md:block absolute bottom-4 right-4 text-white/60 text-xs text-right">
           <div>Use arrow keys or click to navigate</div>
           <div>Press ESC to close</div>
         </div>

@@ -1,0 +1,47 @@
+# Dependencies
+node_modules
+
+# Testing
+.playwright-mcp
+
+# Media files (too large for Vercel)
+media
+public/images/original
+public/flipbook-images/original
+portfolio-snapshot.png
+public/images/gif.gif
+public/images/worksplaceholderII.jpg
+# Temporarily exclude large images that can be optimized later
+public/images/non-human/5.jpg
+public/images/non-human/7.jpg
+public/images/non-human/8.jpg
+public/images/human/3.jpg
+
+# Development files
+AI
+*.py
+test-brightness.html
+
+# Build outputs
+.next/cache
+
+# IDE
+.vscode
+
+# Git
+.git
+.gitignore
+
+# Misc
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files (will be configured in Vercel dashboard)
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

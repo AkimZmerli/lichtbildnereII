@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import './flipbook-blur.css';
 
@@ -21,9 +21,12 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
   const [flippingPageImage, setFlippingPageImage] = useState<string | null>(null);
   const [isBackFace, setIsBackFace] = useState(false);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const flipbookRef = useRef<HTMLDivElement>(null);
   
   // Create spreads (pairs of pages)
-  const spreads = [];
+  const spreads: Array<{ left: string; right: string | null }> = [];
   for (let i = 0; i < images.length; i += 2) {
     spreads.push({
       left: images[i],
@@ -32,6 +35,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
   }
   
   const currentSpread = Math.floor(currentPage / 2);
+  
   
   // Sync display spread with current spread when not flipping
   useEffect(() => {
@@ -57,6 +61,33 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
       img.src = images[index];
     });
   }, [currentPage, images, loadedImages]);
+  
+  // Touch event handlers for swipe navigation
+  const minSwipeDistance = 50;
+  
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+  
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+  
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    
+    if (isLeftSwipe) {
+      goToNextSpread();
+    }
+    if (isRightSwipe) {
+      goToPrevSpread();
+    }
+  };
   
   const goToNextSpread = () => {
     if (!isFlipping && currentSpread < spreads.length - 1) {
@@ -112,38 +143,36 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
     }
   };
   
+  // Render spreads for all screen sizes
   return (
     <div className="flipbook-wrapper">
       <div className="flipbook-container">
-        <div className="flipbook">
-          {/* Book spine */}
-          <div className="book-spine"></div>
-          
-          {/* Current spread */}
+        <div 
+          ref={flipbookRef}
+          className="flipbook"
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
+          {/* Current spread with spine */}
           <div className="spread">
+            {/* Book spine - positioned in the center of spread */}
+            <div className="book-spine"></div>
+            
             {/* Left page (x position) - stays as current left during forward flip, shows previous left during back flip */}
             <div className="page page-left">
               {(() => {
                 // Forward flip: keep showing x (current left)
                 // Back flip: show v (previous left) underneath
                 const leftSpread = isFlipping && flipDirection === 'back' ? displaySpread : currentSpread;
-                if (leftSpread === 0) {
-                  return (
-                    <div className="cover-page">
-                      <img 
-                        src={spreads[0].left} 
-                        alt="Cover"
-                        className="page-image"
-                      />
-                    </div>
-                  );
-                }
-                return spreads[leftSpread]?.left && (
+                return spreads[leftSpread]?.left ? (
                   <img 
                     src={spreads[leftSpread].left} 
                     alt={`Page ${leftSpread * 2 + 1}`}
                     className="page-image"
                   />
+                ) : (
+                  <div className="page-placeholder" />
                 );
               })()}
             </div>
@@ -163,49 +192,49 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
                 );
               })()}
             </div>
+            
+            {/* Flipping page for forward animation */}
+            {isFlipping && flipDirection === 'forward' && flippingPageImage && (
+              <div className="flipping-page-container">
+                <div className="flipping-page flip-forward">
+                  {/* Single image that swaps at 50% */}
+                  <img 
+                    src={flippingPageImage}
+                    alt="Flipping page"
+                    className="page-image"
+                    style={{ 
+                      width: '100%', 
+                      height: '100%', 
+                      objectFit: 'contain',
+                      transform: isBackFace ? 'scaleX(-1)' : 'none'
+                    }}
+                  />
+                </div>
+                <div className="page-shadow-overlay"></div>
+              </div>
+            )}
+            
+            {/* Flipping page for back animation */}
+            {isFlipping && flipDirection === 'back' && flippingPageImage && (
+              <div className="flipping-page-container flipping-page-container-back">
+                <div className="flipping-page flipping-page-back flip-back">
+                  {/* Single image that swaps at 50% */}
+                  <img 
+                    src={flippingPageImage}
+                    alt="Flipping page"
+                    className="page-image"
+                    style={{ 
+                      width: '100%', 
+                      height: '100%', 
+                      objectFit: 'contain',
+                      transform: isBackFace ? 'scaleX(-1)' : 'none'
+                    }}
+                  />
+                </div>
+                <div className="page-shadow-overlay"></div>
+              </div>
+            )}
           </div>
-          
-          {/* Flipping page for forward animation */}
-          {isFlipping && flipDirection === 'forward' && flippingPageImage && (
-            <div className="flipping-page-container">
-              <div className="flipping-page flip-forward">
-                {/* Single image that swaps at 50% */}
-                <img 
-                  src={flippingPageImage}
-                  alt="Flipping page"
-                  className="page-image"
-                  style={{ 
-                    width: '100%', 
-                    height: '100%', 
-                    objectFit: 'contain',
-                    transform: isBackFace ? 'scaleX(-1)' : 'none'
-                  }}
-                />
-              </div>
-              <div className="page-shadow-overlay"></div>
-            </div>
-          )}
-          
-          {/* Flipping page for back animation */}
-          {isFlipping && flipDirection === 'back' && flippingPageImage && (
-            <div className="flipping-page-container flipping-page-container-back">
-              <div className="flipping-page flipping-page-back flip-back">
-                {/* Single image that swaps at 50% */}
-                <img 
-                  src={flippingPageImage}
-                  alt="Flipping page"
-                  className="page-image"
-                  style={{ 
-                    width: '100%', 
-                    height: '100%', 
-                    objectFit: 'contain',
-                    transform: isBackFace ? 'scaleX(-1)' : 'none'
-                  }}
-                />
-              </div>
-              <div className="page-shadow-overlay"></div>
-            </div>
-          )}
         </div>
         
         {/* Navigation Controls */}
@@ -226,9 +255,9 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
         </button>
       </div>
       
-      {/* Page indicator - now outside container */}
+      {/* Page indicator */}
       <div className="page-indicator">
-        Page {currentSpread + 1} / {Math.ceil(images.length / 2)}
+        Spread {currentSpread + 1} / {Math.ceil(images.length / 2)}
       </div>
     </div>
   );
