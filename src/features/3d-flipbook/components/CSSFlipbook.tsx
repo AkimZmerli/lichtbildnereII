@@ -23,7 +23,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
   const [isBackFace, setIsBackFace] = useState(false);
   
   // Create spreads (pairs of pages)
-  const spreads = [];
+  const spreads: Array<{ left: string; right: string | null }> = [];
   for (let i = 0; i < images.length; i += 2) {
     spreads.push({
       left: images[i],
