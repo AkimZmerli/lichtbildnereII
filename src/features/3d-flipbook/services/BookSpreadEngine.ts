@@ -398,7 +398,12 @@ export class BookSpreadEngine {
       // Clean up pages
       this.spreads.forEach(spread => {
         spread.forEach(page => {
-          page.mesh.material.dispose();
+          const material = page.mesh.material;
+          if (Array.isArray(material)) {
+            material.forEach(mat => mat.dispose());
+          } else {
+            material.dispose();
+          }
           page.mesh.geometry.dispose();
           this.bookGroup.remove(page.mesh);
         });
