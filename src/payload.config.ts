@@ -61,7 +61,7 @@ export default buildConfig({
       port: Number(process.env.POSTGRES_PORT),
       database: process.env.POSTGRES_DB,
       user: process.env.POSTGRES_USER,
-      password: process.env.POSTGRESS_PASSWORD,
+      password: process.env.POSTGRES_PASSWORD,
     },
   }),
   sharp,
