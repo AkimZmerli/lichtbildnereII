@@ -17,9 +17,9 @@ export interface PageTexture {
 }
 
 export class FlipbookEngine {
-  private scene: THREE.Scene;
-  private camera: THREE.PerspectiveCamera;
-  private renderer: THREE.WebGLRenderer;
+  private scene!: THREE.Scene;
+  private camera!: THREE.PerspectiveCamera;
+  private renderer!: THREE.WebGLRenderer;
   private container: HTMLElement;
   
   private pages: THREE.Mesh[] = [];
