@@ -53,13 +53,19 @@ const fetchPayloadGalleryItems = async (
 
 // Main function to get gallery images based on environment
 export const getGalleryImages = async (type: 'human' | 'non-human'): Promise<GalleryImage[]> => {
-  // Use test data in development or when explicitly set
-  if (process.env.NEXT_PUBLIC_USE_TEST_DATA === 'true' || process.env.NODE_ENV === 'development') {
-    return type === 'human' ? testHumanImages : testNonHumanImages
+  // In production, ALWAYS fetch from Payload CMS
+  if (process.env.NODE_ENV === 'production') {
+    const images = await fetchPayloadGalleryItems(type)
+    // Fallback to test data if no images in CMS yet
+    if (images.length === 0) {
+      console.log('No images in CMS yet, using test data as fallback')
+      return type === 'human' ? testHumanImages : testNonHumanImages
+    }
+    return images
   }
 
-  // Use Payload CMS data in production
-  return fetchPayloadGalleryItems(type)
+  // In development, use test data for faster development
+  return type === 'human' ? testHumanImages : testNonHumanImages
 }
 
 // Helper function to check if we're using test data

@@ -36,16 +36,13 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
     }
   }, [isOpen, images, imagesLoaded]);
 
-  // Handle ESC key and arrow navigation
+  // Handle ESC key only - arrow navigation is handled by CSSFlipbook
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         onClose();
-      } else if (event.key === 'ArrowRight') {
-        setCurrentPage(prev => Math.min(prev + 2, images.length - 1));
-      } else if (event.key === 'ArrowLeft') {
-        setCurrentPage(prev => Math.max(prev - 2, 0));
       }
+      // Arrow key navigation is handled by CSSFlipbook component
     };
 
     if (isOpen) {
@@ -62,7 +59,7 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm" onClick={(e) => {
+    <div className="fixed inset-0 z-50 bg-grainy backdrop-blur-sm" onClick={(e) => {
       if (e.target === e.currentTarget) {
         onClose();
       }
@@ -97,8 +94,8 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
 
         {/* CSS Flipbook Container */}
         {imagesLoaded && (
-          <div className="w-full max-w-[90vw] h-[85vh] md:w-[90vw] md:h-[85vh] rounded-lg flex items-center justify-center">
-            <div className="w-full h-full max-h-[80vh] md:max-h-none flex items-center justify-center">
+          <div className="w-full h-[85vh] md:max-w-[90vw] md:h-[85vh] rounded-lg flex items-center justify-center">
+            <div className="w-full h-full flex items-center justify-center">
               <CSSFlipbook
                 images={images}
                 currentPage={currentPage}
@@ -108,8 +105,8 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
           </div>
         )}
 
-        {/* Navigation Hint */}
-        <div className="absolute bottom-4 right-4 text-white/60 text-xs text-right">
+        {/* Navigation Hint - Desktop only */}
+        <div className="hidden md:block absolute bottom-4 right-4 text-white/60 text-xs text-right">
           <div>Use arrow keys or click to navigate</div>
           <div>Press ESC to close</div>
         </div>
