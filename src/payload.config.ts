@@ -72,45 +72,16 @@ export default buildConfig({
   sharp,
   plugins: [
     payloadCloudPlugin(),
-    // Storage adapter - automatically switches between Vercel Blob and S3
-    ...((() => {
-      // Use S3 if configured (for when you exceed 1GB)
-      if (process.env.S3_BUCKET && process.env.S3_ACCESS_KEY_ID) {
-        console.log('Using S3 storage')
-        return [
-          s3Storage({
-            collections: {
-              media: {
-                prefix: 'media',
-              },
-            },
-            bucket: process.env.S3_BUCKET,
-            config: {
-              credentials: {
-                accessKeyId: process.env.S3_ACCESS_KEY_ID,
-                secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
-              },
-              region: process.env.S3_REGION || 'auto',
-              endpoint: process.env.S3_ENDPOINT,
-            },
-          }),
-        ]
-      }
-      // Otherwise use Vercel Blob (default for now)
-      if (process.env.BLOB_READ_WRITE_TOKEN) {
-        console.log('Using Vercel Blob storage')
-        return [
-          vercelBlobStorage({
-            collections: {
-              media: true,
-            },
-            token: process.env.BLOB_READ_WRITE_TOKEN,
-          }),
-        ]
-      }
-      // No storage configured (local development)
-      console.log('No cloud storage configured - using local files')
-      return []
-    })()),
+    // Storage adapter - only enable in production when configured
+    ...(process.env.NODE_ENV === 'production' && process.env.BLOB_READ_WRITE_TOKEN ? [
+      vercelBlobStorage({
+        collections: {
+          media: {
+            prefix: 'media', // Keep prefix to match existing schema
+          },
+        },
+        token: process.env.BLOB_READ_WRITE_TOKEN,
+      }),
+    ] : []),
   ],
 })

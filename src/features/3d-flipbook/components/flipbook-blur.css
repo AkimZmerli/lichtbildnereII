@@ -32,13 +32,14 @@
 .book-spine {
   position: absolute;
   left: 50%;
-  top: 0;
-  bottom: 0;
+  top: 50%;
   width: 2px;
+  height: 100%;
   background: linear-gradient(to right, #666, #999, #666);
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   z-index: 10;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  max-height: min(100%, calc(90vw / 1.414));
 }
 
 .spread {
@@ -46,7 +47,6 @@
   width: auto;
   height: 100%;
   transform-style: preserve-3d;
-  aspect-ratio: 2 / 1.414;
 }
 
 .page {
@@ -54,7 +54,7 @@
   height: 100%;
   position: relative;
   background: transparent;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  box-shadow: none;
   overflow: hidden;
 }
 
@@ -69,7 +69,7 @@
 .page-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
   image-rendering: optimizeQuality;
   -webkit-backface-visibility: hidden;
@@ -307,20 +307,49 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .flipbook {
-    width: 95%;
+  .flipbook-container {
+    height: calc(100% - 100px); /* More space for bottom navigation */
   }
   
+  .flipbook {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 5px;
+  }
+  
+  .spread {
+    aspect-ratio: unset;
+    width: 100%;
+  }
+  
+  .page {
+    width: 50%;
+  }
+  
+  /* Move navigation buttons to bottom */
   .nav-button {
-    width: 40px;
-    height: 40px;
+    position: fixed;
+    bottom: 20px;
+    top: auto;
+    width: 45px;
+    height: 45px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
   }
   
   .nav-button-prev {
-    left: 1rem;
+    left: 20px;
+    transform: none;
   }
   
   .nav-button-next {
-    right: 1rem;
+    right: 20px;
+    transform: none;
+  }
+  
+  .page-indicator {
+    bottom: 75px;
+    font-size: 14px;
+    padding: 6px 12px;
   }
 }
