@@ -1,7 +1,8 @@
 export async function getHeroImage() {
   try {
+    // Fetch all hero images sorted by creation date (latest first)
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/hero-image/2?depth=1&draft=false`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/hero-image?depth=1&draft=false&sort=-createdAt&limit=1`,
       {
         next: { revalidate: 10 },
         cache: 'no-store',
@@ -15,8 +16,11 @@ export async function getHeroImage() {
       return null
     }
 
-    const data = await res.json()
-    // console.log('API Response data:', JSON.stringify(data, null, 2))
+    const response = await res.json()
+    // console.log('API Response data:', JSON.stringify(response, null, 2))
+    
+    // Extract the first (latest) hero image from the docs array
+    const data = response?.docs?.[0] || null
 
     // Log the specific image URLs we're trying to use (disabled)
     // if (data) {
