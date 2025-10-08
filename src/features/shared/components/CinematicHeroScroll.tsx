@@ -23,6 +23,7 @@ export default function CinematicHeroScroll({
 }: CinematicHeroScrollProps) {
   const [imageLoaded, setImageLoaded] = useState(false)
   const [isReady, setIsReady] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const heroRef = useRef<HTMLDivElement>(null)
 
@@ -32,6 +33,17 @@ export default function CinematicHeroScroll({
   // Reset scroll position on mount to ensure animation starts from beginning
   useEffect(() => {
     window.scrollTo(0, 0)
+  }, [])
+
+  // Check if mobile on mount and window resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768) // Using Tailwind's md breakpoint
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
   // Scroll progress tracking
@@ -177,7 +189,9 @@ export default function CinematicHeroScroll({
               width: useTransform(
                 smoothProgress,
                 [0, 0.1, 0.25, 0.4, 0.5, 1],
-                ['25vw', '20vw', '12.5vw', '5vw', '0vw', '0vw'],
+                isMobile 
+                  ? ['30vw', '25vw', '17.5vw', '10vw', '0vw', '0vw'] // Mobile: shifted right by 25% less
+                  : ['25vw', '20vw', '12.5vw', '5vw', '0vw', '0vw'], // Desktop: original values
               ),
             }}
           />
@@ -189,7 +203,9 @@ export default function CinematicHeroScroll({
               width: useTransform(
                 smoothProgress,
                 [0, 0.1, 0.25, 0.4, 0.5, 1],
-                ['25vw', '20vw', '12.5vw', '5vw', '0vw', '0vw'],
+                isMobile
+                  ? ['20vw', '15vw', '7.5vw', '2.5vw', '0vw', '0vw'] // Mobile: adjusted
+                  : ['25vw', '20vw', '12.5vw', '5vw', '0vw', '0vw'], // Desktop: original values
               ),
             }}
           />
@@ -205,9 +221,17 @@ export default function CinematicHeroScroll({
                 [0, 0.15, 0.3, 0.5, 1],
                 ['35vh', '27.5vh', '12.5vh', '0vh', '0vh'], // Moves up to top as it expands
               ),
-              left: 0,
-              right: 0,
-              margin: '0 auto',
+              ...(isMobile 
+                ? {
+                    left: '55%', // Align shadow with shifted mobile window
+                    transform: 'translateX(-50%)',
+                  }
+                : {
+                    left: 0,
+                    right: 0,
+                    margin: '0 auto', // Center for desktop
+                  }
+              ),
               boxShadow: '0 0 60px 20px rgba(0, 0, 0, 0.7), inset 0 0 40px rgba(0, 0, 0, 0.5)',
             }}
           >
