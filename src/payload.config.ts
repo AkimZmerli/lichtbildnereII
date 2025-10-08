@@ -2,6 +2,8 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+import { s3Storage } from '@payloadcms/storage-s3'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -62,14 +64,53 @@ export default buildConfig({
       database: process.env.POSTGRES_DB,
       user: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
-      ssl: {
+      ssl: process.env.NODE_ENV === 'production' ? {
         rejectUnauthorized: false,
-      },
+      } : false,
     },
   }),
   sharp,
   plugins: [
     payloadCloudPlugin(),
-    // storage-adapter-placeholder
+    // Storage adapter - automatically switches between Vercel Blob and S3
+    ...((() => {
+      // Use S3 if configured (for when you exceed 1GB)
+      if (process.env.S3_BUCKET && process.env.S3_ACCESS_KEY_ID) {
+        console.log('Using S3 storage')
+        return [
+          s3Storage({
+            collections: {
+              media: {
+                prefix: 'media',
+              },
+            },
+            bucket: process.env.S3_BUCKET,
+            config: {
+              credentials: {
+                accessKeyId: process.env.S3_ACCESS_KEY_ID,
+                secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+              },
+              region: process.env.S3_REGION || 'auto',
+              endpoint: process.env.S3_ENDPOINT,
+            },
+          }),
+        ]
+      }
+      // Otherwise use Vercel Blob (default for now)
+      if (process.env.BLOB_READ_WRITE_TOKEN) {
+        console.log('Using Vercel Blob storage')
+        return [
+          vercelBlobStorage({
+            collections: {
+              media: true,
+            },
+            token: process.env.BLOB_READ_WRITE_TOKEN,
+          }),
+        ]
+      }
+      // No storage configured (local development)
+      console.log('No cloud storage configured - using local files')
+      return []
+    })()),
   ],
 })

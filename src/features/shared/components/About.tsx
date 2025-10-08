@@ -8,15 +8,28 @@ export default function About() {
         {/* ABOUT HEADING */}
         <h2 className="uppercase tracking-widest mb-12 text-2xl text-center">A B O U T</h2>
 
-        {/* PROFILE IMAGE */}
+        {/* PROFILE IMAGE/VIDEO */}
         <div className="mb-8 md:mb-12">
-          <Image
-            src="/images/gif.gif"
-            alt="Profile"
-            width={800}
-            height={400}
+          {/* Use video for better performance - acts exactly like a GIF */}
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
             className="w-full object-cover"
-          />
+            poster="/images/gif-poster.jpg" // Optional: first frame as placeholder
+          >
+            <source src="/images/animation.mp4" type="video/mp4" />
+            <source src="/images/animation.webm" type="video/webm" />
+            {/* Fallback to original GIF if needed */}
+            <Image
+              src="/images/gif.gif"
+              alt="Profile"
+              width={800}
+              height={400}
+              className="w-full object-cover"
+            />
+          </video>
         </div>
 
         {/* TEXT BLOCKS - Responsive Grid */}
