@@ -22,24 +22,37 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
   const [flippingPageImage, setFlippingPageImage] = useState<string | null>(null);
   const [isBackFace, setIsBackFace] = useState(false);
   
-  // Create spreads - first page is cover (displayed alone), then pairs
-  const spreads: Array<{ left: string | null; right: string | null; isCover?: boolean }> = [];
+  // Create spreads - first page is front cover (single), middle pages are pairs, last is back cover (single)
+  const spreads: Array<{ left: string | null; right: string | null; isCover?: boolean; isBack?: boolean }> = [];
   
-  // First spread is the cover - only shows page 1 (full spread image)
+  // First spread is the front cover - single page
   if (images.length > 0) {
     spreads.push({
-      left: images[0],  // Cover image (full spread)
-      right: null,      // No right page for cover
-      isCover: true
+      left: null,           // No left page for front cover
+      right: images[0],     // Front cover on right side
+      isCover: true,
+      isBack: false
     });
   }
   
-  // Rest of the pages are paired (2-3, 4-5, 6-7, etc.)
-  for (let i = 1; i < images.length; i += 2) {
+  // Middle pages are paired (1-2, 3-4, 5-6, etc.)
+  // Skip first and last images (covers)
+  for (let i = 1; i < images.length - 1; i += 2) {
     spreads.push({
       left: images[i] || null,
       right: images[i + 1] || null,
-      isCover: false
+      isCover: false,
+      isBack: false
+    });
+  }
+  
+  // Last spread is the back cover - single page
+  if (images.length > 1) {
+    spreads.push({
+      left: images[images.length - 1],  // Back cover on left side
+      right: null,                      // No right page for back cover
+      isCover: false,
+      isBack: true
     });
   }
   
@@ -77,19 +90,17 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
       setDisplaySpread(currentSpread + 1);
       setIsBackFace(false);
       
-      // For cover page, flip the right half of the cover image
-      if (currentSpread === 0) {
-        // Create a temporary image that shows the right half of the cover
-        setFlippingPageImage(spreads[0].left); // Use the cover image
-      } else {
-        // Normal page flip
-        setFlippingPageImage(spreads[currentSpread].right);
-      }
+      // Set the flipping page image
+      setFlippingPageImage(spreads[currentSpread].right);
       
-      // Swap to back face image (r) earlier to prevent glitch
+      // Swap to back face image earlier to prevent glitch
       setTimeout(() => {
-        setFlippingPageImage(spreads[currentSpread + 1]?.left || null);
-        setIsBackFace(true);
+        const nextSpread = spreads[currentSpread + 1];
+        if (nextSpread) {
+          // If next spread is back cover, show it on the left
+          setFlippingPageImage(nextSpread.left || nextSpread.right);
+          setIsBackFace(true);
+        }
       }, 380); // Earlier than halfway for smoother transition
       
       // Update page state AFTER the flip animation completes
@@ -115,13 +126,12 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
       
       // Swap to back face image earlier to prevent glitch
       setTimeout(() => {
-        // If flipping back to cover, show right half of cover
-        if (currentSpread === 1) {
-          setFlippingPageImage(spreads[0].left); // Cover image
-        } else {
-          setFlippingPageImage(spreads[currentSpread - 1]?.right || null);
+        const prevSpread = spreads[currentSpread - 1];
+        if (prevSpread) {
+          // If flipping back to front cover, show it on the right
+          setFlippingPageImage(prevSpread.right || prevSpread.left);
+          setIsBackFace(true);
         }
-        setIsBackFace(true);
       }, 380); // Earlier than halfway for smoother transition
       
       // Update page state AFTER the flip animation completes
@@ -135,21 +145,29 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
     }
   }, [currentSpread, isFlipping, spreads, onPageChange]);
   
-  // Keyboard navigation
+  // Keyboard navigation - instant page change without animation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isFlipping) return; // Don't allow during animation
       
       if (e.key === 'ArrowRight') {
-        goToNextSpread();
+        // Instant forward navigation
+        if (currentSpread < spreads.length - 1) {
+          setDisplaySpread(currentSpread + 1);
+          onPageChange((currentSpread + 1) * 2);
+        }
       } else if (e.key === 'ArrowLeft') {
-        goToPrevSpread();
+        // Instant backward navigation
+        if (currentSpread > 0) {
+          setDisplaySpread(currentSpread - 1);
+          onPageChange((currentSpread - 1) * 2);
+        }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [goToNextSpread, goToPrevSpread, isFlipping]);
+  }, [currentSpread, spreads.length, onPageChange, isFlipping]);
   
   return (
     <div className="flipbook-wrapper">
@@ -159,141 +177,148 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
           <div className="spread">
             {/* Book spine - moved inside spread */}
             <div className="book-spine"></div>
-            {/* Determine if we should show the cover */}
-            {currentSpread === 0 ? (
-              // Cover page - spans both pages when on spread 0
-              <>
-                <div className="page page-left" style={{ overflow: 'hidden' }}>
-                  <img 
-                    src={spreads[0].left} 
-                    alt="Cover"
-                    className="page-image"
-                    style={{ 
-                      width: '200%',
-                      maxWidth: '200%',
-                      objectFit: 'contain',
-                      objectPosition: 'left'
-                    }}
-                  />
-                </div>
-                <div className="page page-right" style={{ overflow: 'hidden' }}>
-                  {/* Right side of cover - only show when not flipping forward from cover */}
-                  {!(isFlipping && flipDirection === 'forward') && (
-                    <img 
-                      src={spreads[0].left} 
-                      alt="Cover"
-                      className="page-image"
-                      style={{ 
-                        width: '200%',
-                        maxWidth: '200%',
-                        objectFit: 'contain',
-                        objectPosition: 'right',
-                        transform: 'translateX(-50%)'
-                      }}
-                    />
-                  )}
-                  {/* Show next right page underneath when flipping forward from cover */}
-                  {isFlipping && flipDirection === 'forward' && spreads[1]?.right && (
-                    <img 
-                      src={spreads[1].right} 
-                      alt={`Page 3`}
-                      className="page-image"
-                    />
-                  )}
-                </div>
-              </>
-            ) : (
-              // Regular spreads
-              <>
-                {/* Left page */}
-                <div className="page page-left" style={{ overflow: 'hidden' }}>
-                  {(() => {
-                    // When flipping back to cover, show left half of cover properly
-                    if (currentSpread === 1 && isFlipping && flipDirection === 'back') {
-                      return (
+            {/* Render pages based on current spread */}
+            {(() => {
+              const spread = spreads[currentSpread];
+              const nextSpread = spreads[currentSpread + 1];
+              const prevSpread = spreads[currentSpread - 1];
+              
+              if (spread?.isCover) {
+                // Front cover - single page on right
+                return (
+                  <>
+                    <div className="page page-left">
+                      {/* Empty left page for front cover */}
+                    </div>
+                    <div className="page page-right">
+                      {!(isFlipping && flipDirection === 'forward') && spread.right && (
                         <img 
-                          src={spreads[0].left}  // Cover image
-                          alt="Cover"
+                          src={spread.right} 
+                          alt="Front Cover"
+                          className="page-image page-cover-image"
+                        />
+                      )}
+                      {/* Show next right page underneath when flipping forward from cover */}
+                      {isFlipping && flipDirection === 'forward' && nextSpread?.right && (
+                        <img 
+                          src={nextSpread.right} 
+                          alt="Next Page"
                           className="page-image"
-                          style={{ 
-                            width: '200%',
-                            maxWidth: '200%',
+                          style={{
+                            width: '100%',
+                            height: '100%',
                             objectFit: 'contain',
-                            objectPosition: 'left'
+                            objectPosition: 'center'
                           }}
                         />
-                      );
-                    }
-                    const leftSpread = isFlipping && flipDirection === 'back' ? displaySpread : currentSpread;
-                    return spreads[leftSpread]?.left && (
-                      <img 
-                        src={spreads[leftSpread].left} 
-                        alt={`Page ${leftSpread === 0 ? 1 : leftSpread * 2}`}
-                        className="page-image"
-                      />
-                    );
-                  })()}
-                </div>
-                
-                {/* Right page */}
-                <div className="page page-right">
-                  {(() => {
-                    // Don't change right page when flipping back to cover
-                    if (currentSpread === 1 && isFlipping && flipDirection === 'back') {
-                      // Keep showing page 3 until flip completes
-                      return spreads[1]?.right && (
+                      )}
+                    </div>
+                  </>
+                );
+              } else if (spread?.isBack) {
+                // Back cover - single page on left
+                return (
+                  <>
+                    <div className="page page-left">
+                      {!(isFlipping && flipDirection === 'back') && spread.left && (
                         <img 
-                          src={spreads[1].right} 
-                          alt={`Page 3`}
-                          className="page-image"
+                          src={spread.left} 
+                          alt="Back Cover"
+                          className="page-image page-cover-image"
                         />
-                      );
-                    }
-                    const rightSpread = isFlipping && flipDirection === 'forward' ? displaySpread : currentSpread;
-                    return spreads[rightSpread]?.right && (
-                      <img 
-                        src={spreads[rightSpread].right} 
-                        alt={`Page ${rightSpread * 2 + 1}`}
-                        className="page-image"
-                      />
-                    );
-                  })()}
-                </div>
-              </>
-            )}
+                      )}
+                      {/* Show previous left page underneath when flipping back from back cover */}
+                      {isFlipping && flipDirection === 'back' && prevSpread?.left && (
+                        <img 
+                          src={prevSpread.left} 
+                          alt="Previous Page"
+                          className="page-image"
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'contain',
+                            objectPosition: 'center'
+                          }}
+                        />
+                      )}
+                    </div>
+                    <div className="page page-right">
+                      {/* Empty right page for back cover */}
+                    </div>
+                  </>
+                );
+              } else {
+                // Regular double-page spreads
+                return (
+                  <>
+                    {/* Left page */}
+                    <div className="page page-left">
+                      {(() => {
+                        // Handle animation states for left page
+                        if (isFlipping && flipDirection === 'back') {
+                          // When flipping back, show the previous spread's left page
+                          return spreads[displaySpread]?.left && (
+                            <img 
+                              src={spreads[displaySpread].left} 
+                              alt="Left Page"
+                              className="page-image"
+                            />
+                          );
+                        }
+                        return spread?.left && (
+                          <img 
+                            src={spread.left} 
+                            alt="Left Page"
+                            className="page-image"
+                          />
+                        );
+                      })()}
+                    </div>
+                    
+                    {/* Right page */}
+                    <div className="page page-right">
+                      {(() => {
+                        // Handle animation states for right page
+                        if (isFlipping && flipDirection === 'forward') {
+                          // When flipping forward, show the next spread's right page
+                          return spreads[displaySpread]?.right && (
+                            <img 
+                              src={spreads[displaySpread].right} 
+                              alt="Right Page"
+                              className="page-image"
+                            />
+                          );
+                        }
+                        return spread?.right && (
+                          <img 
+                            src={spread.right} 
+                            alt="Right Page"
+                            className="page-image"
+                          />
+                        );
+                      })()}
+                    </div>
+                  </>
+                );
+              }
+            })()}
           </div>
           
           {/* Flipping page for forward animation */}
           {isFlipping && flipDirection === 'forward' && flippingPageImage && (
             <div className="flipping-page-container">
-              <div className="flipping-page flip-forward" style={{ overflow: 'hidden' }}>
-                {/* For cover flip, show right half of cover image */}
-                {currentSpread === 0 && !isBackFace ? (
-                  <img 
-                    src={flippingPageImage}
-                    alt="Flipping page"
-                    className="page-image"
-                    style={{ 
-                      width: '200%',
-                      maxWidth: '200%',
-                      objectFit: 'contain',
-                      objectPosition: 'right',
-                      transform: 'translateX(-50%)'
-                    }}
-                  />
-                ) : (
-                  <img 
-                    src={flippingPageImage}
-                    alt="Flipping page"
-                    className="page-image"
-                    style={{ 
-                      width: '100%', 
-                      height: '100%', 
-                      objectFit: 'contain',
-                      transform: isBackFace ? 'scaleX(-1)' : 'none'
-                    }}
-                  />
-                )}
+              <div className="flipping-page flip-forward">
+                <img 
+                  src={flippingPageImage}
+                  alt="Flipping page"
+                  className="page-image"
+                  style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    objectFit: 'contain',
+                    transform: isBackFace ? 'scaleX(-1)' : 'none'
+                  }}
+                />
               </div>
               <div className="page-shadow-overlay"></div>
             </div>
@@ -302,35 +327,18 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
           {/* Flipping page for back animation */}
           {isFlipping && flipDirection === 'back' && flippingPageImage && (
             <div className="flipping-page-container flipping-page-container-back">
-              <div className="flipping-page flipping-page-back flip-back" style={{ overflow: 'hidden' }}>
-                {/* For flipping back to cover, handle the cover image properly */}
-                {currentSpread === 1 && isBackFace ? (
-                  // Back face when flipping to cover - show RIGHT half of cover
-                  <img 
-                    src={flippingPageImage}
-                    alt="Flipping page"
-                    className="page-image"
-                    style={{ 
-                      width: '200%',
-                      maxWidth: '200%',
-                      objectFit: 'contain',
-                      objectPosition: 'left',
-                      transform: 'scaleX(-1)'
-                    }}
-                  />
-                ) : (
-                  <img 
-                    src={flippingPageImage}
-                    alt="Flipping page"
-                    className="page-image"
-                    style={{ 
-                      width: '100%', 
-                      height: '100%', 
-                      objectFit: 'contain',
-                      transform: isBackFace ? 'scaleX(-1)' : 'none'
-                    }}
-                  />
-                )}
+              <div className="flipping-page flipping-page-back flip-back">
+                <img 
+                  src={flippingPageImage}
+                  alt="Flipping page"
+                  className="page-image"
+                  style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    objectFit: 'contain',
+                    transform: isBackFace ? 'scaleX(-1)' : 'none'
+                  }}
+                />
               </div>
               <div className="page-shadow-overlay"></div>
             </div>
@@ -357,7 +365,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
       
       {/* Page indicator - now outside container */}
       <div className="page-indicator">
-        Page {currentSpread + 1} / {Math.ceil(images.length / 2)}
+        Page {currentSpread + 1} / {spreads.length}
       </div>
     </div>
   );
