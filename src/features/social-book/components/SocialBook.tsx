@@ -18,7 +18,7 @@ export default function SocialBook() {
 
   return (
     <section ref={sectionRef}>
-      <div className="text-center bg-white-rose/90 text-hot-rose px-4 py-40">
+      <div className="text-center bg-white-rose text-hot-rose px-4 py-40">
         <h2 className="uppercase mb-15 text-base text-hot-pink text-[2rem] flex flex-col items-center">
           <span className="tracking-[0.5em]">THE SOCIAL</span>
           <span className="tracking-[0.5em] mt-2">BOOK</span>

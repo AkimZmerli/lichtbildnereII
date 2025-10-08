@@ -14,7 +14,7 @@ interface FlipbookModalProps {
 export const FlipbookModal: React.FC<FlipbookModalProps> = ({
   isOpen,
   onClose,
-  images = Array.from({length: 63}, (_, i) => `/flipbook-images/${i + 1}.png`)
+  images = Array.from({length: 64}, (_, i) => `/flipbook-images/${i + 1}.png`)
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [imagesLoaded, setImagesLoaded] = useState(false);
