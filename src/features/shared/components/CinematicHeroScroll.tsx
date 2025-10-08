@@ -26,6 +26,9 @@ export default function CinematicHeroScroll({
   const containerRef = useRef<HTMLDivElement>(null)
   const heroRef = useRef<HTMLDivElement>(null)
 
+  // Debug props (disabled)
+  // console.log('CinematicHeroScroll received imageUrl:', imageUrl)
+
   // Reset scroll position on mount to ensure animation starts from beginning
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -134,8 +137,9 @@ export default function CinematicHeroScroll({
               className="object-contain"
               sizes="100vw"
               onLoad={() => setImageLoaded(true)}
-              onError={() => {
-                console.error('Hero image failed to load')
+              onError={(e) => {
+                console.error('Hero image failed to load:', imageUrl)
+                console.error('Error details:', e)
                 setImageLoaded(true)
               }}
             />

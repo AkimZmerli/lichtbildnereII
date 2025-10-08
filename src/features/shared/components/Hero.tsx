@@ -11,17 +11,27 @@ interface HeroImage {
 
 export default async function Hero() {
   const heroImage = (await getHeroImage()) as HeroImage
-  console.log('Hero component received:', heroImage)
+  // console.log('Hero component received:', heroImage)
 
+  // Check if we have hero images from Payload
   if (!heroImage?.mobileImage?.url || !heroImage?.desktopImage?.url) {
+    // Use placeholder if no images in database
+    const mobileUrl = '/images/placeholderSocial.png'
+    const desktopUrl = '/images/placeholderSocial.png'
     return (
-      <div className="relative w-full h-[50vh] md:h-[70vh] bg-gray-200 flex items-center justify-center">
-        <p>No hero image found</p>
-      </div>
+      <ClientHero
+        mobileUrl={mobileUrl}
+        desktopUrl={desktopUrl}
+        altText="Hero image"
+      />
     )
   }
-  const mobileUrl = '/images/worksplaceholderI.jpg'
-
+  
+  // Use Payload images - they should be served from /api/media/[id]
+  const mobileUrl = heroImage.mobileImage.url.startsWith('/')
+    ? `${process.env.NEXT_PUBLIC_SERVER_URL}${heroImage.mobileImage.url}`
+    : heroImage.mobileImage.url
+  
   const desktopUrl = heroImage.desktopImage.url.startsWith('/')
     ? `${process.env.NEXT_PUBLIC_SERVER_URL}${heroImage.desktopImage.url}`
     : heroImage.desktopImage.url
