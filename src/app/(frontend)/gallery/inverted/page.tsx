@@ -7,7 +7,7 @@ import MobileGallery from '@/features/gallery-management/components/MobileGaller
 import { GalleryImage } from '@/features/gallery-management/components/types/gallery'
 import { useGalleryTracking } from '@/features/gallery-management/hooks/useGalleryTracking'
 
-export default function HumanGalleryPage() {
+export default function InvertedGalleryPage() {
   const [images, setImages] = useState<GalleryImage[]>([])
   const [isMobile, setIsMobile] = useState(() => {
     if (typeof window === 'undefined') return false
@@ -15,10 +15,21 @@ export default function HumanGalleryPage() {
   })
   
   // Track that this gallery has been viewed
-  const { hasViewedBothMainGalleries } = useGalleryTracking('human')
+  const { hasViewedBothMainGalleries } = useGalleryTracking('inverted')
   
-  // Determine next link - always go to non-human from human
-  const alternateLink = '/gallery/non-human'
+  // After inverted gallery, go to social book with smooth scroll
+  const handleSocialBookNavigation = () => {
+    window.location.href = '/#social-book'
+    // Give the page time to load then scroll smoothly
+    setTimeout(() => {
+      document.getElementById('social-book')?.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      })
+    }, 100)
+  }
+  
+  const alternateLink = '/#social-book'
 
   useEffect(() => {
     const checkMobile = () => {
@@ -43,15 +54,15 @@ export default function HumanGalleryPage() {
 
   useEffect(() => {
     const loadImages = async () => {
-      const galleryImages = await getGalleryImages('human')
+      const galleryImages = await getGalleryImages('inverted')
       setImages(galleryImages)
     }
     loadImages()
   }, [])
 
   return isMobile ? (
-    <MobileGallery images={images} title="Human" alternateGalleryLink={alternateLink} />
+    <MobileGallery images={images} title="Inverted" alternateGalleryLink={alternateLink} />
   ) : (
-    <DesktopGallery images={images} title="Human" alternateGalleryLink={alternateLink} />
+    <DesktopGallery images={images} title="Inverted" alternateGalleryLink={alternateLink} />
   )
 }

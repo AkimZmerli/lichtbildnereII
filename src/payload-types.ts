@@ -178,9 +178,26 @@ export interface HeroImage {
 export interface GalleryItem {
   id: number;
   image: number | Media;
-  type: 'human' | 'non-human';
+  type: 'human' | 'non-human' | 'inverted';
+  /**
+   * The name/title of the photograph
+   */
+  name?: string | null;
   title?: string | null;
   description?: string | null;
+  /**
+   * Width of the physical print
+   */
+  physicalWidth?: number | null;
+  /**
+   * Height of the physical print
+   */
+  physicalHeight?: number | null;
+  unit?: ('cm' | 'inch') | null;
+  /**
+   * e.g., "Silver Gelatin Print", "Digital C-Print", "Inverted Development"
+   */
+  material?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -372,8 +389,13 @@ export interface HeroImageSelect<T extends boolean = true> {
 export interface GalleryItemsSelect<T extends boolean = true> {
   image?: T;
   type?: T;
+  name?: T;
   title?: T;
   description?: T;
+  physicalWidth?: T;
+  physicalHeight?: T;
+  unit?: T;
+  material?: T;
   updatedAt?: T;
   createdAt?: T;
 }

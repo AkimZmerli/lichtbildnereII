@@ -7,6 +7,11 @@ export interface PayloadImage {
 export interface PayloadGalleryItem {
   id: string
   image: PayloadImage
+  name?: string
+  physicalWidth?: number
+  physicalHeight?: number
+  unit?: string
+  material?: string
 }
 
 export interface GalleryProps {
@@ -59,4 +64,4 @@ export interface GalleryLayoutProps {
   header: React.ReactNode
 }
 
-export type GalleryType = 'human' | 'non human'
+export type GalleryType = 'human' | 'non human' | 'inverted'
