@@ -4,8 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { GalleryProps } from './types/gallery'
 import GalleryImage from './GalleryImage'
 import Header from '@/features/shared/components/Header'
+import { createSmoothLink } from '@/features/shared/utils/smoothNavigation'
 
-const DesktopGallery = ({ images, title }: GalleryProps) => {
+const DesktopGallery = ({ images, title, alternateGalleryLink }: GalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [uiVisible, setUiVisible] = useState(true)
   const [isTransitioning, setIsTransitioning] = useState(false)
@@ -270,10 +271,14 @@ const DesktopGallery = ({ images, title }: GalleryProps) => {
               }}
             >
               <Link
-                href={`/gallery/${title.toLowerCase() === 'human' ? 'non-human' : 'human'}`}
+                href={alternateGalleryLink}
+                onClick={createSmoothLink(alternateGalleryLink)}
                 className="inline-flex items-center gap-2 bg-grainy/80 backdrop-blur-sm px-4 py-2 rounded-lg text-hot-pink hover:text-white-rose transition-colors border border-hot-pink/30 hover:border-hot-pink/60"
               >
-                View {title.toLowerCase() === 'human' ? 'non-human' : 'human'} gallery
+                View {alternateGalleryLink.includes('inverted') ? 'inverted gallery' : 
+                       alternateGalleryLink.includes('non-human') ? 'non-human gallery' : 
+                       alternateGalleryLink.includes('#social-book') ? 'social book' : 
+                       alternateGalleryLink.includes('socialbook') ? 'social book' : 'human gallery'}
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"

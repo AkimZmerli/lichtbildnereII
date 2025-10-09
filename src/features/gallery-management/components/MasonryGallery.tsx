@@ -7,8 +7,11 @@ import Header from '@/features/shared/components/Header'
 import Footer from '@/features/shared/components/Footer'
 import ImagePopup from '@/features/shared/components/ImagePopup'
 import { MasonryGalleryProps } from './types/gallery'
+import { createSmoothLink } from '@/features/shared/utils/smoothNavigation'
 
-interface ExtendedMasonryGalleryProps extends MasonryGalleryProps {
+interface ExtendedMasonryGalleryProps extends Omit<MasonryGalleryProps, 'title'> {
+  title?: string
+  type?: 'human' | 'non-human' | 'inverted'
   alternateGalleryLink?: string
   onBack?: () => void
 }
@@ -16,10 +19,13 @@ interface ExtendedMasonryGalleryProps extends MasonryGalleryProps {
 const MasonryGallery = ({
   images,
   title,
+  type,
   alternateGalleryLink,
   onBack,
 }: ExtendedMasonryGalleryProps) => {
-  const alternateTitle = title.toLowerCase() === 'human' ? 'non-human' : 'human'
+  // Determine display title based on type
+  const displayTitle = type === 'inverted' ? 'INVERTED' : (title || (type === 'human' ? 'HUMAN' : 'NON-HUMAN'))
+  const alternateTitle = type === 'human' ? 'non-human' : (type === 'non-human' ? 'human' : '')
   
   const [popupState, setPopupState] = useState({
     isOpen: false,
@@ -51,14 +57,24 @@ const MasonryGallery = ({
       <div className="flex-1 p-6 pt-20"> {/* Added pt-20 to account for fixed header */}
         {/* Header with gallery switch button */}
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-white-rose text-2xl tracking-[0.5em] uppercase">{title}</h2>
+          <h2 className="text-white-rose text-2xl tracking-[0.5em] uppercase">{displayTitle}</h2>
 
           <Link
-            href={alternateGalleryLink || `/gallery/${title.toLowerCase() === 'human' ? 'non-human' : 'human'}`}
+            href={alternateGalleryLink || `/gallery/${type === 'human' ? 'non-human' : 'human'}`}
+            onClick={createSmoothLink(alternateGalleryLink || `/gallery/${type === 'human' ? 'non-human' : 'human'}`)}
             className="flex items-center gap-2 text-hot-pink hover:text-white-rose transition-colors text-sm"
           >
-            <span className="text-base">⇄</span>
-            <span>{title.toLowerCase() === 'human' ? 'Non-Human' : 'Human'}</span>
+            {alternateGalleryLink?.includes('#social-book') ? (
+              <>
+                <span>Social Book</span>
+                <span className="text-base">→</span>
+              </>
+            ) : (
+              <>
+                <span className="text-base">⇄</span>
+                <span>{alternateGalleryLink?.includes('inverted') ? 'Inverted' : alternateTitle}</span>
+              </>
+            )}
           </Link>
         </div>
 
