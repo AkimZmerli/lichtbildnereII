@@ -27,19 +27,23 @@ const testNonHumanImages: GalleryImage[] = Array.from({ length: 4 }, (_, i) => (
 const transformPayloadToGalleryImages = (items: PayloadGalleryItem[]): GalleryImage[] => {
   return items.map((item) => ({
     url: item.image.url,
-    alt: item.image.alt || item.image.filename,
+    alt: item.name || item.image.alt || item.image.filename,
     width: 800, // Default width, should be updated with actual image dimensions
     height: 600, // Default height, should be updated with actual image dimensions
+    physicalWidth: item.physicalWidth,
+    physicalHeight: item.physicalHeight,
+    unit: item.unit || 'cm',
+    material: item.material,
   }))
 }
 
 // Fetch production data from Payload CMS
 const fetchPayloadGalleryItems = async (
-  collection: 'human' | 'non-human',
+  collection: 'human' | 'non-human' | 'inverted',
 ): Promise<GalleryImage[]> => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_PAYLOAD_API_URL}/api/gallery-items?where[category][equals]=${collection}`,
+      `${process.env.NEXT_PUBLIC_PAYLOAD_API_URL}/api/gallery-items?where[type][equals]=${collection}`,
     )
     if (!response.ok) throw new Error('Failed to fetch gallery items')
 
@@ -51,20 +55,34 @@ const fetchPayloadGalleryItems = async (
   }
 }
 
+// Test data for inverted images
+const testInvertedImages: GalleryImage[] = Array.from({ length: 4 }, (_, i) => ({
+  url: `/images/inverted/${i + 1}.jpg`,
+  alt: `Inverted Gallery Image ${i + 1}`,
+  width: 800,
+  height: 600,
+  physicalWidth: [100, 110, 90, 120][i],
+  physicalHeight: [100, 80, 120, 90][i],
+  unit: 'cm',
+  material: 'Inverted Development Technique',
+}))
+
 // Main function to get gallery images based on environment
-export const getGalleryImages = async (type: 'human' | 'non-human'): Promise<GalleryImage[]> => {
+export const getGalleryImages = async (type: 'human' | 'non-human' | 'inverted'): Promise<GalleryImage[]> => {
   // In production, ALWAYS fetch from Payload CMS
   if (process.env.NODE_ENV === 'production') {
     const images = await fetchPayloadGalleryItems(type)
     // Fallback to test data if no images in CMS yet
     if (images.length === 0) {
       console.log('No images in CMS yet, using test data as fallback')
+      if (type === 'inverted') return testInvertedImages
       return type === 'human' ? testHumanImages : testNonHumanImages
     }
     return images
   }
 
   // In development, use test data for faster development
+  if (type === 'inverted') return testInvertedImages
   return type === 'human' ? testHumanImages : testNonHumanImages
 }
 
