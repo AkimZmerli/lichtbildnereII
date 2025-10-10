@@ -7,6 +7,11 @@ export interface PayloadImage {
 export interface PayloadGalleryItem {
   id: string
   image: PayloadImage
+  name?: string
+  physicalWidth?: number
+  physicalHeight?: number
+  unit?: string
+  material?: string
 }
 
 export interface GalleryProps {
@@ -31,6 +36,8 @@ export interface GalleryImageProps {
 export interface MasonryGalleryProps {
   images: GalleryImage[]
   title: string
+  alternateGalleryLink?: string
+  onBack?: () => void
 }
 
 export interface GalleryImage {
@@ -38,6 +45,7 @@ export interface GalleryImage {
   alt: string
   width: number
   height: number
+  name?: string
   physicalWidth?: number
   physicalHeight?: number
   unit?: string
@@ -59,4 +67,4 @@ export interface GalleryLayoutProps {
   header: React.ReactNode
 }
 
-export type GalleryType = 'human' | 'non human'
+export type GalleryType = 'human' | 'non human' | 'inverted'

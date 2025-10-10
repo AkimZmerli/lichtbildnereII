@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 export default function HiddenGem() {
   return (
-    <section className="bg-grainy text-white-rose">
+    <section id="closing-words" className="bg-grainy text-white-rose">
       <div className="max-w-4xl mx-auto px-6 py-16 md:py-24 text-center">
         <h2 className="uppercase mb-12 text-2xl tracking-[0.5em]">CLOSING WORDS</h2>
 

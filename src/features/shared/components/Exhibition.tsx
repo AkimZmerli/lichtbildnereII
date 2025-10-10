@@ -1,7 +1,6 @@
 import { Suspense } from 'react'
 import { getSlides } from '../services/hero/getSlides'
 import ExhibitionList from './ExhibitionList'
-import Link from 'next/link'
 
 export default async function Exhibition() {
   const slides = await getSlides()
@@ -16,16 +15,6 @@ export default async function Exhibition() {
         <Suspense fallback={<div>Loading...</div>}>
           <ExhibitionList slides={slides} />
         </Suspense>
-
-        <div className="mt-16 md:mt-20">
-          You can visit my first exhibition{' '}
-          <Link
-            href="/tankstelle"
-            className="font-lato underline-offset-4 text-hot-pink hover:underline transition-all duration-200 hover:translate-y-[-2px]"
-          >
-            here
-          </Link>
-        </div>
       </div>
     </section>
   )

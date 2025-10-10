@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import ImageSlideshow from './ImagesSlideshow'
+import Link from 'next/link'
 import type { Slide } from '../services/hero/getSlides'
 
 interface SlideWithImages extends Slide {
@@ -60,6 +61,8 @@ export default function ExhibitionList({ slides }: { slides: Slide[] }) {
             onImageClick={openSlideshow}
           />
         ))}
+        {/* Special Interactive Exhibition Item */}
+        <TankstelleExhibition index={slides.length} />
       </div>
 
       {/* Slideshow Modal */}
@@ -223,6 +226,113 @@ function ExhibitionItem({
                   })}
                 </div>
               )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  )
+}
+
+function TankstelleExhibition({ index }: { index: number }) {
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  return (
+    <motion.div
+      className="border-t border-neutral-700 last:border-b"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        duration: 0.4,
+        delay: index * 0.05,
+        ease: smoothEasing,
+      }}
+    >
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full py-6 px-4 flex items-center justify-between hover:bg-neutral-900/30 transition-colors duration-200 group"
+      >
+        <div className="flex items-center gap-3">
+          <span className="text-sm group-hover:translate-x-1 transition-transform duration-200 ease-out">
+            Projektraum
+          </span>
+          {/* Interactive 3D Badge */}
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 text-xs bg-hot-pink/20 text-hot-pink rounded-full">
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+              />
+            </svg>
+            <span>Interactive 3D</span>
+          </span>
+        </div>
+
+        <motion.svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          animate={{
+            rotate: isExpanded ? 180 : 0,
+          }}
+          transition={{ duration: 0.3, ease: easing }}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </motion.svg>
+      </button>
+
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            className="overflow-hidden"
+            initial={{ height: 0 }}
+            animate={{ height: 'auto' }}
+            exit={{ height: 0 }}
+            transition={{
+              duration: 0.4,
+              ease: easing,
+            }}
+          >
+            <motion.div
+              className="px-4 pb-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{
+                duration: 0.3,
+                delay: 0.1,
+              }}
+            >
+              <div className="text-sm text-neutral-400 mb-4">
+                Explore an interactive 3D scan of my first exhibition at Tankstelle. Navigate
+                through the gallery as if you were there.
+              </div>
+
+              {/* Visit Exhibition Button */}
+              <Link
+                href="/tankstelle"
+                className="group inline-flex items-center gap-2 text-hot-pink hover:text-white-rose hover:scale-105 active:scale-95 transition-all duration-300 ease-out"
+              >
+                <span className="font-light tracking-wider uppercase text-sm">
+                  Visit Exhibition
+                </span>
+                <svg
+                  className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
+                  />
+                </svg>
+              </Link>
             </motion.div>
           </motion.div>
         )}

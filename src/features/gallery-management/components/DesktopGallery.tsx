@@ -4,8 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { GalleryProps } from './types/gallery'
 import GalleryImage from './GalleryImage'
 import Header from '@/features/shared/components/Header'
+import { createSmoothLink } from '@/features/shared/utils/smoothNavigation'
 
-const DesktopGallery = ({ images, title }: GalleryProps) => {
+const DesktopGallery = ({ images, title, alternateGalleryLink }: GalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [uiVisible, setUiVisible] = useState(true)
   const [isTransitioning, setIsTransitioning] = useState(false)
@@ -237,10 +238,12 @@ const DesktopGallery = ({ images, title }: GalleryProps) => {
               uiVisible ? 'opacity-100' : 'opacity-0'
             }`}
           >
+            {images[currentIndex].name && (
+              <div className="text-white-rose">{images[currentIndex].name}</div>
+            )}
             {images[currentIndex].physicalWidth && images[currentIndex].physicalHeight && (
               <div>
-                {images[currentIndex].physicalWidth} × {images[currentIndex].physicalHeight}{' '}
-                {images[currentIndex].unit}
+                {images[currentIndex].physicalWidth} × {images[currentIndex].physicalHeight} cm
               </div>
             )}
             {images[currentIndex].material && <div>{images[currentIndex].material}</div>}
@@ -264,22 +267,33 @@ const DesktopGallery = ({ images, title }: GalleryProps) => {
               }}
               exit={{ x: 300, opacity: 0 }}
               transition={{
-                delay: 5,
+                delay: 2.5,
                 duration: 0.8,
                 ease: [0.4, 0, 0.2, 1],
               }}
             >
               <Link
-                href={`/gallery/${title.toLowerCase() === 'human' ? 'non-human' : 'human'}`}
-                className="inline-flex items-center gap-2 bg-grainy/80 backdrop-blur-sm px-4 py-2 rounded-lg text-hot-pink hover:text-white-rose transition-colors border border-hot-pink/30 hover:border-hot-pink/60"
+                href={alternateGalleryLink}
+                onClick={createSmoothLink(alternateGalleryLink)}
+                className="group inline-flex items-center gap-3 bg-black-almost/60 backdrop-blur-md px-5 py-2.5 rounded-full text-hot-pink hover:text-white-rose hover:bg-hot-pink/20 hover:scale-105 hover:shadow-hot-pink/20 active:scale-95 transition-all duration-300 ease-out border border-hot-pink/40 hover:border-hot-pink shadow-lg shadow-hot-pink/10 focus:outline-none focus:ring-2 focus:ring-hot-pink/50 focus:ring-offset-2 focus:ring-offset-black-almost"
               >
-                View {title.toLowerCase() === 'human' ? 'non-human' : 'human'} gallery
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span className="font-light tracking-wider uppercase text-sm">
+                  {alternateGalleryLink.includes('inverted') ? 'Enter Inverted' : 
+                   alternateGalleryLink.includes('non-human') ? 'View Non-Human' : 
+                   alternateGalleryLink.includes('#social-book') ? 'Social Book' : 
+                   alternateGalleryLink.includes('socialbook') ? 'Social Book' : 'View Human'}
+                </span>
+                <svg 
+                  className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M9 5l7 7-7 7"
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
                   />
                 </svg>
               </Link>

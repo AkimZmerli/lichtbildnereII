@@ -13,29 +13,36 @@ export default function DatenschutzPage() {
           
           <div className="space-y-8">
             <section>
-              <h2 className="text-lg font-semibold mb-3 text-white-rose">1. Punkt</h2>
+              <h2 className="text-lg font-semibold mb-3 text-white-rose">1. Verantwortliche Stelle</h2>
               <p className="text-base leading-relaxed mb-3 text-white-rose/90">
-                Datenschutz hat einen hohen Stellenwert für unsere Organisation. Die Verarbeitung personenbezogener Daten erfolgt stets im Einklang mit den geltenden gesetzlichen Bestimmungen sowie in Übereinstimmung mit den Grundsätzen der Zweckbindung, Transparenz und Datenminimierung.
-              </p>
-              <p className="text-base leading-relaxed text-white-rose/90">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Personalis Datae collecta sunt ad legitimum finem, in particulari ad optimizationem servitiorum atque ad usum statistisch anonymisatum. Quisquis in Nutzung einwilligt, erklärt sich einverstanden, dass Metadata (IP-Adresse, Browsertyp, Zugriffszeitpunkt) temporär gespeichert werden.
+                Verantwortlich für die Datenverarbeitung auf dieser Website ist Valentin Mici. Diese Website dient ausschließlich der Präsentation fotografischer Arbeiten.
               </p>
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold mb-3 text-white-rose">2. Punkt</h2>
+              <h2 className="text-lg font-semibold mb-3 text-white-rose">2. Erhebung und Verarbeitung von Daten</h2>
               <p className="text-base leading-relaxed mb-3 text-white-rose/90">
-                Praesent commodo suscipit magna, sed facilisis risus auctor nec. Transmissiones an Dritte erfolgen ausschließlich im Rahmen der gesetzlichen Verpflichtung oder auf Basis eines Auftragsverarbeitungsvertrages (Art. 28 DSGVO). Curabitur dignissim tellus vel dui luctus, non tincidunt sapien faucibus.
+                Diese Portfolio-Website erhebt, verarbeitet und speichert keine personenbezogenen Daten der Besucher. Es werden keine Cookies gesetzt, keine Tracking-Tools verwendet und keine Daten an Dritte weitergegeben.
               </p>
               <p className="text-base leading-relaxed text-white-rose/90">
-                Ad securitatem technicam et organisatoriam, omnibus mensuris stand der Technik entsprechen. Suspendisse potenti. Data subject rights (Auskunft, Berichtigung, Löschung, Einschränkung, Widerspruch, Portabilität) können jederzeit schriftlich geltend gemacht werden.
+                Beim Besuch der Website werden automatisch technische Informationen (wie IP-Adresse, Browser-Typ, Zugriffszeit) temporär in den Server-Logfiles gespeichert. Diese Daten werden ausschließlich zur technischen Bereitstellung der Website verwendet und nach kurzer Zeit automatisch gelöscht.
               </p>
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold mb-3 text-white-rose">3. Punkt</h2>
+              <h2 className="text-lg font-semibold mb-3 text-white-rose">3. Kontakt und Rechte</h2>
+              <p className="text-base leading-relaxed mb-3 text-white-rose/90">
+                Da keine personenbezogenen Daten erhoben werden, bestehen auch keine entsprechenden Betroffenenrechte bezüglich gespeicherter Daten.
+              </p>
               <p className="text-base leading-relaxed text-white-rose/90">
-                Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Informationes non conservantur diutius quam ad Zweckerfüllung notwendig. Quodsi retention period abläuft, data automatisch gelöscht oder anonymisiert.
+                Bei Fragen zum Datenschutz können Sie sich über die im Impressum angegebenen Kontaktdaten an uns wenden.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-lg font-semibold mb-3 text-white-rose">4. Externe Links</h2>
+              <p className="text-base leading-relaxed text-white-rose/90">
+                Diese Website kann Links zu externen Websites enthalten. Für deren Inhalte und Datenschutzpraktiken übernehmen wir keine Verantwortung.
               </p>
             </section>
           </div>

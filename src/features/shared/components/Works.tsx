@@ -1,13 +1,35 @@
 'use client'
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { getWorksPreviewData } from '../services/works/getWorksPreviewData'
+
+interface WorksPreviewImage {
+  url: string
+  alt: string
+  width: number
+  height: number
+}
+
+interface WorksPreviewData {
+  human: WorksPreviewImage
+  nonHuman: WorksPreviewImage
+}
 
 export default function Works() {
   const sectionRef = useRef(null)
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 })
+  const [previewData, setPreviewData] = useState<WorksPreviewData | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getWorksPreviewData()
+      setPreviewData(data)
+    }
+    fetchData()
+  }, [])
 
   // Animation variants
   const containerVariants = {
@@ -98,7 +120,7 @@ export default function Works() {
       {/* WORKS */}
       <div className="text-center">
         <motion.div
-          className="flex items-center justify-center gap-4 mb-12"
+          className="flex items-center justify-center gap-4 mb-20"
           variants={headerVariants}
           initial="hidden"
           animate={isInView ? 'visible' : 'hidden'}
@@ -132,10 +154,10 @@ export default function Works() {
                 <div>
                   <div className="flex justify-center">
                     <Image
-                      src="/images/worksplaceholderII.jpg"
-                      alt="Human Gallery"
-                      width={430}
-                      height={350}
+                      src={previewData?.human.url || "/images/worksplaceholderII.jpg"}
+                      alt={previewData?.human.alt || "Human Gallery"}
+                      width={300}
+                      height={420}
                       className="object-cover rounded-sm"
                     />
                   </div>
@@ -156,10 +178,10 @@ export default function Works() {
                 <div>
                   <div className="flex justify-center">
                     <Image
-                      src="/images/Hanoi.jpg"
-                      alt="Non-Human Gallery"
-                      width={300}
-                      height={500}
+                      src={previewData?.nonHuman.url || "/images/Hanoi.jpg"}
+                      alt={previewData?.nonHuman.alt || "Non-Human Gallery"}
+                      width={280}
+                      height={440}
                       className="object-cover rounded-sm"
                     />
                   </div>
@@ -181,7 +203,7 @@ export default function Works() {
           </motion.div>
 
           {/* Desktop layout (hidden on small screens) */}
-          <div className="hidden md:flex md:flex-row justify-center items-center md:gap-36">
+          <div className="hidden md:flex md:flex-row justify-center items-center md:gap-48">
             {/* HUMAN - Desktop */}
             <motion.div
               className="text-center space-y-4"
@@ -191,10 +213,10 @@ export default function Works() {
             >
               <h3 className="flex justify-start uppercase text-2xl tracking-[0.5em]">HUMAN</h3>
               <Image
-                src="/images/worksplaceholderII.jpg"
-                alt="Human Gallery"
-                width={430}
-                height={350}
+                src={previewData?.human.url || "/images/worksplaceholderII.jpg"}
+                alt={previewData?.human.alt || "Human Gallery"}
+                width={300}
+                height={420}
                 className="object-cover rounded-sm"
               />
               <Link
@@ -214,10 +236,10 @@ export default function Works() {
             >
               <h3 className="flex justify-start uppercase text-2xl tracking-[0.5em]">NON HUMAN</h3>
               <Image
-                src="/images/Hanoi.jpg"
-                alt="Non-Human Gallery"
-                width={300}
-                height={500}
+                src={previewData?.nonHuman.url || "/images/Hanoi.jpg"}
+                alt={previewData?.nonHuman.alt || "Non-Human Gallery"}
+                width={280}
+                height={440}
                 className="object-cover rounded-sm"
               />
               <Link
