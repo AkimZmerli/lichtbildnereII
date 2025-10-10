@@ -5,6 +5,9 @@ export const Media: CollectionConfig = {
   access: {
     read: () => true,
   },
+  admin: {
+    hidden: true, // Hide from client admin
+  },
   fields: [
     {
       name: 'alt',

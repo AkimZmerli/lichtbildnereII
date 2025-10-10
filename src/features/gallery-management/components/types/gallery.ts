@@ -36,6 +36,8 @@ export interface GalleryImageProps {
 export interface MasonryGalleryProps {
   images: GalleryImage[]
   title: string
+  alternateGalleryLink?: string
+  onBack?: () => void
 }
 
 export interface GalleryImage {

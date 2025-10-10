@@ -43,7 +43,7 @@ const fetchPayloadGalleryItems = async (
 ): Promise<GalleryImage[]> => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_PAYLOAD_API_URL}/api/gallery-items?where[type][equals]=${collection}`,
+      `${process.env.NEXT_PUBLIC_PAYLOAD_API_URL}/api/gallery-items?where[type][equals]=${collection}&sort=order`,
     )
     if (!response.ok) throw new Error('Failed to fetch gallery items')
 

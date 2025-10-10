@@ -17,19 +17,12 @@ export default function InvertedGalleryPage() {
   // Track that this gallery has been viewed
   const { hasViewedBothMainGalleries } = useGalleryTracking('inverted')
   
-  // After inverted gallery, go to social book with smooth scroll
+  // After inverted gallery, go to social book page directly
   const handleSocialBookNavigation = () => {
-    window.location.href = '/#social-book'
-    // Give the page time to load then scroll smoothly
-    setTimeout(() => {
-      document.getElementById('social-book')?.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
-      })
-    }, 100)
+    window.location.href = '/socialbook'
   }
   
-  const alternateLink = '/#social-book'
+  const alternateLink = '/socialbook'
 
   useEffect(() => {
     const checkMobile = () => {
