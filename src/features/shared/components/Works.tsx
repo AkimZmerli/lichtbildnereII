@@ -1,13 +1,35 @@
 'use client'
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { getWorksPreviewData } from '../services/works/getWorksPreviewData'
+
+interface WorksPreviewImage {
+  url: string
+  alt: string
+  width: number
+  height: number
+}
+
+interface WorksPreviewData {
+  human: WorksPreviewImage
+  nonHuman: WorksPreviewImage
+}
 
 export default function Works() {
   const sectionRef = useRef(null)
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 })
+  const [previewData, setPreviewData] = useState<WorksPreviewData | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getWorksPreviewData()
+      setPreviewData(data)
+    }
+    fetchData()
+  }, [])
 
   // Animation variants
   const containerVariants = {
@@ -89,6 +111,30 @@ export default function Works() {
     },
   }
 
+  // Show loading state while fetching data
+  if (!previewData) {
+    return (
+      <section
+        ref={sectionRef}
+        id="works"
+        className="bg-grainy text-white-rose py-16 md:py-24 space-y-24 h-full md:pb-96"
+      >
+        <div className="text-center">
+          <div className="flex items-center justify-center gap-4 mb-12">
+            <div className="h-[1px] bg-white-rose flex-1" />
+            <h2 className="tracking-widest text-2xl text-white-rose">W O R K S</h2>
+            <div className="h-[1px] bg-white-rose flex-1" />
+          </div>
+          <div className="px-6">
+            <div className="flex justify-center items-center">
+              <div className="text-white-rose/60">Loading preview images...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section
       ref={sectionRef}
@@ -132,10 +178,10 @@ export default function Works() {
                 <div>
                   <div className="flex justify-center">
                     <Image
-                      src="/images/worksplaceholderII.jpg"
-                      alt="Human Gallery"
-                      width={430}
-                      height={350}
+                      src={previewData.human.url}
+                      alt={previewData.human.alt}
+                      width={previewData.human.width}
+                      height={previewData.human.height}
                       className="object-cover rounded-sm"
                     />
                   </div>
@@ -156,10 +202,10 @@ export default function Works() {
                 <div>
                   <div className="flex justify-center">
                     <Image
-                      src="/images/Hanoi.jpg"
-                      alt="Non-Human Gallery"
-                      width={300}
-                      height={500}
+                      src={previewData.nonHuman.url}
+                      alt={previewData.nonHuman.alt}
+                      width={previewData.nonHuman.width}
+                      height={previewData.nonHuman.height}
                       className="object-cover rounded-sm"
                     />
                   </div>
@@ -191,10 +237,10 @@ export default function Works() {
             >
               <h3 className="flex justify-start uppercase text-2xl tracking-[0.5em]">HUMAN</h3>
               <Image
-                src="/images/worksplaceholderII.jpg"
-                alt="Human Gallery"
-                width={430}
-                height={350}
+                src={previewData.human.url}
+                alt={previewData.human.alt}
+                width={previewData.human.width}
+                height={previewData.human.height}
                 className="object-cover rounded-sm"
               />
               <Link
@@ -214,10 +260,10 @@ export default function Works() {
             >
               <h3 className="flex justify-start uppercase text-2xl tracking-[0.5em]">NON HUMAN</h3>
               <Image
-                src="/images/Hanoi.jpg"
-                alt="Non-Human Gallery"
-                width={300}
-                height={500}
+                src={previewData.nonHuman.url}
+                alt={previewData.nonHuman.alt}
+                width={previewData.nonHuman.width}
+                height={previewData.nonHuman.height}
                 className="object-cover rounded-sm"
               />
               <Link
