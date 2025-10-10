@@ -12,15 +12,21 @@ interface WorksPreviewData {
 
 export const getWorksPreviewData = async (): Promise<WorksPreviewData> => {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_PAYLOAD_API_URL}/api/works-preview`
-    )
+    const apiUrl = process.env.NEXT_PUBLIC_PAYLOAD_API_URL || 'http://localhost:3000'
+    const url = `${apiUrl}/api/works-preview`
+    
+    console.log('Fetching works preview data from:', url)
+    
+    const response = await fetch(url)
     
     if (!response.ok) {
+      console.error(`Works Preview API response not ok: ${response.status} ${response.statusText}`)
       throw new Error('Failed to fetch works preview data')
     }
 
     const data = await response.json()
+    console.log('Works Preview API response:', data)
+    console.log('Number of docs found:', data.docs?.length || 0)
     
     let humanImage: WorksPreviewImage = {
       url: '/images/worksplaceholderII.jpg',
