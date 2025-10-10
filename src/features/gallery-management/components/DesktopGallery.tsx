@@ -238,10 +238,12 @@ const DesktopGallery = ({ images, title, alternateGalleryLink }: GalleryProps) =
               uiVisible ? 'opacity-100' : 'opacity-0'
             }`}
           >
+            {images[currentIndex].name && (
+              <div className="text-white-rose">{images[currentIndex].name}</div>
+            )}
             {images[currentIndex].physicalWidth && images[currentIndex].physicalHeight && (
               <div>
-                {images[currentIndex].physicalWidth} × {images[currentIndex].physicalHeight}{' '}
-                {images[currentIndex].unit}
+                {images[currentIndex].physicalWidth} × {images[currentIndex].physicalHeight} cm
               </div>
             )}
             {images[currentIndex].material && <div>{images[currentIndex].material}</div>}

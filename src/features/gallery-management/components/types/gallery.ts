@@ -45,6 +45,7 @@ export interface GalleryImage {
   alt: string
   width: number
   height: number
+  name?: string
   physicalWidth?: number
   physicalHeight?: number
   unit?: string

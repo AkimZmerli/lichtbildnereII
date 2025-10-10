@@ -179,34 +179,17 @@ export interface HeroImage {
   createdAt: string;
 }
 /**
- * Manage photos in Human, Non-Human, and Inverted galleries
- *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "gallery-items".
  */
 export interface GalleryItem {
   id: number;
-  /**
-   * Order in which this image appears in the gallery (lower numbers appear first)
-   */
   order?: number | null;
   image: number | Media;
   type: 'human' | 'non-human' | 'inverted';
-  /**
-   * The name/title of the photograph
-   */
   name?: string | null;
-  /**
-   * Width of the physical print in centimeters
-   */
-  physicalWidth?: number | null;
-  /**
-   * Height of the physical print in centimeters
-   */
   physicalHeight?: number | null;
-  /**
-   * e.g., "Silver Gelatin Print", "Digital C-Print", "Inverted Development"
-   */
+  physicalWidth?: number | null;
   material?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -246,8 +229,6 @@ export interface Slide {
   createdAt: string;
 }
 /**
- * Manage preview images for Human and Non-Human galleries shown on homepage
- *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "works-preview".
  */
@@ -398,8 +379,8 @@ export interface GalleryItemsSelect<T extends boolean = true> {
   image?: T;
   type?: T;
   name?: T;
-  physicalWidth?: T;
   physicalHeight?: T;
+  physicalWidth?: T;
   material?: T;
   updatedAt?: T;
   createdAt?: T;
