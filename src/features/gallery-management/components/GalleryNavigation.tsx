@@ -20,7 +20,7 @@ const GalleryNavigation = ({ type }: GalleryNavigationProps) => {
     if (type === 'inverted' && hasViewedAllGalleries()) {
       // Small delay to let the page render before redirecting
       const timer = setTimeout(() => {
-        router.push('/socialbook#social-book')
+        router.push('/socialbook')
       }, 3000)
       return () => clearTimeout(timer)
     }
@@ -48,7 +48,7 @@ const GalleryNavigation = ({ type }: GalleryNavigationProps) => {
       nextText = 'human'
     }
   } else if (type === 'inverted') {
-    nextLink = '/socialbook#social-book'
+    nextLink = '/socialbook'
     nextText = 'social book'
   }
 
@@ -63,10 +63,22 @@ const GalleryNavigation = ({ type }: GalleryNavigationProps) => {
           </div>
           <Link
             href={nextLink}
-            className="text-hot-pink hover:text-white-rose transition-colors flex items-center gap-2 whitespace-nowrap"
+            className="group inline-flex items-center gap-3 bg-black-almost/60 backdrop-blur-md px-5 py-2.5 rounded-full text-hot-pink hover:text-white-rose hover:bg-hot-pink/20 hover:scale-105 hover:shadow-hot-pink/20 active:scale-95 transition-all duration-300 ease-out border border-hot-pink/40 hover:border-hot-pink shadow-lg shadow-hot-pink/10 focus:outline-none focus:ring-2 focus:ring-hot-pink/50 focus:ring-offset-2 focus:ring-offset-black-almost whitespace-nowrap"
           >
-            View {nextText}
-            <span className="text-xl">→</span>
+            <span className="font-light tracking-wider uppercase text-sm">View {nextText}</span>
+            <svg 
+              className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 7l5 5m0 0l-5 5m5-5H6"
+              />
+            </svg>
           </Link>
         </div>
       </div>

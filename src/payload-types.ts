@@ -72,8 +72,7 @@ export interface Config {
     'hero-image': HeroImage;
     'gallery-items': GalleryItem;
     slides: Slide;
-    'site-settings': SiteSetting;
-    Human: Human;
+    'works-preview': WorksPreview;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -85,8 +84,7 @@ export interface Config {
     'hero-image': HeroImageSelect<false> | HeroImageSelect<true>;
     'gallery-items': GalleryItemsSelect<false> | GalleryItemsSelect<true>;
     slides: SlidesSelect<false> | SlidesSelect<true>;
-    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
-    Human: HumanSelect<false> | HumanSelect<true>;
+    'works-preview': WorksPreviewSelect<false> | WorksPreviewSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -165,35 +163,47 @@ export interface Media {
  */
 export interface HeroImage {
   id: number;
-  mobileImage: number | Media;
-  desktopImage: number | Media;
+  /**
+   * Main homepage hero image for desktop users
+   */
+  desktopImage?: (number | null) | Media;
+  /**
+   * Main homepage hero image for mobile users
+   */
+  mobileImage?: (number | null) | Media;
+  /**
+   * Alternative text for accessibility
+   */
   altText?: string | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
+ * Manage photos in Human, Non-Human, and Inverted galleries
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "gallery-items".
  */
 export interface GalleryItem {
   id: number;
+  /**
+   * Order in which this image appears in the gallery (lower numbers appear first)
+   */
+  order?: number | null;
   image: number | Media;
   type: 'human' | 'non-human' | 'inverted';
   /**
    * The name/title of the photograph
    */
   name?: string | null;
-  title?: string | null;
-  description?: string | null;
   /**
-   * Width of the physical print
+   * Width of the physical print in centimeters
    */
   physicalWidth?: number | null;
   /**
-   * Height of the physical print
+   * Height of the physical print in centimeters
    */
   physicalHeight?: number | null;
-  unit?: ('cm' | 'inch') | null;
   /**
    * e.g., "Silver Gelatin Print", "Digital C-Print", "Inverted Development"
    */
@@ -202,6 +212,8 @@ export interface GalleryItem {
   createdAt: string;
 }
 /**
+ * Manage exhibition slides shown in the exhibitions section
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "slides".
  */
@@ -234,30 +246,29 @@ export interface Slide {
   createdAt: string;
 }
 /**
+ * Manage preview images for Human and Non-Human galleries shown on homepage
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "site-settings".
+ * via the `definition` "works-preview".
  */
-export interface SiteSetting {
+export interface WorksPreview {
   id: number;
-  footerText?: string | null;
-  socials?:
-    | {
-        platform?: string | null;
-        url?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "Human".
- */
-export interface Human {
-  id: number;
+  /**
+   * Which gallery this preview image represents
+   */
+  galleryType: 'human' | 'non-human';
+  /**
+   * The preview image shown in the Works section
+   */
+  previewImage: number | Media;
+  /**
+   * Alternative text for the preview image
+   */
+  altText?: string | null;
+  /**
+   * Optional: Override the default gallery title
+   */
   title?: string | null;
-  featuredImage?: (number | null) | Media;
   updatedAt: string;
   createdAt: string;
 }
@@ -289,12 +300,8 @@ export interface PayloadLockedDocument {
         value: number | Slide;
       } | null)
     | ({
-        relationTo: 'site-settings';
-        value: number | SiteSetting;
-      } | null)
-    | ({
-        relationTo: 'Human';
-        value: number | Human;
+        relationTo: 'works-preview';
+        value: number | WorksPreview;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -376,8 +383,8 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "hero-image_select".
  */
 export interface HeroImageSelect<T extends boolean = true> {
-  mobileImage?: T;
   desktopImage?: T;
+  mobileImage?: T;
   altText?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -387,14 +394,12 @@ export interface HeroImageSelect<T extends boolean = true> {
  * via the `definition` "gallery-items_select".
  */
 export interface GalleryItemsSelect<T extends boolean = true> {
+  order?: T;
   image?: T;
   type?: T;
   name?: T;
-  title?: T;
-  description?: T;
   physicalWidth?: T;
   physicalHeight?: T;
-  unit?: T;
   material?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -418,27 +423,13 @@ export interface SlidesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "site-settings_select".
+ * via the `definition` "works-preview_select".
  */
-export interface SiteSettingsSelect<T extends boolean = true> {
-  footerText?: T;
-  socials?:
-    | T
-    | {
-        platform?: T;
-        url?: T;
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "Human_select".
- */
-export interface HumanSelect<T extends boolean = true> {
+export interface WorksPreviewSelect<T extends boolean = true> {
+  galleryType?: T;
+  previewImage?: T;
+  altText?: T;
   title?: T;
-  featuredImage?: T;
   updatedAt?: T;
   createdAt?: T;
 }

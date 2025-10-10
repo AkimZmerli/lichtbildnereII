@@ -62,16 +62,40 @@ const MasonryGallery = ({
           <Link
             href={alternateGalleryLink || `/gallery/${type === 'human' ? 'non-human' : 'human'}`}
             onClick={createSmoothLink(alternateGalleryLink || `/gallery/${type === 'human' ? 'non-human' : 'human'}`)}
-            className="flex items-center gap-2 text-hot-pink hover:text-white-rose transition-colors text-sm"
+            className="group inline-flex items-center gap-2 bg-black-almost/60 backdrop-blur-md px-4 py-2 rounded-none text-hot-pink hover:text-white-rose hover:bg-hot-pink/20 hover:scale-105 active:scale-95 transition-all duration-300 ease-out shadow-lg shadow-hot-pink/10 text-sm font-light tracking-wider uppercase"
           >
             {alternateGalleryLink?.includes('#social-book') ? (
               <>
                 <span>Social Book</span>
-                <span className="text-base">→</span>
+                <svg 
+                  className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
+                  />
+                </svg>
               </>
             ) : (
               <>
-                <span className="text-base">⇄</span>
+                <svg 
+                  className="w-4 h-4 transform group-hover:rotate-180 transition-transform duration-300" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+                  />
+                </svg>
                 <span>{alternateGalleryLink?.includes('inverted') ? 'Inverted' : alternateTitle}</span>
               </>
             )}

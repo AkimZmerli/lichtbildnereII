@@ -2,7 +2,29 @@ import type { CollectionConfig } from 'payload'
 
 export const GalleryItem: CollectionConfig = {
   slug: 'gallery-items',
+  labels: {
+    singular: 'Gallery Photo',
+    plural: 'Gallery Photos',
+  },
+  admin: {
+    defaultSort: 'order',
+    useAsTitle: 'name',
+    description: 'Manage photos in Human, Non-Human, and Inverted galleries',
+    listSearchableFields: ['name', 'type', 'material'],
+    pagination: {
+      defaultLimit: 50
+    },
+    defaultColumns: ['image', 'name', 'type', 'order', 'physicalWidth', 'physicalHeight', 'material']
+  },
   fields: [
+    {
+      name: 'order',
+      type: 'number',
+      label: 'Display Order',
+      admin: {
+        description: 'Order in which this image appears in the gallery (lower numbers appear first)',
+      },
+    },
     {
       name: 'image',
       type: 'upload',
@@ -24,35 +46,20 @@ export const GalleryItem: CollectionConfig = {
       },
     },
     {
-      name: 'title',
-      type: 'text',
-    },
-    {
-      name: 'description',
-      type: 'textarea',
-    },
-    {
       name: 'physicalWidth',
       type: 'number',
-      label: 'Physical Width',
+      label: 'Width (cm)',
       admin: {
-        description: 'Width of the physical print',
+        description: 'Width of the physical print in centimeters',
       },
     },
     {
       name: 'physicalHeight',
       type: 'number',
-      label: 'Physical Height',
+      label: 'Height (cm)',
       admin: {
-        description: 'Height of the physical print',
+        description: 'Height of the physical print in centimeters',
       },
-    },
-    {
-      name: 'unit',
-      type: 'select',
-      options: ['cm', 'inch'],
-      defaultValue: 'cm',
-      label: 'Measurement Unit',
     },
     {
       name: 'material',
