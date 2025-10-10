@@ -2,16 +2,8 @@ import type { CollectionConfig } from 'payload'
 
 export const WorksPreview: CollectionConfig = {
   slug: 'works-preview',
-  labels: {
-    singular: 'Works Preview',
-    plural: 'Works Previews',
-  },
   access: {
     read: () => true,
-  },
-  admin: {
-    useAsTitle: 'galleryType',
-    description: 'Manage preview images for Human and Non-Human galleries shown on homepage',
   },
   fields: [
     {

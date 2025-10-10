@@ -111,30 +111,6 @@ export default function Works() {
     },
   }
 
-  // Show loading state while fetching data
-  if (!previewData) {
-    return (
-      <section
-        ref={sectionRef}
-        id="works"
-        className="bg-grainy text-white-rose py-16 md:py-24 space-y-24 h-full md:pb-96"
-      >
-        <div className="text-center">
-          <div className="flex items-center justify-center gap-4 mb-12">
-            <div className="h-[1px] bg-white-rose flex-1" />
-            <h2 className="tracking-widest text-2xl text-white-rose">W O R K S</h2>
-            <div className="h-[1px] bg-white-rose flex-1" />
-          </div>
-          <div className="px-6">
-            <div className="flex justify-center items-center">
-              <div className="text-white-rose/60">Loading preview images...</div>
-            </div>
-          </div>
-        </div>
-      </section>
-    )
-  }
-
   return (
     <section
       ref={sectionRef}
@@ -144,7 +120,7 @@ export default function Works() {
       {/* WORKS */}
       <div className="text-center">
         <motion.div
-          className="flex items-center justify-center gap-4 mb-12"
+          className="flex items-center justify-center gap-4 mb-20"
           variants={headerVariants}
           initial="hidden"
           animate={isInView ? 'visible' : 'hidden'}
@@ -178,10 +154,10 @@ export default function Works() {
                 <div>
                   <div className="flex justify-center">
                     <Image
-                      src={previewData.human.url}
-                      alt={previewData.human.alt}
-                      width={previewData.human.width}
-                      height={previewData.human.height}
+                      src={previewData?.human.url || "/images/worksplaceholderII.jpg"}
+                      alt={previewData?.human.alt || "Human Gallery"}
+                      width={300}
+                      height={420}
                       className="object-cover rounded-sm"
                     />
                   </div>
@@ -202,10 +178,10 @@ export default function Works() {
                 <div>
                   <div className="flex justify-center">
                     <Image
-                      src={previewData.nonHuman.url}
-                      alt={previewData.nonHuman.alt}
-                      width={previewData.nonHuman.width}
-                      height={previewData.nonHuman.height}
+                      src={previewData?.nonHuman.url || "/images/Hanoi.jpg"}
+                      alt={previewData?.nonHuman.alt || "Non-Human Gallery"}
+                      width={280}
+                      height={440}
                       className="object-cover rounded-sm"
                     />
                   </div>
@@ -227,7 +203,7 @@ export default function Works() {
           </motion.div>
 
           {/* Desktop layout (hidden on small screens) */}
-          <div className="hidden md:flex md:flex-row justify-center items-center md:gap-36">
+          <div className="hidden md:flex md:flex-row justify-center items-center md:gap-48">
             {/* HUMAN - Desktop */}
             <motion.div
               className="text-center space-y-4"
@@ -237,10 +213,10 @@ export default function Works() {
             >
               <h3 className="flex justify-start uppercase text-2xl tracking-[0.5em]">HUMAN</h3>
               <Image
-                src={previewData.human.url}
-                alt={previewData.human.alt}
-                width={previewData.human.width}
-                height={previewData.human.height}
+                src={previewData?.human.url || "/images/worksplaceholderII.jpg"}
+                alt={previewData?.human.alt || "Human Gallery"}
+                width={300}
+                height={420}
                 className="object-cover rounded-sm"
               />
               <Link
@@ -260,10 +236,10 @@ export default function Works() {
             >
               <h3 className="flex justify-start uppercase text-2xl tracking-[0.5em]">NON HUMAN</h3>
               <Image
-                src={previewData.nonHuman.url}
-                alt={previewData.nonHuman.alt}
-                width={previewData.nonHuman.width}
-                height={previewData.nonHuman.height}
+                src={previewData?.nonHuman.url || "/images/Hanoi.jpg"}
+                alt={previewData?.nonHuman.alt || "Non-Human Gallery"}
+                width={280}
+                height={440}
                 className="object-cover rounded-sm"
               />
               <Link

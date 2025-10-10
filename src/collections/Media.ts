@@ -6,7 +6,7 @@ export const Media: CollectionConfig = {
     read: () => true,
   },
   admin: {
-    hidden: true, // Hide from client admin
+    useAsTitle: 'filename',
   },
   fields: [
     {

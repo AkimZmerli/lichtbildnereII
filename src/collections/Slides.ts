@@ -6,6 +6,9 @@ export const Slides: CollectionConfig = {
     singular: 'Exhibition Slide',
     plural: 'Exhibition Slides',
   },
+  access: {
+    read: () => true,
+  },
   admin: {
     useAsTitle: 'label',
     description: 'Manage exhibition slides shown in the exhibitions section',

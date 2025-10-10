@@ -15,6 +15,7 @@ import { HeroImage } from './collections/HeroImage'
 import { GalleryItem } from './collections/GalleryItem'
 import { Slides } from './collections/Slides'
 import { WorksPreview } from './collections/WorksPreview'
+// import { SocialBook } from './collections/SocialBook'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
