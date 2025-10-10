@@ -5,6 +5,7 @@ import { getGalleryImages } from '@/features/gallery-management/services/gallery
 import DesktopGallery from '@/features/gallery-management/components/DesktopGallery'
 import MobileGallery from '@/features/gallery-management/components/MobileGallery'
 import { GalleryImage } from '@/features/gallery-management/components/types/gallery'
+import { useGalleryTracking } from '@/features/gallery-management/hooks/useGalleryTracking'
 
 export default function HumanGalleryPage() {
   const [images, setImages] = useState<GalleryImage[]>([])
@@ -12,6 +13,12 @@ export default function HumanGalleryPage() {
     if (typeof window === 'undefined') return false
     return window.innerWidth < 768
   })
+  
+  // Track that this gallery has been viewed
+  const { hasViewedBothMainGalleries } = useGalleryTracking('human')
+  
+  // Determine next link - always go to non-human from human
+  const alternateLink = '/gallery/non-human'
 
   useEffect(() => {
     const checkMobile = () => {
@@ -43,8 +50,8 @@ export default function HumanGalleryPage() {
   }, [])
 
   return isMobile ? (
-    <MobileGallery images={images} title="Human" alternateGalleryLink="/gallery/non-human" />
+    <MobileGallery images={images} title="Human" alternateGalleryLink={alternateLink} />
   ) : (
-    <DesktopGallery images={images} title="Human" alternateGalleryLink="/gallery/non-human" />
+    <DesktopGallery images={images} title="Human" alternateGalleryLink={alternateLink} />
   )
 }

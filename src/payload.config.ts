@@ -14,7 +14,8 @@ import { Media } from './collections/Media'
 import { HeroImage } from './collections/HeroImage'
 import { GalleryItem } from './collections/GalleryItem'
 import { Slides } from './collections/Slides'
-import { SiteSettings } from './collections/SiteSettings'
+import { WorksPreview } from './collections/WorksPreview'
+// import { SocialBook } from './collections/SocialBook'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -35,25 +36,7 @@ export default buildConfig({
     HeroImage,
     GalleryItem,
     Slides,
-    SiteSettings,
-
-    {
-      slug: 'Human',
-      admin: {
-        useAsTitle: 'title',
-      },
-      fields: [
-        {
-          name: 'title',
-          type: 'text',
-        },
-        {
-          name: 'featuredImage',
-          type: 'upload',
-          relationTo: 'media',
-        },
-      ],
-    },
+    WorksPreview,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

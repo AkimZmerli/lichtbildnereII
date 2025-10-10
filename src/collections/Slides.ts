@@ -2,8 +2,16 @@ import type { CollectionConfig } from 'payload'
 
 export const Slides: CollectionConfig = {
   slug: 'slides',
+  labels: {
+    singular: 'Exhibition Slide',
+    plural: 'Exhibition Slides',
+  },
+  access: {
+    read: () => true,
+  },
   admin: {
     useAsTitle: 'label',
+    description: 'Manage exhibition slides shown in the exhibitions section',
   },
   fields: [
     {

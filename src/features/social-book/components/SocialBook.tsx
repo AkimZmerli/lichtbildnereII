@@ -17,7 +17,7 @@ export default function SocialBook() {
   console.log('Section in view:', isInView)
 
   return (
-    <section ref={sectionRef}>
+    <section ref={sectionRef} id="social-book">
       <div className="text-center bg-white-rose/90 text-hot-rose px-4 py-40">
         <h2 className="uppercase mb-15 text-base text-hot-pink text-[2rem] flex flex-col items-center">
           <span className="tracking-[0.5em]">THE SOCIAL</span>
@@ -27,7 +27,7 @@ export default function SocialBook() {
         <div className="flex justify-center">
           <Image
             src="/images/placeholderSocial.png"
-            alt="T Social Book"
+            alt="The Social Book"
             width={780}
             height={405}
             className="object-contain w-[230] h-[169]"
