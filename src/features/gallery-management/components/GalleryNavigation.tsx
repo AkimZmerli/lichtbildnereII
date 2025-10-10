@@ -28,7 +28,7 @@ const GalleryNavigation = ({ type }: GalleryNavigationProps) => {
 
   // Determine title based on gallery type
   let title = 'H U M A N'
-  if (type === 'non human') title = 'N O N   H U M A N'
+  if (type === 'non-human') title = 'N O N   H U M A N'
   if (type === 'inverted') title = 'I N V E R T E D'
 
   // Determine next link based on current gallery and viewing history
@@ -38,7 +38,7 @@ const GalleryNavigation = ({ type }: GalleryNavigationProps) => {
   if (type === 'human') {
     nextLink = '/gallery/non-human'
     nextText = 'non-human'
-  } else if (type === 'non human') {
+  } else if (type === 'non-human') {
     // If both main galleries have been viewed, show inverted
     if (hasViewedBothMainGalleries()) {
       nextLink = '/gallery/inverted'
