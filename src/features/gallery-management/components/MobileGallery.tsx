@@ -7,12 +7,32 @@ import Header from '@/features/shared/components/Header'
 import Footer from '@/features/shared/components/Footer'
 import { GalleryProps } from './types/gallery'
 
-const MobileGallery = ({ images, title, alternateGalleryLink }: GalleryProps) => {
+const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: GalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [showMasonryView, setShowMasonryView] = useState(false)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [touchStart, setTouchStart] = useState({ x: 0, y: 0, time: 0 })
   const [showMetadata, setShowMetadata] = useState(false)
+  const [dynamicAlternateLink, setDynamicAlternateLink] = useState(alternateGalleryLink)
+  const [isClient, setIsClient] = useState(false)
+  
+  // Ensure client-side rendering
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+  
+  // Handle dynamic alternate link for human gallery only after client mount
+  useEffect(() => {
+    if (isClient && galleryType === 'human') {
+      const viewedGalleries = JSON.parse(sessionStorage.getItem('viewedGalleries') || '[]')
+      // Simple logic: if non-human was viewed before, go to inverted; otherwise go to non-human
+      if (viewedGalleries.includes('non-human')) {
+        setDynamicAlternateLink('/gallery/inverted')
+      } else {
+        setDynamicAlternateLink('/gallery/non-human')
+      }
+    }
+  }, [isClient, galleryType])
 
   // Keyboard handler for spacebar
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -56,7 +76,7 @@ const MobileGallery = ({ images, title, alternateGalleryLink }: GalleryProps) =>
       <MasonryGallery
         images={images}
         title={title}
-        alternateGalleryLink={alternateGalleryLink}
+        alternateGalleryLink={dynamicAlternateLink}
         onBack={() => {
           setShowMasonryView(false)
           setCurrentIndex(images.length - 1)
@@ -71,16 +91,14 @@ const MobileGallery = ({ images, title, alternateGalleryLink }: GalleryProps) =>
       <Header />
 
       {/* Title */}
-      <div className="pt-22 pl-8 pr-4">
-        {' '}
-        {/* Increased pt-4 to pt-20 for header clearance */}
-        <h1 className="text-white-rose/60 pb-4text-lg tracking-[0.3em] uppercase text-center">
+      <div className="pt-28 pl-8 pr-4 pb-0">
+        <h1 className="text-white-rose text-lg tracking-[0.3em] uppercase text-center">
           {title}
         </h1>
       </div>
 
       {/* Photo Area - Large and simple */}
-      <div className="px-4 p-6" style={{ height: '75vh' }}>
+      <div className="px-4 -mt-6" style={{ height: '75vh' }}>
         <div
           className="w-full h-full relative  rounded-sm overflow-hidden cursor-pointer"
           onClick={() => setShowMetadata(!showMetadata)}
