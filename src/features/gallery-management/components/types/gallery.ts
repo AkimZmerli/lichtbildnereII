@@ -18,6 +18,7 @@ export interface GalleryProps {
   images: GalleryImage[]
   title: string
   alternateGalleryLink: string
+  galleryType?: GalleryType
 }
 
 export interface NavigationProps {

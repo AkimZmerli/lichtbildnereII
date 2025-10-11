@@ -7,7 +7,7 @@ export default function DisplayScan() {
     <div className="min-h-screen flex flex-col bg-grainy">
       <Header />
 
-      <div className="flex-1 flex items-center justify-center bg-grainy text-white-rose px-4 md:px-8 relative">
+      <div className="flex-1 flex items-center justify-center bg-grainy text-white-rose px-4 md:px-8 relative pt-20 md:pt-24">
         {/* Back Link - positioned at top left on desktop */}
         <div className="absolute top-26 left-8 hidden md:block">
           <Link

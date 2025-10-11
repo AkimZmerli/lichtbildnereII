@@ -6,12 +6,32 @@ import GalleryImage from './GalleryImage'
 import Header from '@/features/shared/components/Header'
 import { createSmoothLink } from '@/features/shared/utils/smoothNavigation'
 
-const DesktopGallery = ({ images, title, alternateGalleryLink }: GalleryProps) => {
+const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: GalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [uiVisible, setUiVisible] = useState(true)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const [dynamicAlternateLink, setDynamicAlternateLink] = useState(alternateGalleryLink)
+  const [isClient, setIsClient] = useState(false)
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  
+  // Ensure client-side rendering
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+  
+  // Handle dynamic alternate link for human gallery only after client mount
+  useEffect(() => {
+    if (isClient && galleryType === 'human') {
+      const viewedGalleries = JSON.parse(sessionStorage.getItem('viewedGalleries') || '[]')
+      // Simple logic: if non-human was viewed before, go to inverted; otherwise go to non-human
+      if (viewedGalleries.includes('non-human')) {
+        setDynamicAlternateLink('/gallery/inverted')
+      } else {
+        setDynamicAlternateLink('/gallery/non-human')
+      }
+    }
+  }, [isClient, galleryType])
   const scrollTimerRef = useRef<NodeJS.Timeout | null>(null)
   const touchStartX = useRef(0)
   const touchStartTime = useRef(0)
@@ -246,7 +266,18 @@ const DesktopGallery = ({ images, title, alternateGalleryLink }: GalleryProps) =
                 {images[currentIndex].physicalWidth} × {images[currentIndex].physicalHeight} cm
               </div>
             )}
-            {images[currentIndex].material && <div>{images[currentIndex].material}</div>}
+            {images[currentIndex].material && (
+              <div>
+                {images[currentIndex].material === 'silver gelatin print on baryta paper' ? (
+                  <>
+                    <div>silver gelatin print</div>
+                    <div>on baryta paper</div>
+                  </>
+                ) : (
+                  images[currentIndex].material
+                )}
+              </div>
+            )}
             <div className="text-white-rose/50">
               <Link href="/impressum" className="text-hot-pink/70 hover:text-hot-pink underline">
                 Impressum
@@ -273,15 +304,15 @@ const DesktopGallery = ({ images, title, alternateGalleryLink }: GalleryProps) =
               }}
             >
               <Link
-                href={alternateGalleryLink}
-                onClick={createSmoothLink(alternateGalleryLink)}
+                href={dynamicAlternateLink}
+                onClick={createSmoothLink(dynamicAlternateLink)}
                 className="group inline-flex items-center gap-3 bg-black-almost/60 backdrop-blur-md px-5 py-2.5 rounded-full text-hot-pink hover:text-white-rose hover:bg-hot-pink/20 hover:scale-105 hover:shadow-hot-pink/20 active:scale-95 transition-all duration-300 ease-out border border-hot-pink/40 hover:border-hot-pink shadow-lg shadow-hot-pink/10 focus:outline-none focus:ring-2 focus:ring-hot-pink/50 focus:ring-offset-2 focus:ring-offset-black-almost"
               >
                 <span className="font-light tracking-wider uppercase text-sm">
-                  {alternateGalleryLink.includes('inverted') ? 'Enter Inverted' : 
-                   alternateGalleryLink.includes('non-human') ? 'View Non-Human' : 
-                   alternateGalleryLink.includes('#social-book') ? 'Social Book' : 
-                   alternateGalleryLink.includes('socialbook') ? 'Social Book' : 'View Human'}
+                  {dynamicAlternateLink.includes('inverted') ? 'Inverted' : 
+                   dynamicAlternateLink.includes('non-human') ? 'View Non-Human' : 
+                   dynamicAlternateLink.includes('#social-book') ? 'Social Book' : 
+                   dynamicAlternateLink.includes('socialbook') ? 'Social Book' : 'View Human'}
                 </span>
                 <svg 
                   className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" 
