@@ -87,7 +87,7 @@ export default function CinematicHeroScroll({
   const containerWidth = useTransform(
     smoothProgress,
     [0, 0.1, 0.25, 0.4, 0.5, 1],
-    ['50%', '60%', '75%', '90%', '100%', '100%'], // Even narrower start
+    ['40%', '50%', '65%', '80%', '100%', '100%'], // Smaller window
   )
 
   // Content opacity and position (fades in as you scroll)
@@ -190,7 +190,7 @@ export default function CinematicHeroScroll({
                 smoothProgress,
                 [0, 0.1, 0.25, 0.4, 0.5, 1],
                 isMobile 
-                  ? ['30vw', '25vw', '17.5vw', '10vw', '0vw', '0vw'] // Mobile: shifted right by 25% less
+                  ? ['45vw', '36vw', '25vw', '18vw', '0vw', '0vw'] // Mobile: add 45% from left
                   : ['25vw', '20vw', '12.5vw', '5vw', '0vw', '0vw'], // Desktop: original values
               ),
             }}
@@ -204,7 +204,7 @@ export default function CinematicHeroScroll({
                 smoothProgress,
                 [0, 0.1, 0.25, 0.4, 0.5, 1],
                 isMobile
-                  ? ['20vw', '15vw', '7.5vw', '2.5vw', '0vw', '0vw'] // Mobile: adjusted
+                  ? ['23vw', '18vw', '13vw', '7vw', '0vw', '0vw'] // Mobile: cut only 3% from right
                   : ['25vw', '20vw', '12.5vw', '5vw', '0vw', '0vw'], // Desktop: original values
               ),
             }}
@@ -223,7 +223,7 @@ export default function CinematicHeroScroll({
               ),
               ...(isMobile 
                 ? {
-                    left: '55%', // Align shadow with shifted mobile window
+                    left: '40%', // Align shadow with shifted mobile window (moved more to right)
                     transform: 'translateX(-50%)',
                   }
                 : {

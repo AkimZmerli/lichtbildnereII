@@ -54,8 +54,8 @@ export default function InvertedGalleryPage() {
   }, [])
 
   return isMobile ? (
-    <MobileGallery images={images} title="Inverted" alternateGalleryLink={alternateLink} />
+    <MobileGallery images={images} title="Inverted" alternateGalleryLink={alternateLink} galleryType="inverted" />
   ) : (
-    <DesktopGallery images={images} title="Inverted" alternateGalleryLink={alternateLink} />
+    <DesktopGallery images={images} title="Inverted" alternateGalleryLink={alternateLink} galleryType="inverted" />
   )
 }
