@@ -36,20 +36,38 @@ const GalleryNavigation = ({ type }: GalleryNavigationProps) => {
   let nextText = 'human'
   
   if (type === 'human') {
-    nextLink = '/gallery/non-human'
-    nextText = 'non-human'
-  } else if (type === 'non-human') {
-    // If both main galleries have been viewed, show inverted
-    if (hasViewedBothMainGalleries()) {
+    // Check if user has seen non-human already
+    const viewed = getViewedGalleries()
+    if (viewed.includes('non-human')) {
+      // Both seen, go to inverted
       nextLink = '/gallery/inverted'
       nextText = 'inverted'
     } else {
+      // Haven't seen non-human yet
+      nextLink = '/gallery/non-human'
+      nextText = 'non-human'
+    }
+  } else if (type === 'non-human') {
+    // Check if user has seen human already
+    const viewed = getViewedGalleries()
+    if (viewed.includes('human')) {
+      // Both seen, go to inverted
+      nextLink = '/gallery/inverted'
+      nextText = 'inverted'
+    } else {
+      // Haven't seen human yet
       nextLink = '/gallery/human'
       nextText = 'human'
     }
   } else if (type === 'inverted') {
     nextLink = '/socialbook'
     nextText = 'social book'
+  }
+
+  // Helper function to get viewed galleries
+  const getViewedGalleries = (): string[] => {
+    if (typeof window === 'undefined') return []
+    return JSON.parse(sessionStorage.getItem('viewedGalleries') || '[]')
   }
 
   return (
