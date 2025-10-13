@@ -26,6 +26,12 @@ const GalleryNavigation = ({ type }: GalleryNavigationProps) => {
     }
   }, [type, hasViewedAllGalleries, router])
 
+  // Helper function to get viewed galleries
+  const getViewedGalleries = (): string[] => {
+    if (typeof window === 'undefined') return []
+    return JSON.parse(sessionStorage.getItem('viewedGalleries') || '[]')
+  }
+
   // Determine title based on gallery type
   let title = 'H U M A N'
   if (type === 'non-human') title = 'N O N   H U M A N'
@@ -62,12 +68,6 @@ const GalleryNavigation = ({ type }: GalleryNavigationProps) => {
   } else if (type === 'inverted') {
     nextLink = '/socialbook'
     nextText = 'social book'
-  }
-
-  // Helper function to get viewed galleries
-  const getViewedGalleries = (): string[] => {
-    if (typeof window === 'undefined') return []
-    return JSON.parse(sessionStorage.getItem('viewedGalleries') || '[]')
   }
 
   return (
