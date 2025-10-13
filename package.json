@@ -8,6 +8,7 @@
     "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
     "build:next": "cross-env NODE_OPTIONS=--no-deprecation next build",
     "init:db": "cross-env NODE_OPTIONS=--no-deprecation node scripts/init-db.js",
+    "create-admin": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/create-admin-user.ts",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
     "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation next dev",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
@@ -29,6 +30,7 @@
     "@types/three": "^0.179.0",
     "@vercel/blob": "^2.0.0",
     "cross-env": "^7.0.3",
+    "dotenv": "^17.2.3",
     "framer-motion": "^12.7.4",
     "graphql": "^16.8.1",
     "gsap": "^3.13.0",
@@ -46,12 +48,14 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
+    "@types/dotenv": "^8.2.3",
     "@types/node": "^22.5.4",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "eslint": "^9.16.0",
     "eslint-config-next": "15.3.0",
     "prettier": "^3.4.2",
+    "tsx": "^4.20.6",
     "typescript": "5.7.3"
   },
   "engines": {
