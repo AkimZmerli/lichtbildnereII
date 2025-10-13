@@ -1,21 +1,25 @@
 import { NextResponse } from 'next/server'
 import { getPayload } from '@/lib/payload'
+import { up } from '../../../migrations/20251013_184049_initial'
 
 export async function GET() {
   try {
     const payload = await getPayload()
     
-    // Run migrations using Payload's migration system
-    console.log('Running database migrations...')
+    // Run migrations directly by executing the up function
+    console.log('Running database migrations directly...')
     
-    if (payload.db.migrator) {
-      const migrationResult = await payload.db.migrator.migrator.migrate()
-      console.log('Migration result:', migrationResult)
-    }
+    await up({ 
+      db: payload.db, 
+      payload,
+      req: {} as any
+    })
+    
+    console.log('Migration SQL executed successfully')
     
     return NextResponse.json({ 
-      message: 'Migrations completed successfully',
-      note: 'Database tables should now exist'
+      message: 'Database migrations executed successfully',
+      note: 'All tables have been created'
     })
   } catch (error) {
     console.error('Failed to run migrations:', error)
