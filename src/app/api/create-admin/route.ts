@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getPayload } from '@/lib/payload'
 
-export async function POST() {
+async function createAdminUser() {
   try {
     const payload = await getPayload()
 
@@ -37,4 +37,12 @@ export async function POST() {
       details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 })
   }
+}
+
+export async function POST() {
+  return createAdminUser()
+}
+
+export async function GET() {
+  return createAdminUser()
 }
