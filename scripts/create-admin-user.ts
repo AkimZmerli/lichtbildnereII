@@ -29,13 +29,13 @@ const createAdminUser = async () => {
     await payload.create({
       collection: 'users',
       data: {
-        email: 'admin@valentinmici.com',
+        email: 'vmici@gmx.de',
         password: 'TempPassword123!', // Change this immediately after first login
       },
     })
 
     console.log('Admin user created successfully!')
-    console.log('Email: admin@valentinmici.com')
+    console.log('Email: vmici@gmx.de')
     console.log('Password: TempPassword123!')
     console.log('⚠️  IMPORTANT: Change the password after first login!')
     
