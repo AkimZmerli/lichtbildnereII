@@ -4,6 +4,13 @@ import ExhibitionList from './ExhibitionList'
 
 export default async function Exhibition() {
   const slides = await getSlides()
+  
+  // Sort slides by first number in label (smallest years to highest)
+  const sortedSlides = slides.sort((a, b) => {
+    const yearA = parseInt(a.label.match(/\d+/)?.[0] || '0', 10)
+    const yearB = parseInt(b.label.match(/\d+/)?.[0] || '0', 10)
+    return yearA - yearB
+  })
 
   return (
     <section id="exhibition" className="bg-grainy text-white-rose">
@@ -13,7 +20,7 @@ export default async function Exhibition() {
         </h2>
 
         <Suspense fallback={<div>Loading...</div>}>
-          <ExhibitionList slides={slides} />
+          <ExhibitionList slides={sortedSlides} />
         </Suspense>
       </div>
     </section>

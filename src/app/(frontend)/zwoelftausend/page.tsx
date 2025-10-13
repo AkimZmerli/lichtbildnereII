@@ -1,11 +1,13 @@
 'use client'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Header from '@/features/shared/components/Header'
 import Footer from '@/features/shared/components/Footer'
 import Link from 'next/link'
 
 export default function DisplayScan() {
   const videoRef = useRef<HTMLElement>(null)
+  const [isMuted, setIsMuted] = useState(true)
+  const [showUnmutePrompt, setShowUnmutePrompt] = useState(true)
 
   useEffect(() => {
     // Dynamically import Mux Player only on client side
@@ -26,6 +28,16 @@ export default function DisplayScan() {
 
     loadMuxPlayer()
   }, [])
+
+  const handleUnmute = () => {
+    if (videoRef.current) {
+      // Remove muted attribute and unmute the player
+      videoRef.current.removeAttribute('muted')
+      videoRef.current.setAttribute('volume', '1')
+      setIsMuted(false)
+      setShowUnmutePrompt(false)
+    }
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-grainy">
@@ -71,7 +83,7 @@ export default function DisplayScan() {
               stream-type="on-demand"
               controls
               autoplay="true"
-              muted
+              muted={isMuted}
               className="w-full h-full rounded-sm"
               style={
                 {
@@ -85,6 +97,42 @@ export default function DisplayScan() {
                 } as React.CSSProperties
               }
             />
+            
+            {/* Unmute Prompt Overlay */}
+            {showUnmutePrompt && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-[1px] rounded-sm">
+                <button
+                  onClick={handleUnmute}
+                  className="group relative bg-black/70 hover:bg-black/80 border border-white/20 hover:border-hot-pink/50 rounded-lg px-6 py-4 transition-all duration-300 ease-out hover:scale-105 active:scale-95"
+                >
+                  <div className="flex items-center gap-3">
+                    {/* Speaker Icon */}
+                    <svg 
+                      className="w-6 h-6 text-white-rose group-hover:text-hot-pink transition-colors duration-300" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth={2} 
+                        d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M11 5L6 9H2v6h4l5 4V5z" 
+                      />
+                    </svg>
+                    <div className="text-left">
+                      <div className="text-white-rose group-hover:text-hot-pink font-light tracking-wider uppercase text-sm transition-colors duration-300">
+                        <span className="hidden md:inline">Click to Unmute</span>
+                        <span className="md:hidden">Tap to Unmute</span>
+                      </div>
+                      <div className="text-white-rose/70 text-xs font-light mt-1">
+                        Experience the full audio
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Back Link for mobile - stays below media */}
