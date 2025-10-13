@@ -82,7 +82,7 @@ export default function DisplayScan() {
               metadata-viewer-user-id="guest"
               stream-type="on-demand"
               controls
-              autoplay="true"
+              autoplay={true}
               muted={isMuted}
               className="w-full h-full rounded-sm"
               style={
