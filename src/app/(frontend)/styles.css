@@ -10,7 +10,7 @@ html {
 
 @font-face {
   font-family: gurmukhi;
-  src: url("../../../public/fonts/gurmukhi-mn.ttf") format("truetype");
+  src: url("/fonts/gurmukhi-mn.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
