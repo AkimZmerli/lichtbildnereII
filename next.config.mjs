@@ -5,6 +5,12 @@ const nextConfig = {
   env: {
     PAYLOAD_SECRET: process.env.PAYLOAD_SECRET,
   },
+  output: 'standalone',
+  trailingSlash: false,
+  // Force dynamic rendering for all pages during build
+  experimental: {
+    forceDynamic: true,
+  },
   images: {
     remotePatterns: [
       {
@@ -18,6 +24,11 @@ const nextConfig = {
         hostname: 'localhost',
         port: '3000',
         pathname: '/images/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'valli-portfolio-cms.onrender.com',
+        pathname: '/api/media/**',
       },
     ],
   },
