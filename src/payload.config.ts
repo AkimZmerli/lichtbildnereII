@@ -58,8 +58,10 @@ export default buildConfig({
   sharp,
   plugins: [
     payloadCloudPlugin(),
-    // Storage adapter - only enable in production when configured
-    ...(process.env.NODE_ENV === 'production' && process.env.BLOB_READ_WRITE_TOKEN ? [
+    // Storage adapter - only enable when properly configured
+    ...(process.env.NODE_ENV === 'production' && 
+        process.env.BLOB_READ_WRITE_TOKEN && 
+        process.env.BLOB_READ_WRITE_TOKEN.startsWith('vercel_blob_rw_') ? [
       vercelBlobStorage({
         collections: {
           media: {
