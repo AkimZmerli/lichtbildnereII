@@ -7,10 +7,8 @@ const nextConfig = {
   },
   output: 'standalone',
   trailingSlash: false,
-  // Force dynamic rendering for all pages during build
-  experimental: {
-    forceDynamic: true,
-  },
+  // Disable static optimization completely
+  generateStaticParams: false,
   images: {
     remotePatterns: [
       {
