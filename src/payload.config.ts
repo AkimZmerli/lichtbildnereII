@@ -58,18 +58,18 @@ export default buildConfig({
   sharp,
   plugins: [
     payloadCloudPlugin(),
-    // Storage adapter - only enable when properly configured
-    ...(process.env.NODE_ENV === 'production' && 
-        process.env.BLOB_READ_WRITE_TOKEN && 
-        process.env.BLOB_READ_WRITE_TOKEN.startsWith('vercel_blob_rw_') ? [
-      vercelBlobStorage({
-        collections: {
-          media: {
-            prefix: 'media', // Keep prefix to match existing schema
-          },
-        },
-        token: process.env.BLOB_READ_WRITE_TOKEN,
-      }),
-    ] : []),
+    // Storage adapter disabled for now - uncomment when you have valid Vercel Blob token
+    // ...(process.env.NODE_ENV === 'production' && 
+    //     process.env.BLOB_READ_WRITE_TOKEN && 
+    //     process.env.BLOB_READ_WRITE_TOKEN.startsWith('vercel_blob_rw_') ? [
+    //   vercelBlobStorage({
+    //     collections: {
+    //       media: {
+    //         prefix: 'media', // Keep prefix to match existing schema
+    //       },
+    //     },
+    //     token: process.env.BLOB_READ_WRITE_TOKEN,
+    //   }),
+    // ] : []),
   ],
 })
