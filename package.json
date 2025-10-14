@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
-    "build:production": "cross-env NODE_OPTIONS=--no-deprecation SKIP_ENV_VALIDATION=true DISABLE_DB_CONNECTION=true next build",
+    "build:production": "cross-env NODE_OPTIONS=--no-deprecation next build",
     "build:next": "cross-env NODE_OPTIONS=--no-deprecation next build",
     "init:db": "cross-env NODE_OPTIONS=--no-deprecation node scripts/init-db.js",
     "create-admin": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/create-admin-user.ts",
@@ -16,7 +16,8 @@
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
-    "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "start:standalone": "node .next/standalone/server.js"
   },
   "dependencies": {
     "@mux/mux-player": "^3.4.0",
