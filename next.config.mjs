@@ -7,8 +7,6 @@ const nextConfig = {
   },
   output: 'standalone',
   trailingSlash: false,
-  // Disable static optimization completely
-  generateStaticParams: false,
   images: {
     remotePatterns: [
       {
