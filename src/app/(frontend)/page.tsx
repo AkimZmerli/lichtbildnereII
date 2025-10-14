@@ -4,9 +4,6 @@ import Hero from '@/features/shared/components/Hero'
 import SocialBook from '@/features/social-book/components/SocialBook'
 import Works from '@/features/shared/components/Works'
 
-// Force dynamic rendering
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
 
 export default function Home() {
   return (
