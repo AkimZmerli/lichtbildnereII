@@ -1,5 +1,3 @@
-import { getPayload } from '@/lib/payload'
-
 export interface Slide {
   id: string
   label: string
@@ -11,17 +9,8 @@ export interface Slide {
   }[]
 }
 
-export async function getSlides() {
-  try {
-    const payload = await getPayload()
-    const { docs } = await payload.find({
-      collection: 'slides',
-      depth: 2,
-    })
-    return docs as Slide[]
-  } catch (error) {
-    console.warn('Failed to fetch slides:', error)
-    // Return empty array if database tables don't exist yet
-    return [] as Slide[]
-  }
+export async function getSlides(): Promise<Slide[]> {
+  console.log('Getting slides - static implementation pending')
+  // Return empty array for now - will be replaced with static implementation
+  return []
 }

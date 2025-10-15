@@ -3,7 +3,7 @@ import ScrollHandlerWrapper from '@/features/shared/utils/ScrollHandlerWrapper'
 import './styles.css'
 
 export const metadata = {
-  description: 'A blank template using Payload in a Next.js app.',
+  description: 'Valentin Mici - Portfolio',
   title: 'Valentin Mici',
 }
 
