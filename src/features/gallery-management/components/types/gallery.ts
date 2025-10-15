@@ -1,18 +1,4 @@
-export interface PayloadImage {
-  filename: string
-  alt: string
-  url: string
-}
-
-export interface PayloadGalleryItem {
-  id: string
-  image: PayloadImage
-  name?: string
-  physicalWidth?: number
-  physicalHeight?: number
-  unit?: string
-  material?: string
-}
+// Removed Payload-specific types
 
 export interface GalleryProps {
   images: GalleryImage[]
