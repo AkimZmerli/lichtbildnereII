@@ -55,7 +55,7 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
 
   // Mark gallery as completed when user reaches the last image
   useEffect(() => {
-    if (currentIndex === images.length - 1 && galleryType) {
+    if (isClient && currentIndex === images.length - 1 && galleryType) {
       const completedGalleries = JSON.parse(sessionStorage.getItem('completedGalleries') || '[]')
       if (!completedGalleries.includes(galleryType)) {
         completedGalleries.push(galleryType)
@@ -65,7 +65,7 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
         window.dispatchEvent(new Event('storage'))
       }
     }
-  }, [currentIndex, images.length, galleryType])
+  }, [isClient, currentIndex, images.length, galleryType])
   const scrollTimerRef = useRef<NodeJS.Timeout | null>(null)
   const touchStartX = useRef(0)
   const touchStartTime = useRef(0)

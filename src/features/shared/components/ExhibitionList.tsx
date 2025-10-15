@@ -14,15 +14,6 @@ interface SlideWithImages extends Slide {
   }[]
 }
 
-// Helper function to safely render content that might be a rich text object
-const renderContent = (content: any) => {
-  if (!content) return ''
-  if (typeof content === 'string') return content
-  if (content.root && typeof content.root === 'object') {
-    return 'Rich text content - please add a rich text renderer'
-  }
-  return JSON.stringify(content)
-}
 
 // Smooth easing curves
 const easing = [0.25, 0.1, 0.25, 1]
@@ -160,7 +151,6 @@ function ExhibitionItem({
                 delay: 0.1,
               }}
             >
-              <div className="text-sm text-neutral-400 mb-4">{renderContent(slides.content)}</div>
 
               {/* Clickable Image gallery */}
               {slides.images && slides.images.length > 0 && (

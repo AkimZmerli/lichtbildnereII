@@ -62,7 +62,7 @@ const MasonryGallery = ({
           <Link
             href={alternateGalleryLink || `/gallery/${type === 'human' ? 'non-human' : 'human'}`}
             onClick={createSmoothLink(alternateGalleryLink || `/gallery/${type === 'human' ? 'non-human' : 'human'}`)}
-            className="group inline-flex items-center gap-2 bg-black-almost/60 backdrop-blur-md px-4 py-2 rounded-none text-hot-pink hover:text-white-rose hover:bg-hot-pink/20 hover:scale-105 active:scale-95 transition-all duration-300 ease-out shadow-lg shadow-hot-pink/10 text-sm font-light tracking-wider uppercase"
+            className="group inline-flex items-center gap-2 px-4 py-2 text-hot-pink hover:text-white-rose hover:scale-105 active:scale-95 transition-all duration-300 ease-out text-sm font-light tracking-wider uppercase"
           >
             {alternateGalleryLink?.includes('#social-book') ? (
               <>

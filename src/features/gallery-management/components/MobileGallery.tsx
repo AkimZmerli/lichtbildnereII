@@ -15,18 +15,18 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
   const [showMetadata, setShowMetadata] = useState(false)
   const [dynamicAlternateLink, setDynamicAlternateLink] = useState(alternateGalleryLink)
   const [isClient, setIsClient] = useState(false)
-  
+
   // Ensure client-side rendering
   useEffect(() => {
     setIsClient(true)
   }, [])
-  
+
   // Handle dynamic alternate link after client mount
   useEffect(() => {
     if (isClient) {
       const updateAlternateLink = () => {
         const completedGalleries = JSON.parse(sessionStorage.getItem('completedGalleries') || '[]')
-        
+
         if (galleryType === 'human') {
           // Only show inverted if BOTH human and non-human have been completed
           if (completedGalleries.includes('human') && completedGalleries.includes('non-human')) {
@@ -45,28 +45,28 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
       }
 
       updateAlternateLink()
-      
+
       // Listen for storage changes
       const handleStorageChange = () => updateAlternateLink()
       window.addEventListener('storage', handleStorageChange)
-      
+
       return () => window.removeEventListener('storage', handleStorageChange)
     }
   }, [isClient, galleryType])
 
-  // Mark gallery as completed when user reaches the last image or goes to masonry view
+  // Mark gallery as completed only when user reaches the last image (not masonry view)
   useEffect(() => {
-    if (galleryType && (currentIndex === images.length - 1 || showMasonryView)) {
+    if (isClient && galleryType && currentIndex === images.length - 1) {
       const completedGalleries = JSON.parse(sessionStorage.getItem('completedGalleries') || '[]')
       if (!completedGalleries.includes(galleryType)) {
         completedGalleries.push(galleryType)
         sessionStorage.setItem('completedGalleries', JSON.stringify(completedGalleries))
-        
+
         // Trigger storage event manually for same-window updates
         window.dispatchEvent(new Event('storage'))
       }
     }
-  }, [currentIndex, images.length, galleryType, showMasonryView])
+  }, [isClient, currentIndex, images.length, galleryType, showMasonryView])
 
   // Keyboard handler for spacebar
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -104,12 +104,30 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
     setTimeout(() => setIsTransitioning(false), 300)
   }, [currentIndex, isTransitioning])
 
+  // Prevent hydration mismatch by ensuring consistent initial render
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-grainy flex flex-col">
+        <Header />
+        <div className="pt-28 pl-8 pr-4 pb-0">
+          <h1 className="text-white-rose text-lg tracking-[0.3em] uppercase text-center">
+            {title}
+          </h1>
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-white-rose">Loading...</div>
+        </div>
+      </div>
+    )
+  }
+
   // Show masonry view
   if (showMasonryView) {
     return (
       <MasonryGallery
         images={images}
         title={title}
+        type={galleryType}
         alternateGalleryLink={dynamicAlternateLink}
         onBack={() => {
           setShowMasonryView(false)
@@ -126,15 +144,14 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
 
       {/* Title */}
       <div className="pt-28 pl-8 pr-4 pb-0">
-        <h1 className="text-white-rose text-lg tracking-[0.3em] uppercase text-center">
-          {title}
-        </h1>
+        <h1 className="text-white-rose text-lg tracking-[0.3em] uppercase text-center">{title}</h1>
       </div>
 
       {/* Photo Area - Large and simple */}
-      <div className="px-4 -mt-6" style={{ height: '75vh' }}>
+      <div className="px-4 mt-8" style={{ height: '68vh' }}>
         <div
           className="w-full h-full relative  rounded-sm overflow-hidden cursor-pointer"
+          style={{ maxHeight: '60vh' }}
           onClick={() => setShowMetadata(!showMetadata)}
           onTouchStart={(e) => {
             const touch = e.touches[0]

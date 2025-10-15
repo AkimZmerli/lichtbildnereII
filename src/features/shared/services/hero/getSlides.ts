@@ -17,7 +17,7 @@ export async function getSlides(): Promise<Slide[]> {
       content: {},
       images: [
         {
-          url: '/media/exhibitions/6-platz-da.jpg', // "do a kickflip"
+          url: '/media/exhibition/6 - Lichtbildnerei.jpg', // "do a kickflip"
           alt: 'do a kickflip',
           id: 'platz-da-6'
         }
@@ -29,12 +29,12 @@ export async function getSlides(): Promise<Slide[]> {
       content: {},
       images: [
         {
-          url: '/media/exhibitions/4-covid19.jpg', // "Covid-19"
+          url: '/media/exhibition/4 - Lichtbildnerei.jpg', // "Covid-19"
           alt: 'Covid-19',
           id: 'lichtbildnerei-4'
         },
         {
-          url: '/media/exhibitions/5-wealth.jpg', // "an expression of wealth"
+          url: '/media/exhibition/5 - Lichtbildnerei.jpg', // "an expression of wealth"
           alt: 'an expression of wealth', 
           id: 'lichtbildnerei-5'
         }
@@ -46,17 +46,17 @@ export async function getSlides(): Promise<Slide[]> {
       content: {},
       images: [
         {
-          url: '/media/exhibitions/1-amore-i.jpg', // "Amore I"
+          url: '/media/exhibition/Amore I.jpg', // "Amore I"
           alt: 'Amore I',
           id: 'amore-1'
         },
         {
-          url: '/media/exhibitions/2-amore-ii.jpg', // "Amore II"
+          url: '/media/exhibition/2 - Amore.jpg', // "Amore II"
           alt: 'Amore II',
           id: 'amore-2'
         },
         {
-          url: '/media/exhibitions/3-amore-iii.jpg', // "Amore III"
+          url: '/media/exhibition/3 - Amore.jpg', // "Amore III"
           alt: 'Amore III',
           id: 'amore-3'
         }
@@ -68,7 +68,7 @@ export async function getSlides(): Promise<Slide[]> {
       content: {},
       images: [
         {
-          url: '/media/exhibitions/16-europa.jpg', // "Europa"
+          url: '/media/exhibition/2 - Amore.jpg', // "Europa"
           alt: 'Europa',
           id: 'amore-europa-16'
         }
@@ -80,7 +80,7 @@ export async function getSlides(): Promise<Slide[]> {
       content: {},
       images: [
         {
-          url: '/media/exhibitions/25-industrie-landschaft.jpg', // "Industrie und Landschaft des bezierkes karlmarx-stadt"
+          url: '/media/exhibition/25 - Momentum.jpg', // "Industrie und Landschaft des bezierkes karlmarx-stadt"
           alt: 'Industrie und Landschaft des bezierkes karlmarx-stadt',
           id: 'momentum-25'
         }
@@ -92,12 +92,12 @@ export async function getSlides(): Promise<Slide[]> {
       content: {},
       images: [
         {
-          url: '/media/exhibitions/28-sinteza.jpg', // "sinteză"
+          url: '/media/exhibition/28 - Best of II - Visitors Choise.jpg', // "sinteză"
           alt: 'sinteză',
           id: 'best-of-28'
         },
         {
-          url: '/media/exhibitions/29-self-portrait.jpg', // "self potrait"
+          url: '/media/exhibition/29 - Best of II - Visitors Choise.jpg', // "self potrait"
           alt: 'self potrait',
           id: 'best-of-29'
         }
