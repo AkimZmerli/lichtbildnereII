@@ -26,7 +26,7 @@ export default function SocialBook() {
 
         <div className="flex justify-center">
           <Image
-            src="/images/placeholderSocial.png"
+            src="https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/flipbook-images/placeholderSocial.png"
             alt="The Social Book"
             width={780}
             height={405}
