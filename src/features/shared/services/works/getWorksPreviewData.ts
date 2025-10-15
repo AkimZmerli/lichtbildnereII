@@ -11,21 +11,19 @@ interface WorksPreviewData {
 }
 
 export const getWorksPreviewData = async (): Promise<WorksPreviewData> => {
-  console.log('Getting works preview data - static implementation pending')
-  
-  // Return placeholder data for now - will be replaced with static implementation
+  // Return static works preview data
   return {
     human: {
-      url: '/images/worksplaceholderII.jpg',
-      alt: 'Human Gallery',
+      url: '/media/works-preview/WorksPreviewHuman.png',
+      alt: 'Human Gallery Preview',
       width: 430,
-      height: 350
+      height: 333
     },
     nonHuman: {
-      url: '/images/Hanoi.jpg',
-      alt: 'Non-Human Gallery',
-      width: 300,
-      height: 500
+      url: '/media/works-preview/WorksPreviewNonHuman.png',
+      alt: 'Non-Human Gallery Preview',
+      width: 430,
+      height: 333
     }
   }
 }

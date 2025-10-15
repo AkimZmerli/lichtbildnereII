@@ -20,18 +20,52 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
     setIsClient(true)
   }, [])
   
-  // Handle dynamic alternate link for human gallery only after client mount
+  // Handle dynamic alternate link after client mount
   useEffect(() => {
-    if (isClient && galleryType === 'human') {
-      const viewedGalleries = JSON.parse(sessionStorage.getItem('viewedGalleries') || '[]')
-      // Simple logic: if non-human was viewed before, go to inverted; otherwise go to non-human
-      if (viewedGalleries.includes('non-human')) {
-        setDynamicAlternateLink('/gallery/inverted')
-      } else {
-        setDynamicAlternateLink('/gallery/non-human')
+    if (isClient) {
+      const updateAlternateLink = () => {
+        const completedGalleries = JSON.parse(sessionStorage.getItem('completedGalleries') || '[]')
+        
+        if (galleryType === 'human') {
+          // Only show inverted if BOTH human and non-human have been completed
+          if (completedGalleries.includes('human') && completedGalleries.includes('non-human')) {
+            setDynamicAlternateLink('/gallery/inverted')
+          } else {
+            setDynamicAlternateLink('/gallery/non-human')
+          }
+        } else if (galleryType === 'non-human') {
+          // Only show inverted if BOTH human and non-human have been completed
+          if (completedGalleries.includes('human') && completedGalleries.includes('non-human')) {
+            setDynamicAlternateLink('/gallery/inverted')
+          } else {
+            setDynamicAlternateLink('/gallery/human')
+          }
+        }
       }
+
+      updateAlternateLink()
+      
+      // Listen for storage changes
+      const handleStorageChange = () => updateAlternateLink()
+      window.addEventListener('storage', handleStorageChange)
+      
+      return () => window.removeEventListener('storage', handleStorageChange)
     }
   }, [isClient, galleryType])
+
+  // Mark gallery as completed when user reaches the last image
+  useEffect(() => {
+    if (currentIndex === images.length - 1 && galleryType) {
+      const completedGalleries = JSON.parse(sessionStorage.getItem('completedGalleries') || '[]')
+      if (!completedGalleries.includes(galleryType)) {
+        completedGalleries.push(galleryType)
+        sessionStorage.setItem('completedGalleries', JSON.stringify(completedGalleries))
+        
+        // Trigger storage event manually for same-window updates
+        window.dispatchEvent(new Event('storage'))
+      }
+    }
+  }, [currentIndex, images.length, galleryType])
   const scrollTimerRef = useRef<NodeJS.Timeout | null>(null)
   const touchStartX = useRef(0)
   const touchStartTime = useRef(0)

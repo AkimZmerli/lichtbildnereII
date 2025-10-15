@@ -282,7 +282,7 @@ export default function CinematicHeroScroll({
               className="absolute left-1/2 transform -translate-x-1/2 text-white-rose/70 z-20"
               style={{
                 opacity: scrollIndicatorOpacity,
-                bottom: '5vh', // Positioned even lower, near bottom of screen
+                bottom: isMobile ? '15vh' : '5vh', // Move up 10% (from 5vh to 15vh) on mobile
               }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

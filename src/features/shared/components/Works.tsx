@@ -156,13 +156,13 @@ export default function Works() {
                     <Image
                       src={previewData?.human.url || "/images/worksplaceholderII.jpg"}
                       alt={previewData?.human.alt || "Human Gallery"}
-                      width={300}
-                      height={420}
+                      width={331}
+                      height={463}
                       className="object-cover rounded-sm"
                     />
                   </div>
-                  <div className="mt-3 flex justify-between items-center">
-                    <h3 className="uppercase text-2xl tracking-[0.3em]">HUMAN</h3>
+                  <div className="mt-3 flex justify-between items-center" style={{maxWidth: '331px', margin: '12px auto 0'}}>
+                    <h3 className="uppercase text-xl tracking-[0.25em]">HUMAN</h3>
                     <Link
                       href="/gallery/human"
                       className="text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px]"
@@ -180,13 +180,13 @@ export default function Works() {
                     <Image
                       src={previewData?.nonHuman.url || "/images/Hanoi.jpg"}
                       alt={previewData?.nonHuman.alt || "Non-Human Gallery"}
-                      width={280}
-                      height={440}
+                      width={309}
+                      height={485}
                       className="object-cover rounded-sm"
                     />
                   </div>
-                  <div className="mt-3 flex justify-between items-center">
-                    <h3 className="uppercase text-2xl tracking-[0.3em] whitespace-nowrap">
+                  <div className="mt-3 flex justify-between items-center" style={{maxWidth: '309px', margin: '12px auto 0'}}>
+                    <h3 className="uppercase text-xl tracking-[0.2em] whitespace-nowrap">
                       NON HUMAN
                     </h3>
                     <Link
@@ -216,7 +216,7 @@ export default function Works() {
                 src={previewData?.human.url || "/images/worksplaceholderII.jpg"}
                 alt={previewData?.human.alt || "Human Gallery"}
                 width={300}
-                height={420}
+                height={333}
                 className="object-cover rounded-sm"
               />
               <Link
@@ -239,7 +239,7 @@ export default function Works() {
                 src={previewData?.nonHuman.url || "/images/Hanoi.jpg"}
                 alt={previewData?.nonHuman.alt || "Non-Human Gallery"}
                 width={280}
-                height={440}
+                height={333}
                 className="object-cover rounded-sm"
               />
               <Link
