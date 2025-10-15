@@ -16,6 +16,11 @@ const nextConfig = {
         port: '3000',
         pathname: '/media/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'ckr77j2dv5dhtnev.public.blob.vercel-storage.com',
+        pathname: '/**',
+      },
     ],
   },
 }
