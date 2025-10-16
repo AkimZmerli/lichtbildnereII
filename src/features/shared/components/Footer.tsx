@@ -34,7 +34,7 @@ export default function Footer() {
         <Heart className="w-4 h-4 text-hot-pink" />
         <span>by</span>
         <a
-          href="https://akimzmerli.site"
+          href="https://webdev4life.com"
           target="_blank"
           rel="noopener noreferrer"
           className="underline underline-offset-2 hover:opacity-80"
