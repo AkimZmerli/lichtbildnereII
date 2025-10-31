@@ -54,9 +54,9 @@ export default function CinematicHeroScroll({
 
   // Smooth the scroll progress for better performance
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
+    stiffness: 200,
+    damping: 25,
+    restDelta: 0.0001,
   })
 
   // Debug scroll progress
@@ -67,27 +67,26 @@ export default function CinematicHeroScroll({
     return unsubscribe
   }, [smoothProgress])
 
-  // Transform values based on scroll - Complete expansion by 50% and hold
-  // Container height: starts very compressed, reaches full viewport at 50% scroll
+  // Transform values based on scroll - More responsive opening
+  // Container height: starts very compressed, reaches full viewport more gradually
   const containerHeight = useTransform(
     smoothProgress,
-    [0, 0.15, 0.3, 0.5, 1],
-    ['30vh', '45vh', '75vh', '100vh', '100vh'], // Expands to full viewport height
+    [0, 0.2, 0.4, 0.6, 1],
+    ['30vh', '50vh', '75vh', '100vh', '100vh'], // Smoother expansion curve
   )
 
   // Image stays at full size - no scaling
-  // Only add subtle zoom at the very end for cinematic effect
   const imageScale = useTransform(
     smoothProgress,
-    [0, 0.45, 0.5, 1],
-    [1, 1, 1.02, 1.02], // Image at full size, tiny zoom at end
+    [0, 1],
+    [1, 1], // Image stays at exactly the same size throughout
   )
 
-  // Cinematic letterbox width - completes expansion by 50% scroll
+  // Cinematic letterbox width - smoother expansion
   const containerWidth = useTransform(
     smoothProgress,
-    [0, 0.1, 0.25, 0.4, 0.5, 1],
-    ['40%', '50%', '65%', '80%', '100%', '100%'], // Smaller window
+    [0, 0.15, 0.3, 0.5, 0.7, 1],
+    ['40%', '55%', '70%', '85%', '100%', '100%'], // More gradual width expansion
   )
 
   // Content opacity and position (fades in as you scroll)
@@ -164,8 +163,8 @@ export default function CinematicHeroScroll({
             style={{
               height: useTransform(
                 smoothProgress,
-                [0, 0.15, 0.3, 0.5, 1],
-                ['35vh', '27.5vh', '12.5vh', '0vh', '0vh'],
+                [0, 0.2, 0.4, 0.6, 1],
+                ['35vh', '25vh', '12.5vh', '0vh', '0vh'],
               ),
             }}
           />
@@ -176,8 +175,8 @@ export default function CinematicHeroScroll({
             style={{
               height: useTransform(
                 smoothProgress,
-                [0, 0.15, 0.3, 0.5, 1],
-                ['35vh', '27.5vh', '12.5vh', '0vh', '0vh'],
+                [0, 0.2, 0.4, 0.6, 1],
+                ['35vh', '25vh', '12.5vh', '0vh', '0vh'],
               ),
             }}
           />
@@ -188,7 +187,7 @@ export default function CinematicHeroScroll({
             style={{
               width: useTransform(
                 smoothProgress,
-                [0, 0.1, 0.25, 0.4, 0.5, 1],
+                [0, 0.15, 0.3, 0.5, 0.7, 1],
                 isMobile 
                   ? ['45vw', '36vw', '25vw', '18vw', '0vw', '0vw'] // Mobile: add 45% from left
                   : ['25vw', '20vw', '12.5vw', '5vw', '0vw', '0vw'], // Desktop: original values
@@ -202,7 +201,7 @@ export default function CinematicHeroScroll({
             style={{
               width: useTransform(
                 smoothProgress,
-                [0, 0.1, 0.25, 0.4, 0.5, 1],
+                [0, 0.15, 0.3, 0.5, 0.7, 1],
                 isMobile
                   ? ['23vw', '18vw', '13vw', '7vw', '0vw', '0vw'] // Mobile: cut only 3% from right
                   : ['25vw', '20vw', '12.5vw', '5vw', '0vw', '0vw'], // Desktop: original values
@@ -218,8 +217,8 @@ export default function CinematicHeroScroll({
               width: containerWidth,
               top: useTransform(
                 smoothProgress,
-                [0, 0.15, 0.3, 0.5, 1],
-                ['35vh', '27.5vh', '12.5vh', '0vh', '0vh'], // Moves up to top as it expands
+                [0, 0.2, 0.4, 0.6, 1],
+                ['35vh', '25vh', '12.5vh', '0vh', '0vh'], // Moves up to top as it expands
               ),
               ...(isMobile 
                 ? {
@@ -232,7 +231,6 @@ export default function CinematicHeroScroll({
                     margin: '0 auto', // Center for desktop
                   }
               ),
-              boxShadow: '0 0 60px 20px rgba(0, 0, 0, 0.7), inset 0 0 40px rgba(0, 0, 0, 0.5)',
             }}
           >
             {/* Title and subtitle overlay */}
@@ -257,13 +255,6 @@ export default function CinematicHeroScroll({
               </motion.div>
             )}
 
-            {/* Vignette effect */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background: 'radial-gradient(circle, transparent 50%, rgba(0,0,0,0.4) 100%)',
-              }}
-            />
 
             {/* Loading state */}
             {!imageLoaded && (

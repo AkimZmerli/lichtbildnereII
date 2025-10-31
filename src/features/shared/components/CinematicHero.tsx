@@ -286,7 +286,7 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
           {/* Skip to completion if skipAnimation is true */}
           {skipAnimation ? (
             // Fully revealed state
-            <div className="relative overflow-hidden bg-black w-full h-full">
+            <div className="relative overflow-hidden w-full h-full">
               <div className="absolute inset-0 w-full h-full">
                 <picture className="w-full h-full block">
                   <source media="(min-width: 768px)" srcSet={desktopUrl} />
@@ -294,14 +294,6 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
                   <img src={desktopUrl} alt={altText} className="w-full h-full object-cover" />
                 </picture>
 
-                {/* Subtle overlay gradient */}
-                <div
-                  className="absolute inset-0 w-full h-full pointer-events-none"
-                  style={{
-                    background:
-                      'radial-gradient(circle at center, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 80%)',
-                  }}
-                />
 
                 {/* Title and subtitle */}
                 {(title || subtitle) && (
@@ -321,12 +313,10 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
           ) : (
             // Animated cinematic reveal
             <motion.div
-              className="relative overflow-hidden bg-black flex items-center justify-center"
+              className="relative overflow-hidden flex items-center justify-center"
               style={{
                 width: viewportWidth,
                 height: viewportHeight,
-                // Create a cinematic border around the image
-                boxShadow: '0 0 100px 50px rgba(0, 0, 0, 0.8)',
               }}
             >
               {/* Background image with parallax */}
@@ -359,15 +349,6 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
                 </picture>
               </motion.div>
 
-              {/* Subtle overlay gradient for mood (single layer, no double-masking) */}
-              <div
-                className="absolute inset-0 w-full h-full pointer-events-none"
-                style={{
-                  background:
-                    'radial-gradient(circle at center, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 80%)',
-                }}
-                aria-hidden="true"
-              />
 
               {/* Content overlay - appears after initial reveal */}
               <motion.div

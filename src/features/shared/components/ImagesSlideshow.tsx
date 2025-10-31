@@ -160,6 +160,40 @@ export default function ImageSlideshow({
                 />
               </motion.div>
 
+              {/* Preload adjacent images for smooth navigation */}
+              <div className="absolute -top-full left-0 w-full h-full pointer-events-none opacity-0 overflow-hidden">
+                {/* Preload previous image */}
+                {currentIndex > 0 && (
+                  <Image
+                    src={
+                      images[currentIndex - 1].url.startsWith('/')
+                        ? `${process.env.NEXT_PUBLIC_SERVER_URL}${images[currentIndex - 1].url}`
+                        : images[currentIndex - 1].url
+                    }
+                    alt={images[currentIndex - 1].alt}
+                    width={1200}
+                    height={800}
+                    className="max-w-full max-h-[70vh] w-auto h-auto object-contain"
+                    priority={false}
+                  />
+                )}
+                {/* Preload next image */}
+                {currentIndex < images.length - 1 && (
+                  <Image
+                    src={
+                      images[currentIndex + 1].url.startsWith('/')
+                        ? `${process.env.NEXT_PUBLIC_SERVER_URL}${images[currentIndex + 1].url}`
+                        : images[currentIndex + 1].url
+                    }
+                    alt={images[currentIndex + 1].alt}
+                    width={1200}
+                    height={800}
+                    className="max-w-full max-h-[70vh] w-auto h-auto object-contain"
+                    priority={false}
+                  />
+                )}
+              </div>
+
               {/* Next Button */}
               {images.length > 1 && (
                 <button

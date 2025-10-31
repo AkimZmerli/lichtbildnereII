@@ -115,7 +115,32 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
           </h1>
         </div>
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-white-rose">Loading...</div>
+          <div className="text-center">
+            {/* Enhanced mobile loading animation */}
+            <div className="relative mb-6">
+              {/* Pulsing backdrop */}
+              <div className="absolute inset-0 w-24 h-24 bg-hot-pink/5 rounded-full animate-ping motion-reduce:animate-none mx-auto" />
+              <div className="absolute inset-1 w-22 h-22 bg-hot-pink/10 rounded-full animate-pulse motion-reduce:animate-none mx-auto" />
+              
+              {/* Main spinner */}
+              <div className="relative w-20 h-20 mx-auto flex items-center justify-center">
+                {/* Outer ring */}
+                <div className="absolute w-20 h-20 border-3 border-hot-pink/20 rounded-full" />
+                {/* Spinning ring */}
+                <div className="w-20 h-20 border-3 border-transparent border-t-hot-pink border-r-hot-pink rounded-full animate-spin motion-reduce:animate-none" />
+                {/* Inner dot */}
+                <div className="absolute w-2 h-2 bg-hot-pink rounded-full animate-pulse motion-reduce:animate-none" />
+              </div>
+            </div>
+            
+            {/* Animated loading text */}
+            <div className="text-white-rose/70 text-lg">
+              <span className="inline-block animate-pulse motion-reduce:animate-none">Loading</span>
+              <span className="inline-block animate-[bounce_1s_infinite_0.1s] motion-reduce:animate-none">.</span>
+              <span className="inline-block animate-[bounce_1s_infinite_0.2s] motion-reduce:animate-none">.</span>
+              <span className="inline-block animate-[bounce_1s_infinite_0.3s] motion-reduce:animate-none">.</span>
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -178,6 +203,18 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
           }}
         >
           {images[currentIndex] && <GalleryImage image={images[currentIndex]} priority={true} />}
+          
+          {/* Preload adjacent images for smooth navigation */}
+          <div className="absolute -top-full left-0 w-full h-full pointer-events-none opacity-0 overflow-hidden">
+            {/* Preload previous image */}
+            {currentIndex > 0 && images[currentIndex - 1] && (
+              <GalleryImage image={images[currentIndex - 1]} priority={false} />
+            )}
+            {/* Preload next image */}
+            {currentIndex < images.length - 1 && images[currentIndex + 1] && (
+              <GalleryImage image={images[currentIndex + 1]} priority={false} />
+            )}
+          </div>
         </div>
       </div>
 

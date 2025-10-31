@@ -13,9 +13,7 @@ export default function Footer() {
           <div className="h-[1px] bg-white-rose/60 flex-1" />
         </div>
         <a href="mailto:mail@valentinmici.com" className="text-sm mt-1 hover:underline">
-          <p>
-            write me a <span className="text-hot-pink">love</span>letter
-          </p>
+          <p>write me a love letter</p>
         </a>
       </div>
 

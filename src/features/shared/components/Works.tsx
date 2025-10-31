@@ -153,13 +153,15 @@ export default function Works() {
               <motion.div className="w-full max-w-[430px] mx-auto" variants={mobileItemVariants}>
                 <div>
                   <div className="flex justify-center">
-                    <Image
-                      src={previewData?.human.url || "/images/worksplaceholderII.jpg"}
-                      alt={previewData?.human.alt || "Human Gallery"}
-                      width={331}
-                      height={463}
-                      className="object-cover rounded-sm"
-                    />
+                    <Link href="/gallery/human" className="block hover:opacity-90 transition-opacity duration-200">
+                      <Image
+                        src={previewData?.human.url || "/images/worksplaceholderII.jpg"}
+                        alt={previewData?.human.alt || "Human Gallery"}
+                        width={331}
+                        height={463}
+                        className="object-cover "
+                      />
+                    </Link>
                   </div>
                   <div className="mt-3 flex justify-between items-center" style={{maxWidth: '331px', margin: '12px auto 0'}}>
                     <h3 className="uppercase text-xl tracking-[0.25em]">HUMAN</h3>
@@ -167,7 +169,7 @@ export default function Works() {
                       href="/gallery/human"
                       className="text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px]"
                     >
-                      view gallery →
+                      view gallery ↗
                     </Link>
                   </div>
                 </div>
@@ -177,13 +179,15 @@ export default function Works() {
               <motion.div className="w-full max-w-[430px] mx-auto" variants={mobileItemVariants}>
                 <div>
                   <div className="flex justify-center">
-                    <Image
-                      src={previewData?.nonHuman.url || "/images/Hanoi.jpg"}
-                      alt={previewData?.nonHuman.alt || "Non-Human Gallery"}
-                      width={309}
-                      height={485}
-                      className="object-cover rounded-sm"
-                    />
+                    <Link href="/gallery/non-human" className="block hover:opacity-90 transition-opacity duration-200">
+                      <Image
+                        src={previewData?.nonHuman.url || "/images/Hanoi.jpg"}
+                        alt={previewData?.nonHuman.alt || "Non-Human Gallery"}
+                        width={309}
+                        height={485}
+                        className="object-cover "
+                      />
+                    </Link>
                   </div>
                   <div className="mt-3 flex justify-between items-center" style={{maxWidth: '309px', margin: '12px auto 0'}}>
                     <h3 className="uppercase text-xl tracking-[0.2em] whitespace-nowrap">
@@ -193,7 +197,7 @@ export default function Works() {
                       href="/gallery/non-human"
                       className="text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px]"
                     >
-                      view gallery →
+                      view gallery ↗
                     </Link>
                   </div>
                 </div>
@@ -212,18 +216,20 @@ export default function Works() {
               animate={isInView ? 'visible' : 'hidden'}
             >
               <h3 className="flex justify-start uppercase text-2xl tracking-[0.5em]">HUMAN</h3>
-              <Image
-                src={previewData?.human.url || "/images/worksplaceholderII.jpg"}
-                alt={previewData?.human.alt || "Human Gallery"}
-                width={300}
-                height={333}
-                className="object-cover rounded-sm"
-              />
+              <Link href="/gallery/human" className="block hover:opacity-90 transition-opacity duration-200">
+                <Image
+                  src={previewData?.human.url || "/images/worksplaceholderII.jpg"}
+                  alt={previewData?.human.alt || "Human Gallery"}
+                  width={300}
+                  height={333}
+                  className="object-cover "
+                />
+              </Link>
               <Link
                 href="/gallery/human"
-                className="text-hot-pink hover:underline underline-offset-4 flex justify-end"
+                className="text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px] flex justify-end"
               >
-                view gallery →
+                view gallery ↗
               </Link>
             </motion.div>
 
@@ -235,18 +241,20 @@ export default function Works() {
               animate={isInView ? 'visible' : 'hidden'}
             >
               <h3 className="flex justify-start uppercase text-2xl tracking-[0.5em]">NON HUMAN</h3>
-              <Image
-                src={previewData?.nonHuman.url || "/images/Hanoi.jpg"}
-                alt={previewData?.nonHuman.alt || "Non-Human Gallery"}
-                width={280}
-                height={333}
-                className="object-cover rounded-sm"
-              />
+              <Link href="/gallery/non-human" className="block hover:opacity-90 transition-opacity duration-200">
+                <Image
+                  src={previewData?.nonHuman.url || "/images/Hanoi.jpg"}
+                  alt={previewData?.nonHuman.alt || "Non-Human Gallery"}
+                  width={280}
+                  height={333}
+                  className="object-cover "
+                />
+              </Link>
               <Link
                 href="/gallery/non-human"
-                className="text-hot-pink hover:underline underline-offset-4 flex justify-end"
+                className="text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px] flex justify-end"
               >
-                view gallery →
+                view gallery ↗
               </Link>
             </motion.div>
           </div>

@@ -111,7 +111,7 @@ function ExhibitionItem({
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full py-6 px-4 flex items-center justify-between hover:bg-neutral-900/30 transition-colors duration-200 group"
       >
-        <span className="text-sm group-hover:translate-x-1 transition-transform duration-200 ease-out">
+        <span className="text-sm transition-transform duration-200 ease-out">
           {slides.label}
         </span>
 
@@ -188,6 +188,7 @@ function ExhibitionItem({
                             alt={imageAlt}
                             width={150}
                             height={100}
+                            priority={imageIndex < 3} // Preload first 3 images
                             className="object-cover transition-all duration-300 ease-out group-hover/img:scale-105"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover/img:opacity-100 transition-opacity duration-300" />
@@ -243,7 +244,7 @@ function TankstelleExhibition({ index }: { index: number }) {
         className="w-full py-6 px-4 flex items-center justify-between hover:bg-neutral-900/30 transition-colors duration-200 group"
       >
         <div className="flex items-center gap-3">
-          <span className="text-sm group-hover:translate-x-1 transition-transform duration-200 ease-out">
+          <span className="text-sm transition-transform duration-200 ease-out">
             Projektraum
           </span>
           {/* Interactive 3D Badge */}
@@ -304,24 +305,9 @@ function TankstelleExhibition({ index }: { index: number }) {
               {/* Visit Exhibition Button */}
               <Link
                 href="/tankstelle"
-                className="group inline-flex items-center gap-2 text-hot-pink hover:text-white-rose hover:scale-105 active:scale-95 transition-all duration-300 ease-out"
+                className="inline-block text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px]"
               >
-                <span className="font-light tracking-wider uppercase text-sm">
-                  Visit Exhibition
-                </span>
-                <svg
-                  className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 7l5 5m0 0l-5 5m5-5H6"
-                  />
-                </svg>
+                visit exhibition ↗
               </Link>
             </motion.div>
           </motion.div>

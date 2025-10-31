@@ -13,8 +13,8 @@ export default function ImpressumPage() {
           
           <div className="space-y-8">
             <section>
-              <h2 className="text-lg font-semibold mb-6 text-white-rose text-right">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:</h2>
-              <p className="text-base leading-relaxed text-white-rose/90 text-right">
+              <h2 className="text-lg font-semibold mb-6 text-white-rose">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:</h2>
+              <p className="text-base leading-relaxed text-white-rose/90">
                 Valentin Mici<br />
                 Reinhardstraße 26<br />
                 09130 Chemnitz<br />
