@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { GalleryProps } from './types/gallery'
 import GalleryImage from './GalleryImage'
 import Header from '@/features/shared/components/Header'
+import LoadingSpinner from '@/features/shared/components/LoadingSpinner'
 import { createSmoothLink } from '@/features/shared/utils/smoothNavigation'
 
 const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: GalleryProps) => {
@@ -14,18 +15,18 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
   const [isClient, setIsClient] = useState(false)
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
-  
+
   // Ensure client-side rendering
   useEffect(() => {
     setIsClient(true)
   }, [])
-  
+
   // Handle dynamic alternate link after client mount
   useEffect(() => {
     if (isClient) {
       const updateAlternateLink = () => {
         const completedGalleries = JSON.parse(sessionStorage.getItem('completedGalleries') || '[]')
-        
+
         if (galleryType === 'human') {
           // Only show inverted if BOTH human and non-human have been completed
           if (completedGalleries.includes('human') && completedGalleries.includes('non-human')) {
@@ -44,11 +45,11 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
       }
 
       updateAlternateLink()
-      
+
       // Listen for storage changes
       const handleStorageChange = () => updateAlternateLink()
       window.addEventListener('storage', handleStorageChange)
-      
+
       return () => window.removeEventListener('storage', handleStorageChange)
     }
   }, [isClient, galleryType])
@@ -60,7 +61,7 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
       if (!completedGalleries.includes(galleryType)) {
         completedGalleries.push(galleryType)
         sessionStorage.setItem('completedGalleries', JSON.stringify(completedGalleries))
-        
+
         // Trigger storage event manually for same-window updates
         window.dispatchEvent(new Event('storage'))
       }
@@ -206,9 +207,8 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
       <div className="h-screen flex flex-col bg-grainy overflow-hidden">
         <Header />
         <main className="flex-1 flex flex-col justify-center items-center">
-          <h1 className="text-white-rose text-4xl tracking-[0.5em] uppercase mb-4">{title}</h1>
-          <p className="text-white-rose/70 mb-8">Loading gallery...</p>
-          <div className="w-32 h-32 border-4 border-hot-pink rounded-full border-t-transparent animate-spin" />
+          <h1 className="text-white-rose text-4xl tracking-[0.5em] uppercase mb-8">{title}</h1>
+          <LoadingSpinner size="lg" showText={true} />
         </main>
       </div>
     )
@@ -242,7 +242,7 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
         {/* Gallery - adjusted height to account for header and title */}
         <div
           ref={scrollContainerRef}
-          className="flex-1 overflow-hidden cursor-grab active:cursor-grabbing pb-2"
+          className="flex-1 overflow-hidden cursor-grab active:cursor-grabbing pb-4"
         >
           <div
             className="h-full flex transition-transform duration-[2000ms] ease-in-out will-change-transform"
@@ -260,7 +260,11 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
                 <div className="w-full h-full flex items-center justify-center">
                   <GalleryImage
                     image={image}
-                    priority={index === currentIndex || index === currentIndex + 1}
+                    priority={
+                      index === currentIndex || 
+                      index === currentIndex + 1 || 
+                      index === currentIndex - 1
+                    }
                   />
                 </div>
               </div>
@@ -340,27 +344,17 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
               <Link
                 href={dynamicAlternateLink}
                 onClick={createSmoothLink(dynamicAlternateLink)}
-                className="group inline-flex items-center gap-3 bg-black-almost/60 backdrop-blur-md px-5 py-2.5 rounded-full text-hot-pink hover:text-white-rose hover:bg-hot-pink/20 hover:scale-105 hover:shadow-hot-pink/20 active:scale-95 transition-all duration-300 ease-out border border-hot-pink/40 hover:border-hot-pink shadow-lg shadow-hot-pink/10 focus:outline-none focus:ring-2 focus:ring-hot-pink/50 focus:ring-offset-2 focus:ring-offset-black-almost"
+                className="inline-block text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px] text-base font-medium bg-grainy/80 backdrop-blur-sm px-4 py-2 rounded-md border border-hot-pink/30"
               >
-                <span className="font-light tracking-wider uppercase text-sm">
-                  {dynamicAlternateLink.includes('inverted') ? 'Inverted' : 
-                   dynamicAlternateLink.includes('non-human') ? 'View Non-Human' : 
-                   dynamicAlternateLink.includes('#social-book') ? 'Social Book' : 
-                   dynamicAlternateLink.includes('socialbook') ? 'Social Book' : 'View Human'}
-                </span>
-                <svg 
-                  className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 7l5 5m0 0l-5 5m5-5H6"
-                  />
-                </svg>
+                {dynamicAlternateLink.includes('inverted')
+                  ? 'inverted ↗'
+                  : dynamicAlternateLink.includes('non-human')
+                    ? 'view non-human ↗'
+                    : dynamicAlternateLink.includes('#social-book')
+                      ? 'social book ↗'
+                      : dynamicAlternateLink.includes('socialbook')
+                        ? 'social book ↗'
+                        : 'view human ↗'}
               </Link>
             </motion.div>
           )}

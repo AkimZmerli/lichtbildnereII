@@ -88,15 +88,15 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
   // Height animation - from letterbox to full screen
   const viewportHeight = useTransform(
     smoothProgress,
-    [0, 0.8, 1],
-    [`${viewportHeightStart * 100}vh`, '100vh', '100vh'], // End at full height
+    [0, 0.95, 1],
+    [`${viewportHeightStart * 100}vh`, '100vh', '100vh'], // End at full height at 95%
   )
 
   // Width animation - slightly expands from initial width
   const viewportWidth = useTransform(
     smoothProgress,
-    [0, 0.6, 1],
-    [`${viewportWidthStart * 100}%`, '100%', '100%'], // End at full width
+    [0, 0.9, 1],
+    [`${viewportWidthStart * 100}%`, '100%', '100%'], // End at full width at 90%
   )
 
   // Content animations
@@ -124,7 +124,7 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
     document.body.style.overflow = 'hidden'
 
     // Create a custom scroll handler to control the animation precisely
-    const maxScrollDistance = window.innerHeight * 0.8 // 80% of viewport height
+    const maxScrollDistance = window.innerHeight * 4.0 // 400% of viewport height - much more scroll before Works section
     let animationFrameId: number
 
     // Event handlers
@@ -173,13 +173,16 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
       // Only animate if we haven't unlocked scrolling yet
       if (!scrollingUnlocked) {
         // Calculate progress (0 to 1)
-        const progress = Math.min(window.scrollY / maxScrollDistance, 1)
-
+        const totalProgress = Math.min(window.scrollY / maxScrollDistance, 1)
+        
+        // Visual animation completes at 30% of total scroll (1.2/4.0 = 0.30)
+        const visualProgress = Math.min(totalProgress / 0.30, 1)
+        
         // Update our motion value to drive all animations
-        scrollProgress.set(progress)
+        scrollProgress.set(visualProgress)
 
-        // When animation is 85% complete
-        if (progress >= 0.85 && !animationComplete) {
+        // When total scroll reaches 100% (user has scrolled the full distance)
+        if (totalProgress >= 1.0 && !animationComplete) {
           // Set completion flag
           setAnimationComplete(true)
 
@@ -191,25 +194,23 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
             localStorage.setItem(storageKey, 'true')
           }
 
-          // Add a small delay before unlocking scrolling for smoother transition
-          setTimeout(() => {
-            setScrollingUnlocked(true)
-            document.body.style.overflow = 'auto'
+          // Unlock scrolling when user has scrolled the full distance
+          setScrollingUnlocked(true)
+          document.body.style.overflow = 'auto'
 
-            // Dispatch event to notify header that animation is complete
-            window.dispatchEvent(new CustomEvent('cinematicHeroComplete'))
+          // Dispatch event to notify header that animation is complete
+          window.dispatchEvent(new CustomEvent('cinematicHeroComplete'))
 
-            // Clean up all event listeners
-            window.removeEventListener('wheel', handleWheel)
-            window.removeEventListener('keydown', handleKeyDown)
-            window.removeEventListener('touchstart', handleTouchStart)
-            window.removeEventListener('touchmove', handleTouchMove)
-          }, 500) // Half-second delay for smoother transition
+          // Clean up all event listeners
+          window.removeEventListener('wheel', handleWheel)
+          window.removeEventListener('keydown', handleKeyDown)
+          window.removeEventListener('touchstart', handleTouchStart)
+          window.removeEventListener('touchmove', handleTouchMove)
         }
       }
 
-      // Continue the animation loop while animation is not complete
-      if (!animationComplete) {
+      // Continue the animation loop until scrolling is unlocked
+      if (!scrollingUnlocked) {
         animationFrameId = requestAnimationFrame(updateScrollAnimation)
       }
     }
@@ -236,14 +237,13 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
         // Enable allowSkip when forced to complete
         setInternalAllowSkip(true)
 
-        setTimeout(() => {
-          setScrollingUnlocked(true)
-          document.body.style.overflow = 'auto'
-          window.removeEventListener('wheel', handleWheel)
-          window.removeEventListener('keydown', handleKeyDown)
-          window.removeEventListener('touchstart', handleTouchStart)
-          window.removeEventListener('touchmove', handleTouchMove)
-        }, 500)
+        // For escape key, skip the pause and unlock immediately (user explicitly wants to skip)
+        setScrollingUnlocked(true)
+        document.body.style.overflow = 'auto'
+        window.removeEventListener('wheel', handleWheel)
+        window.removeEventListener('keydown', handleKeyDown)
+        window.removeEventListener('touchstart', handleTouchStart)
+        window.removeEventListener('touchmove', handleTouchMove)
       }
     }
 
@@ -286,7 +286,7 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
           {/* Skip to completion if skipAnimation is true */}
           {skipAnimation ? (
             // Fully revealed state
-            <div className="relative overflow-hidden bg-black w-full h-full">
+            <div className="relative overflow-hidden w-full h-full">
               <div className="absolute inset-0 w-full h-full">
                 <picture className="w-full h-full block">
                   <source media="(min-width: 768px)" srcSet={desktopUrl} />
@@ -294,14 +294,6 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
                   <img src={desktopUrl} alt={altText} className="w-full h-full object-cover" />
                 </picture>
 
-                {/* Subtle overlay gradient */}
-                <div
-                  className="absolute inset-0 w-full h-full pointer-events-none"
-                  style={{
-                    background:
-                      'radial-gradient(circle at center, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 80%)',
-                  }}
-                />
 
                 {/* Title and subtitle */}
                 {(title || subtitle) && (
@@ -321,12 +313,10 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
           ) : (
             // Animated cinematic reveal
             <motion.div
-              className="relative overflow-hidden bg-black flex items-center justify-center"
+              className="relative overflow-hidden flex items-center justify-center"
               style={{
                 width: viewportWidth,
                 height: viewportHeight,
-                // Create a cinematic border around the image
-                boxShadow: '0 0 100px 50px rgba(0, 0, 0, 0.8)',
               }}
             >
               {/* Background image with parallax */}
@@ -359,15 +349,6 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
                 </picture>
               </motion.div>
 
-              {/* Subtle overlay gradient for mood (single layer, no double-masking) */}
-              <div
-                className="absolute inset-0 w-full h-full pointer-events-none"
-                style={{
-                  background:
-                    'radial-gradient(circle at center, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 80%)',
-                }}
-                aria-hidden="true"
-              />
 
               {/* Content overlay - appears after initial reveal */}
               <motion.div

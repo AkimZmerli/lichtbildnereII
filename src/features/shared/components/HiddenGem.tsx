@@ -7,8 +7,8 @@ export default function HiddenGem() {
         <h2 className="uppercase mb-12 text-2xl tracking-[0.5em]">CLOSING WORDS</h2>
 
         <div className="space-y-6 max-w-2xl mx-auto">
-          <p className="">Thank you so much for taking your time to view my whole page.</p>
-          <p className=" mb-12">Here&apos;s a little present for you:</p>
+          <p className="">Thank you for taking the time to explore my work.</p>
+          <p className=" mb-12">Here&apos;s a short film from my first exhibition at Tankstelle Projektraum:</p>
 
           <Link
             href="/zwoelftausend"

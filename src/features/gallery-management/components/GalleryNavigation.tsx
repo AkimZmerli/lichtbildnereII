@@ -13,7 +13,7 @@ interface GalleryNavigationProps {
 
 const GalleryNavigation = ({ type }: GalleryNavigationProps) => {
   const router = useRouter()
-  const { hasViewedBothMainGalleries, hasViewedAllGalleries } = useGalleryTracking(type)
+  const { hasViewedBothMainGalleries: _hasViewedBothMainGalleries, hasViewedAllGalleries } = useGalleryTracking(type)
   
   // Redirect to socialbook if viewing inverted and all galleries have been seen
   useEffect(() => {

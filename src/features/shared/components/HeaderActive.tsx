@@ -145,7 +145,7 @@ function HeaderActive({ isOpen, toggleMenu }: HeaderActiveProps) {
             <BurgerMenu isOpen={isOpen} isDark />
           </button>
         </div>
-        <nav className="flex flex-col items-end space-y-4 text-black-almost text-2xl mt-4">
+        <nav className="flex flex-col items-start md:items-end space-y-4 text-black-almost text-2xl mt-4">
           <Link
             href="/#works"
             onClick={(e) => handleNavigation(e, '/#works')}

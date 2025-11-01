@@ -12,7 +12,9 @@
     "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation next dev",
     "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
-    "start:standalone": "node .next/standalone/server.js"
+    "start:standalone": "node .next/standalone/server.js",
+    "upload:previews": "tsx scripts/upload-previews.ts",
+    "upload:all": "tsx scripts/upload-to-blob.ts"
   },
   "dependencies": {
     "@mux/mux-player": "^3.4.0",

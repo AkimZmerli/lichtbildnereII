@@ -18,20 +18,30 @@ export default function SocialBook() {
 
   return (
     <section ref={sectionRef} id="social-book">
-      <div className="text-center bg-white-rose/90 text-hot-rose px-4 py-40">
-        <h2 className="uppercase mb-15 text-base text-hot-pink text-[2rem] flex flex-col items-center">
+      <div className="text-center bg-grainy text-hot-rose px-4 py-20">
+        <h2 className="uppercase mb-15 text-base text-white-rose text-[2rem] flex flex-col items-center">
           <span className="tracking-[0.5em]">THE SOCIAL</span>
           <span className="tracking-[0.5em] mt-2">BOOK</span>
         </h2>
 
         <div className="flex justify-center">
-          <Image
-            src="https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/flipbook-images/placeholderSocial.png"
-            alt="The Social Book"
-            width={780}
-            height={405}
-            className="object-contain w-full max-w-[780px] h-auto"
-          />
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              setShowFlipbook(true)
+            }}
+            className="cursor-pointer hover:opacity-90 transition-opacity duration-200"
+          >
+            <Image
+              src="/media/flipbook-images/placeholderSocial.png"
+              alt="The Social Book"
+              width={780}
+              height={405}
+              className="object-contain w-[230] h-[169]"
+            />
+          </button>
         </div>
 
         {/* Flipbook trigger button */}
@@ -39,9 +49,9 @@ export default function SocialBook() {
           <button
             type="button"
             onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setShowFlipbook(true);
+              e.preventDefault()
+              e.stopPropagation()
+              setShowFlipbook(true)
             }}
             className="inline-block text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px] cursor-pointer"
           >

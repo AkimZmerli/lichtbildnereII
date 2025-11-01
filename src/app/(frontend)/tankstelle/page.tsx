@@ -19,27 +19,14 @@ export default function DisplayScan() {
     <div className="min-h-screen flex flex-col bg-grainy">
       <Header />
 
-      <div className="flex-1 flex items-center justify-center bg-grainy text-white-rose px-4 md:px-8 relative pt-20 md:pt-24">
+      <div className="flex-1 flex items-center justify-center bg-grainy text-white-rose px-4 md:px-8 relative pt-24 md:pt-24">
         {/* Back Link - positioned at top left on desktop */}
         <div className="absolute top-26 left-8 hidden md:block">
           <Link
             href="/about-exhibition#exhibition"
-            className="group inline-flex items-center gap-2 text-hot-pink hover:text-white-rose hover:scale-105 active:scale-95 transition-all duration-300 ease-out"
+            className="inline-block text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px] bg-grainy/80 backdrop-blur-sm px-4 py-2 rounded-md border border-hot-pink/30"
           >
-            <svg 
-              className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform duration-300" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M11 17l-5-5m0 0l5-5m-5 5h12"
-              />
-            </svg>
-            <span className="font-light tracking-wider uppercase text-sm">Go Back</span>
+            ← go back
           </Link>
         </div>
         
@@ -93,22 +80,9 @@ export default function DisplayScan() {
           <div className="mt-8 md:hidden">
             <Link
               href="/about-exhibition#exhibition"
-              className="group inline-flex items-center gap-2 text-hot-pink hover:text-white-rose hover:scale-105 active:scale-95 transition-all duration-300 ease-out"
+              className="inline-block text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px] bg-grainy/80 backdrop-blur-sm px-4 py-2 rounded-md border border-hot-pink/30"
             >
-              <svg 
-                className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform duration-300" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M11 17l-5-5m0 0l5-5m-5 5h12"
-                />
-              </svg>
-              <span className="font-light tracking-wider uppercase text-sm">Go Back</span>
+              ← go back
             </Link>
           </div>
         </div>

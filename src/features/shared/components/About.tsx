@@ -9,13 +9,7 @@ export default function About() {
 
         {/* PROFILE VIDEO - autoplay loop like a GIF */}
         <div className="mb-8 md:mb-12">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full h-auto object-cover"
-          >
+          <video autoPlay loop muted playsInline className="w-full h-auto object-cover">
             <source src="/images/animation.mp4" type="video/mp4" />
             <source src="/images/animation.webm" type="video/webm" />
             {/* Fallback to GIF if video not supported */}
@@ -35,23 +29,26 @@ export default function About() {
           {/* Column 1 */}
           <div className="p-6 rounded-sm">
             <p className="text-base md:text-lg text-white-rose leading-relaxed">
-              My name is Valentin Mici. Born in Romania, raised in Gelenau, and since 2014, I have
-              been living in Chemnitz, which has now become my home. For the past five years, I have
-              been deeply dedicated to black-and-white photography and the development process in
-              the photo lab. I consciously chose against commissioned photography because I prefer
-              to shape my work freely and independently—in every sense.
+              My name is Valentin Mici. Born in Romania, raised in Gelenau, and since 2014 living in
+              Chemnitz. For the past five years, I have been deeply dedicated to black-and-white
+              photography and the development process in the photo lab. I consciously chose against
+              commissioned photography because I prefer to shape my work freely and independently—in
+              every sense. Discovering photography as a means of expression fills me with
+              enthusiasm, as it gives me the opportunity to influence my work.
             </p>
           </div>
 
           {/* Column 2 */}
           <div className="p-6 rounded-sm">
             <p className="text-base md:text-lg text-white-rose leading-relaxed">
-              Discovering photography as a means of expression fills me with enthusiasm, as it gives
-              me the opportunity to influence my work. Not only at the moment I press the shutter
-              button but also in the photo lab, where I have the freedom to further refine my ideas
-              until the result matches my vision. I am open towards cooperation. Some of my photos
-              are for sale.
-            </p>
+              Not only at the moment I press the shutter button but also in the photo lab, where I
+              have the freedom to further refine my ideas until the result matches my vision. My
+              works show that I am in a constant tension between the lively, organic moments of
+              people and the graphic elements like structure and contrast. These two worlds – the
+              human and the graphic – come together in my work, creating a unique dynamic that
+              reflects both naturalness and clear structure.{' '}
+            </p>{' '}
+            <p className="mt-4"> Some of my works are for sale.</p>
           </div>
         </div>
       </div>

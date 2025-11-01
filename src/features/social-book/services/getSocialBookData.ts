@@ -1,3 +1,5 @@
+import { getImageUrl } from '../../../config/blob'
+
 interface SocialBookData {
   coverImage: {
     url: string
@@ -8,12 +10,19 @@ interface SocialBookData {
 }
 
 export const getSocialBookData = async (): Promise<SocialBookData> => {
-  console.log('Getting social book data - static implementation pending')
+  console.log('Getting social book data - static implementation')
   
-  // Return placeholder data for now - will be replaced with static implementation
+  // Use blob URLs in production, local paths in development
+  const isProduction = process.env.NODE_ENV === 'production'
+  const cacheBuster = `?v=${Date.now()}`
+  
+  const imageUrl = isProduction 
+    ? getImageUrl('social-book/placeholderSocial.png')
+    : `/images/placeholderSocial.png${cacheBuster}`
+  
   return {
     coverImage: {
-      url: '/images/placeholderSocial.png',
+      url: imageUrl,
       alt: 'The Social Book'
     },
     title: 'THE SOCIAL BOOK',

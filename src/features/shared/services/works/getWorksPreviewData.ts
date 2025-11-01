@@ -1,3 +1,5 @@
+import { getImageUrl } from '../../../../config/blob'
+
 interface WorksPreviewImage {
   url: string
   alt: string
@@ -11,19 +13,40 @@ interface WorksPreviewData {
 }
 
 export const getWorksPreviewData = async (): Promise<WorksPreviewData> => {
-  // Return static works preview data
-  return {
-    human: {
-      url: '/media/works-preview/WorksPreviewHuman.png',
-      alt: 'Human Gallery Preview',
-      width: 430,
-      height: 333
-    },
-    nonHuman: {
-      url: '/media/works-preview/WorksPreviewNonHuman.png',
-      alt: 'Non-Human Gallery Preview',
-      width: 430,
-      height: 333
+  // Use blob URLs in production, local paths in development
+  const isProduction = process.env.NODE_ENV === 'production'
+  const cacheBuster = `?v=${Date.now()}`
+  
+  if (isProduction) {
+    return {
+      human: {
+        url: getImageUrl('works-preview/WorksPreviewHuman.png'),
+        alt: 'Human Gallery Preview',
+        width: 430,
+        height: 333
+      },
+      nonHuman: {
+        url: getImageUrl('works-preview/WorksPreviewNonHuman.png'),
+        alt: 'Non-Human Gallery Preview',
+        width: 430,
+        height: 333
+      }
+    }
+  } else {
+    // Local development - use local files
+    return {
+      human: {
+        url: `/media/works-preview/WorksPreviewHuman.png${cacheBuster}`,
+        alt: 'Human Gallery Preview',
+        width: 430,
+        height: 333
+      },
+      nonHuman: {
+        url: `/media/works-preview/WorksPreviewNonHuman.png${cacheBuster}`,
+        alt: 'Non-Human Gallery Preview',
+        width: 430,
+        height: 333
+      }
     }
   }
 }
