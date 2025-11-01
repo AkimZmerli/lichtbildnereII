@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { GalleryImageProps } from '@/features/gallery-management/components/types/gallery'
+import LoadingSpinner from '../components/LoadingSpinner'
 
 const ImageWithLoader = ({ image, priority = false, onLoad }: GalleryImageProps) => {
   const [isLoading, setIsLoading] = useState(true)
@@ -21,7 +22,7 @@ const ImageWithLoader = ({ image, priority = false, onLoad }: GalleryImageProps)
           
           {/* Loading spinner */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-8 h-8 border-2 border-hot-pink/30 border-t-hot-pink rounded-full animate-spin motion-reduce:animate-none" />
+            <LoadingSpinner size="sm" showText={false} />
           </div>
         </div>
       )}

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { GalleryProps } from './types/gallery'
 import GalleryImage from './GalleryImage'
 import Header from '@/features/shared/components/Header'
+import LoadingSpinner from '@/features/shared/components/LoadingSpinner'
 import { createSmoothLink } from '@/features/shared/utils/smoothNavigation'
 
 const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: GalleryProps) => {
@@ -206,26 +207,8 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
       <div className="h-screen flex flex-col bg-grainy overflow-hidden">
         <Header />
         <main className="flex-1 flex flex-col justify-center items-center">
-          <h1 className="text-white-rose text-4xl tracking-[0.5em] uppercase mb-4">{title}</h1>
-          
-          {/* Enhanced loading animation */}
-          <div className="relative">
-            {/* Pulsing backdrop */}
-            <div className="absolute inset-0 w-40 h-40 bg-hot-pink/5 rounded-full animate-ping motion-reduce:animate-none" />
-            <div className="absolute inset-2 w-36 h-36 bg-hot-pink/10 rounded-full animate-pulse motion-reduce:animate-none" />
-            
-            {/* Main spinner container */}
-            <div className="relative w-32 h-32 flex items-center justify-center">
-              {/* Outer ring */}
-              <div className="absolute w-32 h-32 border-4 border-hot-pink/20 rounded-full" />
-              {/* Spinning ring */}
-              <div className="w-32 h-32 border-4 border-transparent border-t-hot-pink border-r-hot-pink rounded-full animate-spin motion-reduce:animate-none" />
-              {/* Inner dot */}
-              <div className="absolute w-3 h-3 bg-hot-pink rounded-full animate-pulse motion-reduce:animate-none" />
-            </div>
-          </div>
-          
-          <p className="text-white-rose/70 mt-8 animate-pulse motion-reduce:animate-none">Loading gallery...</p>
+          <h1 className="text-white-rose text-4xl tracking-[0.5em] uppercase mb-8">{title}</h1>
+          <LoadingSpinner size="lg" showText={true} />
         </main>
       </div>
     )

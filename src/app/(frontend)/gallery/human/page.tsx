@@ -6,16 +6,14 @@ import DesktopGallery from '@/features/gallery-management/components/DesktopGall
 import MobileGallery from '@/features/gallery-management/components/MobileGallery'
 import { GalleryImage } from '@/features/gallery-management/components/types/gallery'
 import { useGalleryTracking } from '@/features/gallery-management/hooks/useGalleryTracking'
+import LoadingSpinner from '@/features/shared/components/LoadingSpinner'
 
 export default function HumanGalleryPage() {
   const [images, setImages] = useState<GalleryImage[]>([])
-  const [isMobile, setIsMobile] = useState(() => {
-    if (typeof window === 'undefined') return false
-    return window.innerWidth < 768
-  })
+  const [isMobile, setIsMobile] = useState<boolean | null>(null)
   
   // Track that this gallery has been viewed
-  const { hasViewedBothMainGalleries } = useGalleryTracking('human')
+  const { hasViewedBothMainGalleries: _hasViewedBothMainGalleries } = useGalleryTracking('human')
   
   // Always start with non-human to avoid hydration mismatch
   // The component itself will handle the logic internally
@@ -27,6 +25,7 @@ export default function HumanGalleryPage() {
       setIsMobile(width < 768)
     }
 
+    // Initial check
     checkMobile()
 
     let timeoutId: NodeJS.Timeout
@@ -49,6 +48,15 @@ export default function HumanGalleryPage() {
     }
     loadImages()
   }, [])
+
+  // Show loading state until we determine device type
+  if (isMobile === null) {
+    return (
+      <div className="min-h-screen bg-grainy flex flex-col items-center justify-center">
+        <LoadingSpinner size="md" showText={true} />
+      </div>
+    )
+  }
 
   return isMobile ? (
     <MobileGallery images={images} title="Human" alternateGalleryLink={alternateLink} galleryType="human" />

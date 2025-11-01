@@ -46,14 +46,18 @@ function Header() {
         
         // Header visibility logic for pages with cinematic hero
         if (hasCinematicHero.current) {
-          // Stay completely hidden until cinematic hero completes
-          if (!cinematicHeroCompleted) {
+          // Check if user is within the cinematic hero area (first 400% of viewport height)
+          const cinematicHeroHeight = window.innerHeight * 4.0
+          const isInCinematicArea = currentScrollY <= cinematicHeroHeight
+          
+          // Stay completely hidden while in cinematic hero area OR if animation not completed
+          if (!cinematicHeroCompleted || isInCinematicArea) {
             setIsVisible(false)
-            // Don't process any scroll events during opening animation
+            // Don't process any scroll events during cinematic experience
             ticking.current = false
             return
           } else {
-            // After completion, same responsive behavior as other pages
+            // After completion AND outside cinematic area, normal behavior
             if (scrollingDown && currentScrollY > 50) {
               setIsVisible(false)
             } else if (scrollingUp && currentScrollY > 50) {

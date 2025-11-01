@@ -149,49 +149,29 @@ export default function Works() {
             animate={isInView ? 'visible' : 'hidden'}
           >
             <div className="flex flex-col gap-12">
-              {/* HUMAN - Mobile */}
-              <motion.div className="w-full max-w-[430px] mx-auto" variants={mobileItemVariants}>
-                <div>
-                  <div className="flex justify-center">
-                    <Link href="/gallery/human" className="block hover:opacity-90 transition-opacity duration-200">
-                      <Image
-                        src={previewData?.human.url || "/images/worksplaceholderII.jpg"}
-                        alt={previewData?.human.alt || "Human Gallery"}
-                        width={331}
-                        height={463}
-                        className="object-cover "
-                      />
-                    </Link>
-                  </div>
-                  <div className="mt-3 flex justify-between items-center" style={{maxWidth: '331px', margin: '12px auto 0'}}>
-                    <h3 className="uppercase text-xl tracking-[0.25em]">HUMAN</h3>
-                    <Link
-                      href="/gallery/human"
-                      className="text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px]"
-                    >
-                      view gallery ↗
-                    </Link>
-                  </div>
-                </div>
-              </motion.div>
-
               {/* NON-HUMAN - Mobile */}
               <motion.div className="w-full max-w-[430px] mx-auto" variants={mobileItemVariants}>
                 <div>
                   <div className="flex justify-center">
-                    <Link href="/gallery/non-human" className="block hover:opacity-90 transition-opacity duration-200">
+                    <Link
+                      href="/gallery/non-human"
+                      className="block hover:opacity-90 transition-opacity duration-200"
+                    >
                       <Image
-                        src={previewData?.nonHuman.url || "/images/Hanoi.jpg"}
-                        alt={previewData?.nonHuman.alt || "Non-Human Gallery"}
+                        src={previewData?.nonHuman.url || '/images/Hanoi.jpg'}
+                        alt={previewData?.nonHuman.alt || 'Non-Human Gallery'}
                         width={309}
                         height={485}
                         className="object-cover "
                       />
                     </Link>
                   </div>
-                  <div className="mt-3 flex justify-between items-center" style={{maxWidth: '309px', margin: '12px auto 0'}}>
+                  <div
+                    className="mt-3 flex justify-between items-center"
+                    style={{ maxWidth: '309px', margin: '12px auto 0' }}
+                  >
                     <h3 className="uppercase text-xl tracking-[0.2em] whitespace-nowrap">
-                      NON HUMAN
+                      NON-HUMAN
                     </h3>
                     <Link
                       href="/gallery/non-human"
@@ -203,6 +183,37 @@ export default function Works() {
                 </div>
               </motion.div>
 
+              {/* HUMAN - Mobile */}
+              <motion.div className="w-full max-w-[430px] mx-auto" variants={mobileItemVariants}>
+                <div>
+                  <div className="flex justify-center">
+                    <Link
+                      href="/gallery/human"
+                      className="block hover:opacity-90 transition-opacity duration-200"
+                    >
+                      <Image
+                        src={previewData?.human.url || '/images/worksplaceholderII.jpg'}
+                        alt={previewData?.human.alt || 'Human Gallery'}
+                        width={331}
+                        height={463}
+                        className="object-cover "
+                      />
+                    </Link>
+                  </div>
+                  <div
+                    className="mt-3 flex justify-between items-center"
+                    style={{ maxWidth: '331px', margin: '12px auto 0' }}
+                  >
+                    <h3 className="uppercase text-xl tracking-[0.25em]">HUMAN</h3>
+                    <Link
+                      href="/gallery/human"
+                      className="text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px]"
+                    >
+                      view gallery ↗
+                    </Link>
+                  </div>
+                </div>
+              </motion.div>
             </div>
           </motion.div>
 
@@ -216,10 +227,13 @@ export default function Works() {
               animate={isInView ? 'visible' : 'hidden'}
             >
               <h3 className="flex justify-start uppercase text-2xl tracking-[0.5em]">HUMAN</h3>
-              <Link href="/gallery/human" className="block hover:opacity-90 transition-opacity duration-200">
+              <Link
+                href="/gallery/human"
+                className="block hover:opacity-90 transition-opacity duration-200"
+              >
                 <Image
-                  src={previewData?.human.url || "/images/worksplaceholderII.jpg"}
-                  alt={previewData?.human.alt || "Human Gallery"}
+                  src={previewData?.human.url || '/images/worksplaceholderII.jpg'}
+                  alt={previewData?.human.alt || 'Human Gallery'}
                   width={300}
                   height={333}
                   className="object-cover "
@@ -241,10 +255,13 @@ export default function Works() {
               animate={isInView ? 'visible' : 'hidden'}
             >
               <h3 className="flex justify-start uppercase text-2xl tracking-[0.5em]">NON HUMAN</h3>
-              <Link href="/gallery/non-human" className="block hover:opacity-90 transition-opacity duration-200">
+              <Link
+                href="/gallery/non-human"
+                className="block hover:opacity-90 transition-opacity duration-200"
+              >
                 <Image
-                  src={previewData?.nonHuman.url || "/images/Hanoi.jpg"}
-                  alt={previewData?.nonHuman.alt || "Non-Human Gallery"}
+                  src={previewData?.nonHuman.url || '/images/Hanoi.jpg'}
+                  alt={previewData?.nonHuman.alt || 'Non-Human Gallery'}
                   width={280}
                   height={333}
                   className="object-cover "

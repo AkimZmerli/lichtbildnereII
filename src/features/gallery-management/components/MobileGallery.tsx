@@ -5,6 +5,7 @@ import GalleryImage from './GalleryImage'
 import MasonryGallery from './MasonryGallery'
 import Header from '@/features/shared/components/Header'
 import Footer from '@/features/shared/components/Footer'
+import LoadingSpinner from '@/features/shared/components/LoadingSpinner'
 import { GalleryProps } from './types/gallery'
 
 const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: GalleryProps) => {
@@ -15,6 +16,7 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
   const [showMetadata, setShowMetadata] = useState(false)
   const [dynamicAlternateLink, setDynamicAlternateLink] = useState(alternateGalleryLink)
   const [isClient, setIsClient] = useState(false)
+  const [clickedButton, setClickedButton] = useState<'prev' | 'next' | null>(null)
 
   // Ensure client-side rendering
   useEffect(() => {
@@ -86,6 +88,10 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
   const goToNext = useCallback(() => {
     if (isTransitioning) return
 
+    // Show clicked effect
+    setClickedButton('next')
+    setTimeout(() => setClickedButton(null), 200)
+
     if (currentIndex === images.length - 1) {
       setShowMasonryView(true)
       return
@@ -98,6 +104,10 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
 
   const goToPrevious = useCallback(() => {
     if (isTransitioning || currentIndex === 0) return
+
+    // Show clicked effect
+    setClickedButton('prev')
+    setTimeout(() => setClickedButton(null), 200)
 
     setIsTransitioning(true)
     setCurrentIndex((prev) => prev - 1)
@@ -115,32 +125,7 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
           </h1>
         </div>
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            {/* Enhanced mobile loading animation */}
-            <div className="relative mb-6">
-              {/* Pulsing backdrop */}
-              <div className="absolute inset-0 w-24 h-24 bg-hot-pink/5 rounded-full animate-ping motion-reduce:animate-none mx-auto" />
-              <div className="absolute inset-1 w-22 h-22 bg-hot-pink/10 rounded-full animate-pulse motion-reduce:animate-none mx-auto" />
-              
-              {/* Main spinner */}
-              <div className="relative w-20 h-20 mx-auto flex items-center justify-center">
-                {/* Outer ring */}
-                <div className="absolute w-20 h-20 border-3 border-hot-pink/20 rounded-full" />
-                {/* Spinning ring */}
-                <div className="w-20 h-20 border-3 border-transparent border-t-hot-pink border-r-hot-pink rounded-full animate-spin motion-reduce:animate-none" />
-                {/* Inner dot */}
-                <div className="absolute w-2 h-2 bg-hot-pink rounded-full animate-pulse motion-reduce:animate-none" />
-              </div>
-            </div>
-            
-            {/* Animated loading text */}
-            <div className="text-white-rose/70 text-lg">
-              <span className="inline-block animate-pulse motion-reduce:animate-none">Loading</span>
-              <span className="inline-block animate-[bounce_1s_infinite_0.1s] motion-reduce:animate-none">.</span>
-              <span className="inline-block animate-[bounce_1s_infinite_0.2s] motion-reduce:animate-none">.</span>
-              <span className="inline-block animate-[bounce_1s_infinite_0.3s] motion-reduce:animate-none">.</span>
-            </div>
-          </div>
+          <LoadingSpinner size="lg" showText={true} />
         </div>
       </div>
     )
@@ -203,7 +188,7 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
           }}
         >
           {images[currentIndex] && <GalleryImage image={images[currentIndex]} priority={true} />}
-          
+
           {/* Preload adjacent images for smooth navigation */}
           <div className="absolute -top-full left-0 w-full h-full pointer-events-none opacity-0 overflow-hidden">
             {/* Preload previous image */}
@@ -228,10 +213,12 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
           <button
             onClick={goToPrevious}
             disabled={currentIndex === 0 || isTransitioning}
-            className={`p-2 rounded-full transition-all duration-200 ${
+            className={`p-2 rounded-full transition-all duration-4000 ${
               currentIndex === 0
                 ? 'bg-neutral-800/50 text-neutral-600 cursor-not-allowed'
-                : 'bg-neutral-700/60 text-white-rose/70 hover:bg-neutral-600 hover:text-white-rose active:scale-95'
+                : `bg-neutral-700/60 text-white-rose/70 hover:bg-neutral-600 hover:text-white-rose active:scale-95 ${
+                    clickedButton === 'prev' ? 'ring-4 ring-hot-pink' : ''
+                  }`
             }`}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -247,7 +234,9 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
           <button
             onClick={goToNext}
             disabled={isTransitioning}
-            className="p-2 rounded-full bg-neutral-700/60 text-white-rose/70 hover:bg-neutral-600 hover:text-white-rose active:scale-95 transition-all duration-200"
+            className={`p-2 rounded-full bg-neutral-700/60 text-white-rose/70 hover:bg-neutral-600 hover:text-white-rose active:scale-95 transition-all duration-200 ${
+              clickedButton === 'next' ? 'ring-4 ring-hot-pink' : ''
+            }`}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

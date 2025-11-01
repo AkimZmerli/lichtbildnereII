@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
 import Image from 'next/image'
+import LoadingSpinner from './LoadingSpinner'
 
 interface CinematicHeroScrollProps {
   imageUrl: string
@@ -258,9 +259,8 @@ export default function CinematicHeroScroll({
 
             {/* Loading state */}
             {!imageLoaded && (
-              <div className="absolute inset-0 bg-neutral-900 flex flex-col items-center justify-center gap-4">
-                <div className="w-8 h-8 border-2 border-white-rose border-t-transparent rounded-full animate-spin" />
-                <div className="text-white-rose/60 text-sm tracking-wider">Loading...</div>
+              <div className="absolute inset-0 bg-neutral-900 flex items-center justify-center">
+                <LoadingSpinner size="md" showText={true} />
               </div>
             )}
 

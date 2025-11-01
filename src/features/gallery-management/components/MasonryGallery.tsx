@@ -21,7 +21,7 @@ const MasonryGallery = ({
   title,
   type,
   alternateGalleryLink,
-  onBack,
+  onBack: _onBack,
 }: ExtendedMasonryGalleryProps) => {
   // Determine display title based on type
   const displayTitle = type === 'inverted' ? 'INVERTED' : (title || (type === 'human' ? 'HUMAN' : 'NON-HUMAN'))
@@ -54,7 +54,7 @@ const MasonryGallery = ({
     <div className="min-h-screen bg-grainy flex flex-col">
       <Header />
 
-      <div className="flex-1 p-6 pt-20"> {/* Added pt-20 to account for fixed header */}
+      <div className="flex-1 p-6 pt-24"> {/* Increased padding to prevent header cropping */}
         {/* Header with gallery switch button */}
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-white-rose text-2xl tracking-[0.5em] uppercase">{displayTitle}</h2>
@@ -64,41 +64,26 @@ const MasonryGallery = ({
             onClick={createSmoothLink(alternateGalleryLink || `/gallery/${type === 'human' ? 'non-human' : 'human'}`)}
             className="group inline-flex items-center gap-2 px-4 py-2 text-hot-pink hover:text-white-rose hover:scale-105 active:scale-95 transition-all duration-300 ease-out text-sm font-light tracking-wider uppercase"
           >
-            {alternateGalleryLink?.includes('#social-book') ? (
-              <>
-                <span>Social Book</span>
-                <svg 
-                  className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 7l5 5m0 0l-5 5m5-5H6"
-                  />
-                </svg>
-              </>
-            ) : (
-              <>
-                <svg 
-                  className="w-4 h-4 transform group-hover:rotate-180 transition-transform duration-300" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
-                  />
-                </svg>
-                <span>{alternateGalleryLink?.includes('inverted') ? 'Inverted' : alternateTitle}</span>
-              </>
-            )}
+            <span>
+              {alternateGalleryLink?.includes('socialbook') 
+                ? 'Social Book'
+                : alternateGalleryLink?.includes('inverted') 
+                  ? 'Inverted' 
+                  : alternateTitle}
+            </span>
+            <svg 
+              className="w-4 h-4" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 7l5 5m0 0l-5 5m5-5H6"
+              />
+            </svg>
           </Link>
         </div>
 
