@@ -1,4 +1,4 @@
-import { getImageUrl } from '../../../config/blob'
+import { getImageUrl } from '../../../../config/blob'
 
 interface WorksPreviewImage {
   url: string
