@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { FlipbookModal } from '../../3d-flipbook/components/FlipbookModal'
+import { getImageUrl } from '../../../config/blob'
 
 export default function SocialBook() {
   const sectionRef = useRef(null)
@@ -35,7 +36,7 @@ export default function SocialBook() {
             className="cursor-pointer hover:opacity-90 transition-opacity duration-200"
           >
             <Image
-              src="/media/flipbook-images/placeholderSocial.png"
+              src={getImageUrl('flipbook-images/placeholderSocial.png')}
               alt="The Social Book"
               width={780}
               height={405}
