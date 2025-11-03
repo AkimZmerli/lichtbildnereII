@@ -10,12 +10,7 @@ interface ImagePopupProps {
   onClose: () => void
 }
 
-export default function ImagePopup({
-  src,
-  alt,
-  isOpen,
-  onClose,
-}: ImagePopupProps) {
+export default function ImagePopup({ src, alt, isOpen, onClose }: ImagePopupProps) {
   useEffect(() => {
     if (!isOpen) return
 
@@ -33,7 +28,6 @@ export default function ImagePopup({
       document.body.style.overflow = 'unset'
     }
   }, [isOpen, onClose])
-
 
   return (
     <AnimatePresence>
@@ -57,7 +51,7 @@ export default function ImagePopup({
           {/* Modal Content */}
           <div className="relative w-full h-full flex flex-col max-w-7xl mx-auto p-4">
             {/* Close Button */}
-            <div className="flex justify-end mb-4 z-10">
+            <div className="flex justify-end mt-20 mb-4 z-10">
               <button
                 onClick={onClose}
                 className="text-white hover:text-neutral-300 transition-colors p-2"
@@ -74,7 +68,7 @@ export default function ImagePopup({
             </div>
 
             {/* Image Container */}
-            <div 
+            <div
               className="flex-1 flex items-center justify-center relative cursor-pointer"
               onClick={onClose}
             >

@@ -13,12 +13,31 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [dynamicAlternateLink, setDynamicAlternateLink] = useState(alternateGalleryLink)
   const [isClient, setIsClient] = useState(false)
+  const [showWelcomeHint, setShowWelcomeHint] = useState(false)
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   // Ensure client-side rendering
   useEffect(() => {
     setIsClient(true)
+  }, [])
+
+  // Welcome hint - show only once per session
+  useEffect(() => {
+    // Check if hint has already been shown this session
+    const hintShown = sessionStorage.getItem('galleryHintShown')
+    
+    if (!hintShown) {
+      setShowWelcomeHint(true)
+      
+      // Auto-hide after 2 seconds
+      const timer = setTimeout(() => {
+        setShowWelcomeHint(false)
+        sessionStorage.setItem('galleryHintShown', 'true')
+      }, 2000)
+
+      return () => clearTimeout(timer)
+    }
   }, [])
 
   // Handle dynamic alternate link after client mount
@@ -96,9 +115,14 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
   // UI visibility management
   const showUI = useCallback(() => {
     setUiVisible(true)
+    // Hide welcome hint on first interaction and mark as shown
+    if (showWelcomeHint) {
+      setShowWelcomeHint(false)
+      sessionStorage.setItem('galleryHintShown', 'true')
+    }
     if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current)
     scrollTimerRef.current = setTimeout(() => setUiVisible(false), 2500)
-  }, [])
+  }, [showWelcomeHint])
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
@@ -217,18 +241,20 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
   return (
     <>
       {/* Global CSS reset to eliminate body margins */}
-      <style jsx global>{`
-        html,
-        body {
-          margin: 0 !important;
-          padding: 0 !important;
-          height: 100% !important;
-          overflow: hidden !important;
-        }
-        #__next {
-          height: 100% !important;
-        }
-      `}</style>
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          html,
+          body {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
+            overflow: hidden !important;
+          }
+          #__next {
+            height: 100% !important;
+          }
+        `
+      }} />
 
       <div className="h-screen flex flex-col bg-grainy overflow-hidden m-0 p-0">
         {/* Header - takes natural height */}
@@ -323,6 +349,28 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
             </div>
           </div>
         )}
+
+        {/* Welcome navigation hint - bottom 1/13 */}
+        <AnimatePresence>
+          {showWelcomeHint && (
+            <motion.div
+              className="fixed bottom-1/13 left-1/2 transform -translate-x-1/2 z-60"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+              <div className="text-center">
+                <p className="text-grainy text-lg font-light tracking-wider">
+                  Scroll ↓ to explore
+                </p>
+                <p className="text-grainy text-sm mt-2">
+                  Arrow keys or swipe also work
+                </p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Sliding gallery link - bottom right (appears on last photo with 6s delay) */}
         <AnimatePresence>

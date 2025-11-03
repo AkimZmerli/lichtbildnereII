@@ -92,9 +92,9 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
         {/* Info Button */}
         <button
           onClick={() => setShowInfo(!showInfo)}
-          className="fixed bottom-6 left-6 z-[70] p-3 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all border border-white/20"
+          className="fixed bottom-6 left-6 z-[70] p-3 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all"
         >
-          <Info size={20} />
+          {showInfo ? <X size={20} /> : <Info size={20} />}
         </button>
 
         {/* Title */}
@@ -128,6 +128,12 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
         {/* Info Overlay */}
         {showInfo && (
           <div className="absolute inset-4 z-70 bg-black/80 backdrop-blur-sm rounded-lg flex items-center justify-center">
+            <button
+              onClick={() => setShowInfo(false)}
+              className="absolute top-4 right-4 p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+            >
+              <X size={20} />
+            </button>
             <div className="max-w-lg text-left text-white p-6">
               <h3 className="text-xl font-light mb-4 text-hot-pink">Can a book be social?</h3>
               <p className="text-sm leading-relaxed mb-4 text-white/80">

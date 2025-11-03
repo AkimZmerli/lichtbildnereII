@@ -13,19 +13,11 @@ export default function NonHumanGalleryPage() {
   const [isMobile, setIsMobile] = useState<boolean | null>(null)
   
   // Track that this gallery has been viewed
-  const { hasViewedBothMainGalleries } = useGalleryTracking('non-human')
+  const { hasViewedBothMainGalleries: _hasViewedBothMainGalleries } = useGalleryTracking('non-human')
   
-  // Determine next link based on whether both galleries have been viewed
-  const [alternateLink, setAlternateLink] = useState('/gallery/human')
-  
-  useEffect(() => {
-    // After both galleries viewed, link to inverted
-    if (hasViewedBothMainGalleries()) {
-      setAlternateLink('/gallery/inverted')
-    } else {
-      setAlternateLink('/gallery/human')
-    }
-  }, [hasViewedBothMainGalleries])
+  // Always start with human to avoid hydration mismatch
+  // The component itself will handle the logic internally
+  const alternateLink = '/gallery/human'
 
   useEffect(() => {
     const checkMobile = () => {

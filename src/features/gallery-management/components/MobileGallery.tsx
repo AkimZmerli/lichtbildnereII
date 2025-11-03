@@ -17,6 +17,8 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
   const [dynamicAlternateLink, setDynamicAlternateLink] = useState(alternateGalleryLink)
   const [isClient, setIsClient] = useState(false)
   const [clickedButton, setClickedButton] = useState<'prev' | 'next' | null>(null)
+  const [dragOffset, setDragOffset] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
 
   // Ensure client-side rendering
   useEffect(() => {
@@ -90,7 +92,7 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
 
     // Show clicked effect
     setClickedButton('next')
-    setTimeout(() => setClickedButton(null), 200)
+    setTimeout(() => setClickedButton(null), 600)
 
     if (currentIndex === images.length - 1) {
       setShowMasonryView(true)
@@ -98,6 +100,7 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
     }
 
     setIsTransitioning(true)
+    setDragOffset(0)
     setCurrentIndex((prev) => prev + 1)
     setTimeout(() => setIsTransitioning(false), 300)
   }, [currentIndex, images.length, isTransitioning])
@@ -107,9 +110,10 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
 
     // Show clicked effect
     setClickedButton('prev')
-    setTimeout(() => setClickedButton(null), 200)
+    setTimeout(() => setClickedButton(null), 600)
 
     setIsTransitioning(true)
+    setDragOffset(0)
     setCurrentIndex((prev) => prev - 1)
     setTimeout(() => setIsTransitioning(false), 300)
   }, [currentIndex, isTransitioning])
@@ -153,12 +157,12 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
       <Header />
 
       {/* Title */}
-      <div className="pt-28 pl-8 pr-4 pb-0">
+      <div className="pt-24 pl-8 pr-4 pb-0">
         <h1 className="text-white-rose text-lg tracking-[0.3em] uppercase text-center">{title}</h1>
       </div>
 
       {/* Photo Area - Large and simple */}
-      <div className="px-4 mt-8" style={{ height: '68vh' }}>
+      <div className="px-4 mt-2" style={{ height: '68vh' }}>
         <div
           className="w-full h-full relative  rounded-sm overflow-hidden cursor-pointer"
           style={{ maxHeight: '60vh' }}
@@ -166,6 +170,36 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
           onTouchStart={(e) => {
             const touch = e.touches[0]
             setTouchStart({ x: touch.clientX, y: touch.clientY, time: Date.now() })
+            setIsDragging(true)
+          }}
+          onTouchMove={(e) => {
+            if (!isDragging) return
+
+            const touch = e.touches[0]
+            const deltaX = touchStart.x - touch.clientX
+            const deltaY = touchStart.y - touch.clientY
+
+            // Only handle horizontal swipes
+            if (Math.abs(deltaY) < Math.abs(deltaX)) {
+              e.preventDefault()
+
+              // Add resistance at the edges
+              let offset = -deltaX
+              const maxSwipe = window.innerWidth * 0.8
+
+              // Add resistance when trying to swipe past boundaries
+              if (
+                (currentIndex === 0 && offset > 0) ||
+                (currentIndex === images.length - 1 && offset < 0)
+              ) {
+                offset = offset * 0.3 // Reduce movement by 70%
+              }
+
+              // Limit maximum swipe distance
+              offset = Math.max(-maxSwipe, Math.min(maxSwipe, offset))
+
+              setDragOffset(offset)
+            }
           }}
           onTouchEnd={(e) => {
             const touch = e.changedTouches[0]
@@ -173,38 +207,68 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
             const deltaY = touchStart.y - touch.clientY
             const deltaTime = Date.now() - touchStart.time
 
+            setIsDragging(false)
+
             // Check for tap (short touch with minimal movement)
             if (Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10 && deltaTime < 200) {
               setShowMetadata(!showMetadata)
+              setDragOffset(0)
             }
             // Check for horizontal swipe for navigation
-            else if (Math.abs(deltaX) > 80 && deltaTime < 300 && Math.abs(deltaY) < 50) {
-              if (deltaX > 0) {
+            else if (
+              (Math.abs(deltaX) > 60 && deltaTime < 400) ||
+              Math.abs(deltaX) > window.innerWidth * 0.3
+            ) {
+              if (deltaX > 0 && currentIndex < images.length - 1) {
                 goToNext()
-              } else {
+              } else if (deltaX < 0 && currentIndex > 0) {
                 goToPrevious()
+              } else {
+                // Snap back if can't navigate
+                setDragOffset(0)
               }
+            } else {
+              // Snap back for insufficient swipe
+              setDragOffset(0)
             }
           }}
         >
-          {images[currentIndex] && <GalleryImage image={images[currentIndex]} priority={true} />}
-
-          {/* Preload adjacent images for smooth navigation */}
-          <div className="absolute -top-full left-0 w-full h-full pointer-events-none opacity-0 overflow-hidden">
-            {/* Preload previous image */}
-            {currentIndex > 0 && images[currentIndex - 1] && (
-              <GalleryImage image={images[currentIndex - 1]} priority={false} />
+          {/* Container for all images with smooth drag transform */}
+          <div
+            className="w-full h-full flex"
+            style={{
+              transform: `translateX(${dragOffset}px)`,
+              transition: isDragging
+                ? 'none'
+                : 'transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            }}
+          >
+            {/* Previous image */}
+            {currentIndex > 0 && (
+              <div className="w-full h-full flex-shrink-0 absolute left-[-100%]">
+                <GalleryImage image={images[currentIndex - 1]} priority={false} />
+              </div>
             )}
-            {/* Preload next image */}
-            {currentIndex < images.length - 1 && images[currentIndex + 1] && (
-              <GalleryImage image={images[currentIndex + 1]} priority={false} />
+
+            {/* Current image */}
+            <div className="w-full h-full flex-shrink-0">
+              {images[currentIndex] && (
+                <GalleryImage image={images[currentIndex]} priority={true} />
+              )}
+            </div>
+
+            {/* Next image */}
+            {currentIndex < images.length - 1 && (
+              <div className="w-full h-full flex-shrink-0 absolute left-[100%]">
+                <GalleryImage image={images[currentIndex + 1]} priority={false} />
+              </div>
             )}
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <div className="px-6 pb-4 flex justify-between items-center">
+      <div className="px-6  pb-4  flex justify-between items-center">
         <span className="text-white-rose/50 text-base font-light">
           {currentIndex + 1} / {images.length}
         </span>
@@ -213,7 +277,7 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
           <button
             onClick={goToPrevious}
             disabled={currentIndex === 0 || isTransitioning}
-            className={`p-2 rounded-full transition-all duration-4000 ${
+            className={`p-2 rounded-full transition-all duration-200 ${
               currentIndex === 0
                 ? 'bg-neutral-800/50 text-neutral-600 cursor-not-allowed'
                 : `bg-neutral-700/60 text-white-rose/70 hover:bg-neutral-600 hover:text-white-rose active:scale-95 ${
