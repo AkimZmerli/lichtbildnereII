@@ -114,7 +114,7 @@ export default function CinematicHeroScroll({
       <div
         ref={containerRef}
         className={`relative w-full ${className}`}
-        style={{ height: '300vh' }} // Extended for 100% mask reveal + additional scroll buffer
+        style={{ height: isMobile ? '200vh' : '300vh' }} // Shorter scroll distance on mobile for smoother experience
       >
         {/* Fixed hero container */}
         <div
