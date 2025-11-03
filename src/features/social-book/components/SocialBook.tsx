@@ -40,7 +40,7 @@ export default function SocialBook() {
               alt="The Social Book"
               width={780}
               height={405}
-              className="object-contain w-[230] h-[169]"
+              className="object-contain"
             />
           </button>
         </div>
