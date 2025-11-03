@@ -50,7 +50,7 @@ export async function getExhibitionImages(): Promise<GalleryImage[]> {
     {
       url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/25%20-%20Momentum.jpg',
       alt: 'Industrie und Landschaft des Bezirkes Karl-Marx-Stadt - exhibition photograph',
-      name: 'Industrie und Landschaft des Bezirkes Karl-Marx-Stadt',
+      name: 'Industrie und Landschaft - Karl-Marx-Stadt',
       physicalWidth: 24,
       physicalHeight: 29.7,
       material: 'silver gelatin print on orwo document paper',

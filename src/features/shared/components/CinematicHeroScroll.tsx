@@ -72,8 +72,8 @@ export default function CinematicHeroScroll({
   // Container height: starts very compressed, reaches full viewport more gradually
   const containerHeight = useTransform(
     smoothProgress,
-    [0, 0.2, 0.4, 0.6, 1],
-    ['30vh', '50vh', '75vh', '100vh', '100vh'], // Smoother expansion curve
+    [0, 0.2, 0.4, 0.6, 0.8, 1],
+    ['30vh', '50vh', '75vh', '100vh', '100vh', '100vh'], // Smoother expansion curve, 100% at 0.8
   )
 
   // Image stays at full size - no scaling
@@ -86,8 +86,8 @@ export default function CinematicHeroScroll({
   // Cinematic letterbox width - smoother expansion
   const containerWidth = useTransform(
     smoothProgress,
-    [0, 0.15, 0.3, 0.5, 0.7, 1],
-    ['40%', '55%', '70%', '85%', '100%', '100%'], // More gradual width expansion
+    [0, 0.15, 0.3, 0.5, 0.7, 0.8, 1],
+    ['40%', '55%', '70%', '85%', '100%', '100%', '100%'], // More gradual width expansion, 100% at 0.8
   )
 
   // Content opacity and position (fades in as you scroll)
@@ -114,7 +114,7 @@ export default function CinematicHeroScroll({
       <div
         ref={containerRef}
         className={`relative w-full ${className}`}
-        style={{ height: '230vh' }} // Extended for more viewing time at full expansion
+        style={{ height: '300vh' }} // Extended for 100% mask reveal + additional scroll buffer
       >
         {/* Fixed hero container */}
         <div
@@ -164,8 +164,8 @@ export default function CinematicHeroScroll({
             style={{
               height: useTransform(
                 smoothProgress,
-                [0, 0.2, 0.4, 0.6, 1],
-                ['35vh', '25vh', '12.5vh', '0vh', '0vh'],
+                [0, 0.2, 0.4, 0.6, 0.8, 1],
+                ['35vh', '25vh', '12.5vh', '0vh', '0vh', '0vh'],
               ),
             }}
           />
@@ -176,8 +176,8 @@ export default function CinematicHeroScroll({
             style={{
               height: useTransform(
                 smoothProgress,
-                [0, 0.2, 0.4, 0.6, 1],
-                ['35vh', '25vh', '12.5vh', '0vh', '0vh'],
+                [0, 0.2, 0.4, 0.6, 0.8, 1],
+                ['35vh', '25vh', '12.5vh', '0vh', '0vh', '0vh'],
               ),
             }}
           />
@@ -188,10 +188,10 @@ export default function CinematicHeroScroll({
             style={{
               width: useTransform(
                 smoothProgress,
-                [0, 0.15, 0.3, 0.5, 0.7, 1],
+                [0, 0.15, 0.3, 0.5, 0.7, 0.8, 1],
                 isMobile 
-                  ? ['45vw', '36vw', '25vw', '18vw', '0vw', '0vw'] // Mobile: add 45% from left
-                  : ['25vw', '20vw', '12.5vw', '5vw', '0vw', '0vw'], // Desktop: original values
+                  ? ['45vw', '36vw', '25vw', '18vw', '0vw', '0vw', '0vw'] // Mobile: add 45% from left
+                  : ['25vw', '20vw', '12.5vw', '5vw', '0vw', '0vw', '0vw'], // Desktop: original values
               ),
             }}
           />
@@ -202,10 +202,10 @@ export default function CinematicHeroScroll({
             style={{
               width: useTransform(
                 smoothProgress,
-                [0, 0.15, 0.3, 0.5, 0.7, 1],
+                [0, 0.15, 0.3, 0.5, 0.7, 0.8, 1],
                 isMobile
-                  ? ['23vw', '18vw', '13vw', '7vw', '0vw', '0vw'] // Mobile: cut only 3% from right
-                  : ['25vw', '20vw', '12.5vw', '5vw', '0vw', '0vw'], // Desktop: original values
+                  ? ['23vw', '18vw', '13vw', '7vw', '0vw', '0vw', '0vw'] // Mobile: cut only 3% from right
+                  : ['25vw', '20vw', '12.5vw', '5vw', '0vw', '0vw', '0vw'], // Desktop: original values
               ),
             }}
           />
@@ -218,8 +218,8 @@ export default function CinematicHeroScroll({
               width: containerWidth,
               top: useTransform(
                 smoothProgress,
-                [0, 0.2, 0.4, 0.6, 1],
-                ['35vh', '25vh', '12.5vh', '0vh', '0vh'], // Moves up to top as it expands
+                [0, 0.2, 0.4, 0.6, 0.8, 1],
+                ['35vh', '25vh', '12.5vh', '0vh', '0vh', '0vh'], // Moves up to top as it expands
               ),
               ...(isMobile 
                 ? {
