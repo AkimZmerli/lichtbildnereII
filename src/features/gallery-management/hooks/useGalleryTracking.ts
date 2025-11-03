@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 
-export const useGalleryTracking = (galleryType: 'human' | 'non-human' | 'inverted') => {
+export const useGalleryTracking = (galleryType: 'human' | 'non-human' | 'inverted' | 'exhibition') => {
   useEffect(() => {
     // Mark gallery as viewed
     if (typeof window !== 'undefined') {

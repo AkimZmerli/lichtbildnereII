@@ -11,7 +11,7 @@ import { createSmoothLink } from '@/features/shared/utils/smoothNavigation'
 
 interface ExtendedMasonryGalleryProps extends Omit<MasonryGalleryProps, 'title'> {
   title?: string
-  type?: 'human' | 'non-human' | 'inverted'
+  type?: 'human' | 'non-human' | 'inverted' | 'exhibition'
   alternateGalleryLink?: string
   onBack?: () => void
 }
@@ -38,7 +38,7 @@ const MasonryGallery = ({
     setPopupState({
       isOpen: true,
       src: image.url,
-      alt: image.alt,
+      alt: image.alt || '',
     })
   }
 
@@ -114,7 +114,7 @@ const MasonryGallery = ({
               >
                 <Image
                   src={image.url}
-                  alt={image.alt}
+                  alt={image.alt || ''}
                   width={image.width || 400}
                   height={image.height || 400}
                   className="w-full h-auto object-cover"

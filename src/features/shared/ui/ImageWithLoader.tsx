@@ -28,7 +28,7 @@ const ImageWithLoader = ({ image, priority = false, onLoad }: GalleryImageProps)
       )}
       <Image
         src={image.url}
-        alt={image.alt}
+        alt={image.alt || ''}
         fill
         className={`object-contain transition-opacity duration-500 ${
           isLoading ? 'opacity-0' : 'opacity-100'
