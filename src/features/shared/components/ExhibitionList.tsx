@@ -2,7 +2,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
-import ExhibitionModal from './ExhibitionModal'
 import type { Slide } from '../services/hero/getSlides'
 
 interface SlideWithImages extends Slide {
@@ -13,87 +12,33 @@ interface SlideWithImages extends Slide {
   }[]
 }
 
-
 // Smooth easing curves
 const easing = [0.25, 0.1, 0.25, 1]
 const smoothEasing = [0.4, 0, 0.2, 1]
 
 export default function ExhibitionList({ slides }: { slides: Slide[] }) {
-  const [exhibitionModalState, setExhibitionModalState] = useState({
-    isOpen: false,
-    images: [] as { url: string; alt: string; id: string }[],
-    exhibitionTitle: '',
-  })
-
-  const openExhibitionModal = (
-    images: { url: string; alt: string; id: string }[],
-    title: string
-  ) => {
-    setExhibitionModalState({
-      isOpen: true,
-      images,
-      exhibitionTitle: title,
-    })
-  }
-
-  const closeExhibitionModal = () => {
-    setExhibitionModalState(prev => ({ ...prev, isOpen: false }))
-  }
-
   return (
-    <>
-      <div className="space-y-0.5">
-        {slides.map((slide, index) => (
-          <ExhibitionItem
-            key={slide.id}
-            slides={slide as SlideWithImages}
-            index={index}
-            onExhibitionClick={openExhibitionModal}
-          />
-        ))}
-        {/* Special Interactive Exhibition Item */}
-        <TankstelleExhibition index={slides.length} />
-      </div>
-
-      {/* Exhibition Modal */}
-      <ExhibitionModal
-        isOpen={exhibitionModalState.isOpen}
-        onClose={closeExhibitionModal}
-        images={exhibitionModalState.images}
-        exhibitionTitle={exhibitionModalState.exhibitionTitle}
-      />
-    </>
+    <div className="space-y-0.5">
+      {slides.map((slide, index) => (
+        <ExhibitionItem
+          key={slide.id}
+          slides={slide as SlideWithImages}
+          index={index}
+        />
+      ))}
+      {/* Special Interactive Exhibition Item */}
+      <TankstelleExhibition index={slides.length} />
+    </div>
   )
 }
 
 function ExhibitionItem({
   slides,
   index,
-  onExhibitionClick,
 }: {
   slides: SlideWithImages
   index: number
-  onExhibitionClick: (images: { url: string; alt: string; id: string }[], title: string) => void
 }) {
-  // Prepare images for modal
-  const preparedImages =
-    slides.images?.map((imageItem) => {
-      const imageData = imageItem as unknown as {
-        image?: { url: string; alt: string; id: string }
-      }
-      const image = imageData.image || imageItem
-      return {
-        url: image?.url || '',
-        alt: image?.alt || 'Exhibition image',
-        id: image?.id || Math.random().toString(),
-      }
-    }) || []
-
-  const handleClick = () => {
-    if (preparedImages.length > 0) {
-      onExhibitionClick(preparedImages, slides.label)
-    }
-  }
 
   return (
     <motion.div
@@ -106,14 +51,11 @@ function ExhibitionItem({
         ease: smoothEasing,
       }}
     >
-      <button
-        onClick={handleClick}
+      <Link
+        href="/gallery/exhibition"
         className="w-full py-6 px-4 flex items-center justify-between hover:bg-neutral-900/30 hover:scale-[1.02] transition-all duration-300 ease-out group transform-gpu"
-        disabled={preparedImages.length === 0}
       >
-        <span className="text-sm transition-transform duration-200 ease-out">
-          {slides.label}
-        </span>
+        <span className="text-sm transition-transform duration-200 ease-out">{slides.label}</span>
 
         <svg
           className="w-4 h-4 text-neutral-500 group-hover:text-white-rose transition-colors duration-200"
@@ -123,7 +65,7 @@ function ExhibitionItem({
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
-      </button>
+      </Link>
     </motion.div>
   )
 }
@@ -148,7 +90,7 @@ function TankstelleExhibition({ index }: { index: number }) {
       >
         <div className="flex items-center gap-3">
           <span className="text-sm transition-transform duration-200 ease-out">
-            Projektraum
+            Tankstelle Projektraum
           </span>
           {/* Interactive 3D Badge */}
           <span className="inline-flex items-center gap-1.5 px-2 py-0.5 text-xs bg-hot-pink/20 text-hot-pink rounded-full">

@@ -65,11 +65,13 @@ const MasonryGallery = ({
             className="group inline-flex items-center gap-2 px-4 py-2 text-hot-pink hover:text-white-rose hover:scale-105 active:scale-95 transition-all duration-300 ease-out text-sm font-light tracking-wider uppercase"
           >
             <span>
-              {alternateGalleryLink?.includes('socialbook') 
-                ? 'Social Book'
-                : alternateGalleryLink?.includes('inverted') 
-                  ? 'Inverted' 
-                  : alternateTitle}
+              {alternateGalleryLink?.includes('#exhibition')
+                ? 'Go Back ↗'
+                : alternateGalleryLink?.includes('socialbook') 
+                  ? 'Social Book'
+                  : alternateGalleryLink?.includes('inverted') 
+                    ? 'Inverted' 
+                    : alternateTitle}
             </span>
             <svg 
               className="w-4 h-4" 

@@ -29,15 +29,16 @@ export interface MasonryGalleryProps {
 
 export interface GalleryImage {
   url: string
-  alt: string
-  width: number
-  height: number
+  alt?: string
+  width?: number
+  height?: number
   name?: string
   physicalWidth?: number
   physicalHeight?: number
   unit?: string
   material?: string
   fabrication?: string
+  exhibition?: string
 }
 
 export interface GalleryHeaderProps {
@@ -54,4 +55,4 @@ export interface GalleryLayoutProps {
   header: React.ReactNode
 }
 
-export type GalleryType = 'human' | 'non-human' | 'inverted'
+export type GalleryType = 'human' | 'non-human' | 'inverted' | 'exhibition'

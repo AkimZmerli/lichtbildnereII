@@ -128,12 +128,6 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
         {/* Info Overlay */}
         {showInfo && (
           <div className="absolute inset-4 z-70 bg-black/80 backdrop-blur-sm rounded-lg flex items-center justify-center">
-            <button
-              onClick={() => setShowInfo(false)}
-              className="absolute top-4 right-4 p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all"
-            >
-              <X size={20} />
-            </button>
             <div className="max-w-lg text-left text-white p-6">
               <h3 className="text-xl font-light mb-4 text-hot-pink">Can a book be social?</h3>
               <p className="text-sm leading-relaxed mb-4 text-white/80">
@@ -146,12 +140,10 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
                 perspective, allowing you to look into each other&apos;s eyes and discuss.
               </p>
               <p className="text-sm leading-relaxed mb-4 text-white/80">
-                In that moment, the book isn&apos;t just being viewed – it&apos;s being shared. And that&apos;s
-                precisely where it becomes social.
+                In that moment, the book isn&apos;t just being viewed – it&apos;s being shared. And
+                that&apos;s precisely where it becomes social.
               </p>
-              <p className="text-xs text-white/60 mb-4 text-center">
-                Navigate using arrow keys, mouse clicks, or touch gestures. Press ESC to close.
-              </p>
+
               <button
                 onClick={() => setShowInfo(false)}
                 className="px-4 py-2 bg-hot-pink/20 text-hot-pink border border-hot-pink/30 rounded hover:bg-hot-pink/30 transition-all"
@@ -159,14 +151,6 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
                 Close Info
               </button>
             </div>
-          </div>
-        )}
-
-        {/* Navigation Hint - Desktop only */}
-        {!showInfo && (
-          <div className="hidden md:block absolute bottom-4 right-4 text-white/60 text-xs text-right">
-            <div>Use arrow keys or click to navigate</div>
-            <div>Press ESC to close</div>
           </div>
         )}
       </div>

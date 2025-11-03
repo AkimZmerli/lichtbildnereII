@@ -342,6 +342,9 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
                 )}
               </div>
             )}
+            {images[currentIndex].exhibition && (
+              <div>{images[currentIndex].exhibition}</div>
+            )}
             <div className="text-white-rose/50">
               <Link href="/impressum" className="text-hot-pink/70 hover:text-hot-pink underline">
                 Impressum
@@ -394,15 +397,17 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
                 onClick={createSmoothLink(dynamicAlternateLink)}
                 className="inline-block text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px] text-base font-medium bg-grainy/80 backdrop-blur-sm px-4 py-2 rounded-md border border-hot-pink/30"
               >
-                {dynamicAlternateLink.includes('inverted')
-                  ? 'inverted ↗'
-                  : dynamicAlternateLink.includes('non-human')
-                    ? 'view non-human ↗'
-                    : dynamicAlternateLink.includes('#social-book')
-                      ? 'social book ↗'
-                      : dynamicAlternateLink.includes('socialbook')
+                {dynamicAlternateLink.includes('#exhibition')
+                  ? 'Go Back ↗'
+                  : dynamicAlternateLink.includes('inverted')
+                    ? 'inverted ↗'
+                    : dynamicAlternateLink.includes('non-human')
+                      ? 'view non-human ↗'
+                      : dynamicAlternateLink.includes('#social-book')
                         ? 'social book ↗'
-                        : 'view human ↗'}
+                        : dynamicAlternateLink.includes('socialbook')
+                          ? 'social book ↗'
+                          : 'view human ↗'}
               </Link>
             </motion.div>
           )}

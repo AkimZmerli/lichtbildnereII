@@ -115,7 +115,7 @@ export default function Works() {
     <section
       ref={sectionRef}
       id="works"
-      className="bg-grainy text-white-rose py-16 md:py-24 space-y-24 h-full md:pb-96"
+      className="bg-grainy text-white-rose py-16 md:py-24 space-y-24 h-full md:pb-68"
     >
       {/* WORKS */}
       <div className="text-center">

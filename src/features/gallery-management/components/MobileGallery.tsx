@@ -344,6 +344,13 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
                 </div>
               )}
 
+              {images[currentIndex].exhibition && (
+                <div className="flex justify-between">
+                  <span className="text-white-rose/70">Exhibition:</span>
+                  <span>{images[currentIndex].exhibition}</span>
+                </div>
+              )}
+
               <div className="pt-2 mt-4">
                 <Link href="/impressum" className="text-hot-pink/70 hover:text-hot-pink text-left">
                   Impressum
