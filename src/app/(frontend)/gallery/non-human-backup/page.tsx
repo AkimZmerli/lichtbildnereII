@@ -59,8 +59,8 @@ export default function NonHumanGalleryPage() {
   }
 
   return isMobile ? (
-    <MobileGallery images={images} title="Non-Human" alternateGalleryLink={alternateLink} galleryType="non-human" />
+    <MobileGallery images={images} title="Non Human" alternateGalleryLink={alternateLink} galleryType="non-human" />
   ) : (
-    <DesktopGallery images={images} title="Non-Human" alternateGalleryLink={alternateLink} galleryType="non-human" />
+    <DesktopGallery images={images} title="Non Human" alternateGalleryLink={alternateLink} galleryType="non-human" />
   )
 }

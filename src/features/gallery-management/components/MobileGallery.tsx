@@ -1,5 +1,5 @@
 'use client'
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import GalleryImage from './GalleryImage'
 import MasonryGallery from './MasonryGallery'
@@ -19,6 +19,59 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
   const [clickedButton, setClickedButton] = useState<'prev' | 'next' | null>(null)
   const [dragOffset, setDragOffset] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
+  const [velocity, setVelocity] = useState(0)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const animationRef = useRef<number>()
+  const lastTouchTime = useRef(0)
+  const lastTouchX = useRef(0)
+
+  // Momentum scrolling animation
+  const animateToPosition = useCallback(
+    (targetOffset: number, duration = 400, targetIndex?: number, resetAfter = false) => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current)
+      }
+
+      const startOffset = dragOffset
+      const startTime = Date.now()
+      const startIndex = currentIndex
+
+      const animate = () => {
+        const elapsed = Date.now() - startTime
+        const progress = Math.min(elapsed / duration, 1)
+
+        // Smooth easing curve (cubic-bezier equivalent to ease-out)
+        const easeOut = 1 - Math.pow(1 - progress, 3)
+        const currentOffset = startOffset + (targetOffset - startOffset) * easeOut
+
+        // If we're transitioning to a new index, update it at the very end to avoid flickering
+        if (targetIndex !== undefined && progress >= 1 && currentIndex === startIndex) {
+          setCurrentIndex(targetIndex)
+        }
+
+        setDragOffset(currentOffset)
+
+        if (progress < 1) {
+          animationRef.current = requestAnimationFrame(animate)
+        } else if (resetAfter) {
+          // Reset drag offset after animation completes
+          setDragOffset(0)
+        }
+      }
+
+      animationRef.current = requestAnimationFrame(animate)
+    },
+    [dragOffset, currentIndex],
+  )
+
+  // Cleanup animation frame on unmount
+  useEffect(() => {
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current)
+      }
+    }
+  }, [])
 
   // Ensure client-side rendering
   useEffect(() => {
@@ -87,36 +140,63 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
   }, [handleKeyDown])
 
   // Navigation functions
-  const goToNext = useCallback(() => {
-    if (isTransitioning) return
+  const goToNext = useCallback(
+    (showClickEffect = true) => {
+      if (isTransitioning) return
 
-    // Show clicked effect
-    setClickedButton('next')
-    setTimeout(() => setClickedButton(null), 600)
+      // Show clicked effect only when explicitly requested (button clicks)
+      if (showClickEffect) {
+        setClickedButton('next')
+        setTimeout(() => setClickedButton(null), 400)
+      }
 
-    if (currentIndex === images.length - 1) {
-      setShowMasonryView(true)
-      return
-    }
+      // If we're at the last image, go to masonry view
+      if (currentIndex === images.length - 1) {
+        setShowMasonryView(true)
+        return
+      }
 
-    setIsTransitioning(true)
-    setDragOffset(0)
-    setCurrentIndex((prev) => prev + 1)
-    setTimeout(() => setIsTransitioning(false), 300)
-  }, [currentIndex, images.length, isTransitioning])
+      setIsTransitioning(true)
+      setVelocity(0)
 
-  const goToPrevious = useCallback(() => {
-    if (isTransitioning || currentIndex === 0) return
+      // Calculate the target position for next image (accounting for spacing)
+      const targetIndex = currentIndex + 1
+      
+      // Animate directly from current position to target position
+      animateToPosition(0, 350, targetIndex)
 
-    // Show clicked effect
-    setClickedButton('prev')
-    setTimeout(() => setClickedButton(null), 600)
+      setTimeout(() => {
+        setIsTransitioning(false)
+      }, 350)
+    },
+    [currentIndex, images.length, isTransitioning, animateToPosition],
+  )
 
-    setIsTransitioning(true)
-    setDragOffset(0)
-    setCurrentIndex((prev) => prev - 1)
-    setTimeout(() => setIsTransitioning(false), 300)
-  }, [currentIndex, isTransitioning])
+  const goToPrevious = useCallback(
+    (showClickEffect = true) => {
+      if (isTransitioning || currentIndex === 0) return
+
+      // Show clicked effect only when explicitly requested (button clicks)
+      if (showClickEffect) {
+        setClickedButton('prev')
+        setTimeout(() => setClickedButton(null), 300)
+      }
+
+      setIsTransitioning(true)
+      setVelocity(0)
+
+      // Calculate the target position for previous image (accounting for spacing)
+      const targetIndex = currentIndex - 1
+      
+      // Animate directly from current position to target position
+      animateToPosition(0, 350, targetIndex)
+
+      setTimeout(() => {
+        setIsTransitioning(false)
+      }, 350)
+    },
+    [currentIndex, isTransitioning, animateToPosition],
+  )
 
   // Prevent hydration mismatch by ensuring consistent initial render
   if (!isClient) {
@@ -162,38 +242,62 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
       </div>
 
       {/* Photo Area - Large and simple */}
-      <div className="px-4 mt-2" style={{ height: '68vh' }}>
+      <div className="px-4" style={{ height: '45vh' }}>
         <div
-          className="w-full h-full relative  rounded-sm overflow-hidden cursor-pointer"
-          style={{ maxHeight: '60vh' }}
+          className="w-full h-full relative rounded-sm overflow-hidden cursor-pointer"
+          style={{ maxHeight: '70vh' }}
           onClick={() => setShowMetadata(!showMetadata)}
           onTouchStart={(e) => {
+            // Cancel any ongoing animations
+            if (animationRef.current) {
+              cancelAnimationFrame(animationRef.current)
+            }
+
             const touch = e.touches[0]
-            setTouchStart({ x: touch.clientX, y: touch.clientY, time: Date.now() })
+            const startTime = Date.now()
+            setTouchStart({ x: touch.clientX, y: touch.clientY, time: startTime })
             setIsDragging(true)
+            setVelocity(0)
+
+            // Initialize velocity tracking
+            lastTouchTime.current = startTime
+            lastTouchX.current = touch.clientX
           }}
           onTouchMove={(e) => {
             if (!isDragging) return
 
             const touch = e.touches[0]
+            const currentTime = Date.now()
             const deltaX = touchStart.x - touch.clientX
             const deltaY = touchStart.y - touch.clientY
+
+            // Calculate velocity for momentum
+            const timeDiff = currentTime - lastTouchTime.current
+            if (timeDiff > 0) {
+              const positionDiff = touch.clientX - lastTouchX.current
+              setVelocity(positionDiff / timeDiff)
+            }
+
+            lastTouchTime.current = currentTime
+            lastTouchX.current = touch.clientX
 
             // Only handle horizontal swipes
             if (Math.abs(deltaY) < Math.abs(deltaX)) {
               e.preventDefault()
 
-              // Add resistance at the edges
+              // Calculate drag offset relative to image width + gap
               let offset = -deltaX
-              const maxSwipe = window.innerWidth * 0.8
+              const imageWidth = window.innerWidth - 32 // Account for padding
+              const maxSwipe = imageWidth * 0.9
 
-              // Add resistance when trying to swipe past boundaries
-              if (
-                (currentIndex === 0 && offset > 0) ||
-                (currentIndex === images.length - 1 && offset < 0)
-              ) {
-                offset = offset * 0.3 // Reduce movement by 70%
+              // Add resistance at the edges with smoother falloff
+              if (currentIndex === 0 && offset > 0) {
+                // Resistance when trying to swipe right on first image
+                const resistanceStrength = Math.abs(offset) / (imageWidth * 0.5)
+                const resistance = Math.pow(resistanceStrength, 1.5) * 0.8
+                offset = offset * Math.max(0.1, 1 - resistance)
               }
+              // Note: Removed resistance for last image left swipe to allow masonry navigation
 
               // Limit maximum swipe distance
               offset = Math.max(-maxSwipe, Math.min(maxSwipe, offset))
@@ -212,57 +316,91 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
             // Check for tap (short touch with minimal movement)
             if (Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10 && deltaTime < 200) {
               setShowMetadata(!showMetadata)
-              setDragOffset(0)
+              animateToPosition(0, 200)
+              return
             }
-            // Check for horizontal swipe for navigation
-            else if (
-              (Math.abs(deltaX) > 60 && deltaTime < 400) ||
-              Math.abs(deltaX) > window.innerWidth * 0.3
-            ) {
+
+            // Velocity-based navigation with momentum
+            const swipeThreshold = 50
+            const velocityThreshold = 0.3
+            const distanceThreshold = (window.innerWidth - 32) * 0.25 // Account for padding
+
+            const shouldNavigate =
+              (Math.abs(deltaX) > swipeThreshold && Math.abs(velocity) > velocityThreshold) ||
+              Math.abs(deltaX) > distanceThreshold
+
+            if (shouldNavigate) {
               if (deltaX > 0 && currentIndex < images.length - 1) {
-                goToNext()
+                // Swipe left to next image - calculate slide-through animation
+                setIsTransitioning(true)
+                const targetIndex = currentIndex + 1
+                
+                // Calculate final position: slide completely out of view
+                const imageWidth = window.innerWidth - 32 // Account for padding
+                const finalOffset = -(imageWidth + 48)
+                
+                // Animate to final position while changing index mid-way
+                animateToPosition(finalOffset, 300, targetIndex, true)
+                
+                setTimeout(() => {
+                  setIsTransitioning(false)
+                }, 300)
+                
+              } else if (deltaX > 0 && currentIndex === images.length - 1) {
+                // Swipe right on last image - go to masonry
+                setShowMasonryView(true)
+                
               } else if (deltaX < 0 && currentIndex > 0) {
-                goToPrevious()
+                // Swipe right to previous image - calculate slide-through animation  
+                setIsTransitioning(true)
+                const targetIndex = currentIndex - 1
+                
+                // Calculate final position: slide completely out of view
+                const imageWidth = window.innerWidth - 32 // Account for padding
+                const finalOffset = imageWidth + 48
+                
+                // Animate to final position while changing index mid-way
+                animateToPosition(finalOffset, 300, targetIndex, true)
+                
+                setTimeout(() => {
+                  setIsTransitioning(false)
+                }, 300)
+                
               } else {
-                // Snap back if can't navigate
-                setDragOffset(0)
+                // Snap back with momentum if can't navigate
+                const bounceDistance = Math.abs(dragOffset) * 0.3
+                animateToPosition(deltaX > 0 ? bounceDistance : -bounceDistance, 150)
+                setTimeout(() => animateToPosition(0, 200), 150)
               }
             } else {
-              // Snap back for insufficient swipe
-              setDragOffset(0)
+              // Snap back with easing for insufficient swipe
+              animateToPosition(0, 250)
             }
           }}
         >
           {/* Container for all images with smooth drag transform */}
           <div
-            className="w-full h-full flex"
+            ref={containerRef}
+            className="h-full flex"
             style={{
-              transform: `translateX(${dragOffset}px)`,
-              transition: isDragging
-                ? 'none'
-                : 'transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              width: `calc(${images.length} * (100vw - 32px) + ${(images.length - 1) * 48}px)`,
+              transform: `translateX(calc(-${currentIndex} * (100vw - 32px) - ${currentIndex * 48}px + ${dragOffset}px))`,
+              willChange: 'transform',
+              gap: '48px',
             }}
           >
-            {/* Previous image */}
-            {currentIndex > 0 && (
-              <div className="w-full h-full flex-shrink-0 absolute left-[-100%]">
-                <GalleryImage image={images[currentIndex - 1]} priority={false} />
+            {images.map((image, index) => (
+              <div 
+                key={image.id || index}
+                className="h-full flex-shrink-0"
+                style={{ width: 'calc(100vw - 32px)' }} // Account for px-4 padding (16px * 2)
+              >
+                <GalleryImage 
+                  image={image} 
+                  priority={Math.abs(index - currentIndex) <= 1} // Priority for current and adjacent images
+                />
               </div>
-            )}
-
-            {/* Current image */}
-            <div className="w-full h-full flex-shrink-0">
-              {images[currentIndex] && (
-                <GalleryImage image={images[currentIndex]} priority={true} />
-              )}
-            </div>
-
-            {/* Next image */}
-            {currentIndex < images.length - 1 && (
-              <div className="w-full h-full flex-shrink-0 absolute left-[100%]">
-                <GalleryImage image={images[currentIndex + 1]} priority={false} />
-              </div>
-            )}
+            ))}
           </div>
         </div>
       </div>
@@ -339,7 +477,7 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
 
               {images[currentIndex].material && (
                 <div className="flex justify-between">
-                  <span className="text-white-rose/70">Material:</span>
+                  <span className="text-white-rose/70">Media:</span>
                   <span>{images[currentIndex].material}</span>
                 </div>
               )}

@@ -41,7 +41,7 @@ export default function CinematicHeroScroll({
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768) // Using Tailwind's md breakpoint
     }
-    
+
     checkMobile()
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
@@ -55,8 +55,8 @@ export default function CinematicHeroScroll({
 
   // Smooth the scroll progress for better performance
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 200,
-    damping: 25,
+    stiffness: isMobile ? 120 : 200,
+    damping: isMobile ? 40 : 25,
     restDelta: 0.0001,
   })
 
@@ -72,8 +72,12 @@ export default function CinematicHeroScroll({
   // Container height: starts very compressed, reaches full viewport more gradually
   const containerHeight = useTransform(
     smoothProgress,
-    [0, 0.2, 0.4, 0.6, 0.8, 1],
-    ['30vh', '50vh', '75vh', '100vh', '100vh', '100vh'], // Smoother expansion curve, 100% at 0.8
+    isMobile 
+      ? [0, 0.1, 0.2, 0.35, 0.5, 0.65, 0.8, 1] // Mobile: more steps for smoother animation
+      : [0, 0.15, 0.35, 0.55, 0.75, 1], // Desktop: original timing
+    isMobile
+      ? ['30vh', '42vh', '56vh', '72vh', '85vh', '94vh', '100vh', '100vh'] // Mobile: smoother progression
+      : ['30vh', '50vh', '75vh', '100vh', '100vh', '100vh'], // Desktop: original values
   )
 
   // Image stays at full size - no scaling
@@ -86,8 +90,12 @@ export default function CinematicHeroScroll({
   // Cinematic letterbox width - smoother expansion
   const containerWidth = useTransform(
     smoothProgress,
-    [0, 0.15, 0.3, 0.5, 0.7, 0.8, 1],
-    ['40%', '55%', '70%', '85%', '100%', '100%', '100%'], // More gradual width expansion, 100% at 0.8
+    isMobile
+      ? [0, 0.08, 0.18, 0.3, 0.45, 0.6, 0.75, 0.9, 1] // Mobile: more steps for smoother width expansion
+      : [0, 0.12, 0.25, 0.4, 0.6, 0.75, 1], // Desktop: original timing
+    isMobile
+      ? ['40%', '50%', '60%', '70%', '80%', '90%', '95%', '100%', '100%'] // Mobile: smoother width progression
+      : ['40%', '55%', '70%', '85%', '100%', '100%', '100%'], // Desktop: original values
   )
 
   // Content opacity and position (fades in as you scroll)
@@ -96,7 +104,7 @@ export default function CinematicHeroScroll({
   const contentY = useTransform(smoothProgress, [0.2, 0.4], [50, 0])
 
   // Scroll indicator opacity (fades out very quickly)
-  const scrollIndicatorOpacity = useTransform(smoothProgress, [0, 0.05], [1, 0])
+  const scrollIndicatorOpacity = useTransform(smoothProgress, [0, 0.08], [1, 0])
 
   // Loading sequence
   useEffect(() => {
@@ -114,7 +122,21 @@ export default function CinematicHeroScroll({
       <div
         ref={containerRef}
         className={`relative w-full ${className}`}
-        style={{ height: isMobile ? '200vh' : '300vh' }} // Shorter scroll distance on mobile for smoother experience
+        style={{ 
+          height: isMobile ? '300vh' : '280vh', // Longer scroll distance on mobile to lock hero longer
+          ...(isMobile && {
+            scrollBehavior: 'auto',
+            overscrollBehavior: 'none',
+          })
+        }}
+        onWheel={isMobile ? (e) => {
+          // Accelerate scroll on mobile
+          e.preventDefault()
+          window.scrollBy({
+            top: e.deltaY * 4, // 4x scroll speed
+            behavior: 'auto'
+          })
+        } : undefined}
       >
         {/* Fixed hero container */}
         <div
@@ -164,8 +186,12 @@ export default function CinematicHeroScroll({
             style={{
               height: useTransform(
                 smoothProgress,
-                [0, 0.2, 0.4, 0.6, 0.8, 1],
-                ['35vh', '25vh', '12.5vh', '0vh', '0vh', '0vh'],
+                isMobile
+                  ? [0, 0.08, 0.18, 0.3, 0.45, 0.65, 0.8, 1] // Mobile: smoother curve
+                  : [0, 0.15, 0.35, 0.55, 0.75, 1], // Desktop: original
+                isMobile
+                  ? ['35vh', '28vh', '22vh', '16vh', '10vh', '4vh', '0vh', '0vh'] // Mobile: gradual reduction
+                  : ['35vh', '25vh', '12.5vh', '0vh', '0vh', '0vh'], // Desktop: original
               ),
             }}
           />
@@ -176,8 +202,12 @@ export default function CinematicHeroScroll({
             style={{
               height: useTransform(
                 smoothProgress,
-                [0, 0.2, 0.4, 0.6, 0.8, 1],
-                ['35vh', '25vh', '12.5vh', '0vh', '0vh', '0vh'],
+                isMobile
+                  ? [0, 0.08, 0.18, 0.3, 0.45, 0.65, 0.8, 1] // Mobile: smoother curve
+                  : [0, 0.15, 0.35, 0.55, 0.75, 1], // Desktop: original
+                isMobile
+                  ? ['35vh', '28vh', '22vh', '16vh', '10vh', '4vh', '0vh', '0vh'] // Mobile: gradual reduction
+                  : ['35vh', '25vh', '12.5vh', '0vh', '0vh', '0vh'], // Desktop: original
               ),
             }}
           />
@@ -188,9 +218,11 @@ export default function CinematicHeroScroll({
             style={{
               width: useTransform(
                 smoothProgress,
-                [0, 0.15, 0.3, 0.5, 0.7, 0.8, 1],
-                isMobile 
-                  ? ['45vw', '36vw', '25vw', '18vw', '0vw', '0vw', '0vw'] // Mobile: add 45% from left
+                isMobile
+                  ? [0, 0.08, 0.18, 0.3, 0.45, 0.6, 0.75, 0.9, 1] // Mobile: smoother curve
+                  : [0, 0.12, 0.25, 0.4, 0.6, 0.75, 1], // Desktop: original
+                isMobile
+                  ? ['45vw', '40vw', '34vw', '28vw', '20vw', '12vw', '6vw', '2vw', '0vw'] // Mobile: gradual width reduction
                   : ['25vw', '20vw', '12.5vw', '5vw', '0vw', '0vw', '0vw'], // Desktop: original values
               ),
             }}
@@ -202,9 +234,11 @@ export default function CinematicHeroScroll({
             style={{
               width: useTransform(
                 smoothProgress,
-                [0, 0.15, 0.3, 0.5, 0.7, 0.8, 1],
                 isMobile
-                  ? ['23vw', '18vw', '13vw', '7vw', '0vw', '0vw', '0vw'] // Mobile: cut only 3% from right
+                  ? [0, 0.08, 0.18, 0.3, 0.45, 0.6, 0.75, 0.9, 1] // Mobile: smoother curve
+                  : [0, 0.12, 0.25, 0.4, 0.6, 0.75, 1], // Desktop: original
+                isMobile
+                  ? ['23vw', '20vw', '17vw', '14vw', '10vw', '6vw', '3vw', '1vw', '0vw'] // Mobile: gradual width reduction
                   : ['25vw', '20vw', '12.5vw', '5vw', '0vw', '0vw', '0vw'], // Desktop: original values
               ),
             }}
@@ -218,10 +252,14 @@ export default function CinematicHeroScroll({
               width: containerWidth,
               top: useTransform(
                 smoothProgress,
-                [0, 0.2, 0.4, 0.6, 0.8, 1],
-                ['35vh', '25vh', '12.5vh', '0vh', '0vh', '0vh'], // Moves up to top as it expands
+                isMobile
+                  ? [0, 0.08, 0.18, 0.3, 0.45, 0.65, 0.8, 1] // Mobile: smoother curve
+                  : [0, 0.15, 0.35, 0.55, 0.75, 1], // Desktop: original
+                isMobile
+                  ? ['35vh', '28vh', '22vh', '16vh', '10vh', '4vh', '0vh', '0vh'] // Mobile: gradual movement up
+                  : ['35vh', '25vh', '12.5vh', '0vh', '0vh', '0vh'], // Desktop: original
               ),
-              ...(isMobile 
+              ...(isMobile
                 ? {
                     left: '40%', // Align shadow with shifted mobile window (moved more to right)
                     transform: 'translateX(-50%)',
@@ -230,8 +268,7 @@ export default function CinematicHeroScroll({
                     left: 0,
                     right: 0,
                     margin: '0 auto', // Center for desktop
-                  }
-              ),
+                  }),
             }}
           >
             {/* Title and subtitle overlay */}
@@ -255,7 +292,6 @@ export default function CinematicHeroScroll({
                 )}
               </motion.div>
             )}
-
 
             {/* Loading state */}
             {!imageLoaded && (

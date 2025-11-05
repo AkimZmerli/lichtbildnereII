@@ -21,6 +21,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
   const [flippingPageImage, setFlippingPageImage] = useState<string | null>(null);
   const [isBackFace, setIsBackFace] = useState(false);
+  const [touchStart, setTouchStart] = useState<{ x: number; y: number; time: number } | null>(null);
   
   // Create spreads - first page is front cover (single), middle pages are pairs, last is back cover (single)
   const spreads: Array<{ left: string | null; right: string | null; isCover?: boolean; isBack?: boolean }> = [];
@@ -168,11 +169,50 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentSpread, spreads.length, onPageChange, isFlipping]);
+
+  // Touch handlers for swipe gestures
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (isFlipping) return;
+    
+    const touch = e.touches[0];
+    setTouchStart({
+      x: touch.clientX,
+      y: touch.clientY,
+      time: Date.now()
+    });
+  }, [isFlipping]);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (!touchStart || isFlipping) return;
+    
+    const touch = e.changedTouches[0];
+    const deltaX = touchStart.x - touch.clientX;
+    const deltaY = touchStart.y - touch.clientY;
+    const deltaTime = Date.now() - touchStart.time;
+    
+    // Reset touch start
+    setTouchStart(null);
+    
+    // Check if it's a horizontal swipe (more horizontal than vertical movement)
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50 && deltaTime < 500) {
+      if (deltaX > 0) {
+        // Swipe left - go to next page (forward)
+        goToNextSpread();
+      } else {
+        // Swipe right - go to previous page (back)
+        goToPrevSpread();
+      }
+    }
+  }, [touchStart, isFlipping, goToNextSpread, goToPrevSpread]);
   
   return (
     <div className="flipbook-wrapper">
       <div className="flipbook-container">
-        <div className="flipbook">
+        <div 
+          className="flipbook"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           {/* Current spread */}
           <div className="spread">
             {/* Book spine - moved inside spread */}
@@ -363,9 +403,31 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
         </button>
       </div>
       
-      {/* Page indicator - now outside container */}
-      <div className="page-indicator">
+      {/* Page indicator for desktop, slider for mobile */}
+      <div className="page-indicator desktop-only">
         Page {currentSpread + 1} / {spreads.length}
+      </div>
+      
+      <div className="page-slider-container mobile-only">
+        <input
+          type="range"
+          min="0"
+          max={spreads.length - 1}
+          value={currentSpread}
+          onChange={(e) => {
+            const newSpread = parseInt(e.target.value);
+            if (!isFlipping && newSpread !== currentSpread) {
+              setDisplaySpread(newSpread);
+              onPageChange(newSpread * 2);
+            }
+          }}
+          className="page-slider"
+          disabled={isFlipping}
+        />
+        <div className="page-slider-labels">
+          <span className="page-slider-label">Page {currentSpread + 1}</span>
+          <span className="page-slider-label">{spreads.length} pages</span>
+        </div>
       </div>
     </div>
   );

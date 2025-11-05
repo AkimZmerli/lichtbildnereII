@@ -26,15 +26,15 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
   useEffect(() => {
     // Check if hint has already been shown this session
     const hintShown = sessionStorage.getItem('galleryHintShown')
-    
+
     if (!hintShown) {
       setShowWelcomeHint(true)
-      
-      // Auto-hide after 2 seconds
+
+      // Auto-hide after 3 seconds
       const timer = setTimeout(() => {
         setShowWelcomeHint(false)
         sessionStorage.setItem('galleryHintShown', 'true')
-      }, 2000)
+      }, 3000)
 
       return () => clearTimeout(timer)
     }
@@ -241,8 +241,9 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
   return (
     <>
       {/* Global CSS reset to eliminate body margins */}
-      <style dangerouslySetInnerHTML={{
-        __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
           html,
           body {
             margin: 0 !important;
@@ -253,8 +254,9 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
           #__next {
             height: 100% !important;
           }
-        `
-      }} />
+        `,
+        }}
+      />
 
       <div className="h-screen flex flex-col bg-grainy overflow-hidden m-0 p-0">
         {/* Header - takes natural height */}
@@ -287,8 +289,8 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
                   <GalleryImage
                     image={image}
                     priority={
-                      index === currentIndex || 
-                      index === currentIndex + 1 || 
+                      index === currentIndex ||
+                      index === currentIndex + 1 ||
                       index === currentIndex - 1
                     }
                   />
@@ -342,9 +344,7 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
                 )}
               </div>
             )}
-            {images[currentIndex].exhibition && (
-              <div>{images[currentIndex].exhibition}</div>
-            )}
+            {images[currentIndex].exhibition && <div>{images[currentIndex].exhibition}</div>}
             <div className="text-white-rose/50">
               <Link href="/impressum" className="text-hot-pink/70 hover:text-hot-pink underline">
                 Impressum
@@ -353,23 +353,30 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
           </div>
         )}
 
-        {/* Welcome navigation hint - bottom 1/13 */}
+        {/* Scroll down animation hint - bottom right */}
         <AnimatePresence>
           {showWelcomeHint && (
             <motion.div
-              className="fixed bottom-1/13 left-1/2 transform -translate-x-1/2 z-60"
+              className="fixed bottom-8 right-24 text-white flex flex-col items-center z-60"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
+              transition={{ duration: 0.6, ease: 'easeOut' }}
+              aria-hidden="true"
             >
-              <div className="text-center">
-                <p className="text-grainy text-lg font-light tracking-wider">
-                  Scroll ↓ to explore
-                </p>
-                <p className="text-grainy text-sm mt-2">
-                  Arrow keys or swipe also work
-                </p>
+              <span className="text-sm mb-2 font-light tracking-wider">SCROLL DOWN</span>
+              <div className="w-px h-16 bg-white/50 relative overflow-hidden">
+                <motion.div
+                  className="absolute top-0 left-0 w-full h-full bg-white"
+                  animate={{
+                    y: ['-100%', '100%'],
+                  }}
+                  transition={{
+                    repeat: Infinity,
+                    duration: 1.8,
+                    ease: 'easeInOut',
+                  }}
+                />
               </div>
             </motion.div>
           )}
@@ -387,7 +394,7 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
               }}
               exit={{ x: 300, opacity: 0 }}
               transition={{
-                delay: 2.5,
+                delay: 2,
                 duration: 0.8,
                 ease: [0.4, 0, 0.2, 1],
               }}
