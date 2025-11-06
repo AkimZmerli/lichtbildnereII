@@ -391,7 +391,7 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
           >
             {images.map((image, index) => (
               <div 
-                key={image.id || index}
+                key={index}
                 className="h-full flex-shrink-0"
                 style={{ width: 'calc(100vw - 32px)' }} // Account for px-4 padding (16px * 2)
               >
