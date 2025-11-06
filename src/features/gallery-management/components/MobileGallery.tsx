@@ -413,7 +413,7 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
 
         <div className="flex gap-4">
           <button
-            onClick={goToPrevious}
+            onClick={() => goToPrevious()}
             disabled={currentIndex === 0 || isTransitioning}
             className={`p-2 rounded-full transition-all duration-200 ${
               currentIndex === 0
@@ -434,7 +434,7 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
           </button>
 
           <button
-            onClick={goToNext}
+            onClick={() => goToNext()}
             disabled={isTransitioning}
             className={`p-2 rounded-full bg-neutral-700/60 text-white-rose/70 hover:bg-neutral-600 hover:text-white-rose active:scale-95 transition-all duration-200 ${
               clickedButton === 'next' ? 'ring-4 ring-hot-pink' : ''
