@@ -1,11 +1,12 @@
 'use server'
 
 import ClientHero from './ClientHero'
+import { getImageUrl } from '../../../config/blob'
 
 export default async function Hero() {
-  // Use static hero images from public/media/hero directory
-  const mobileUrl = '/media/hero/HeroMobile.jpg'
-  const desktopUrl = '/media/hero/HeroDesktop.jpg'
+  // Use hero images from blob storage
+  const mobileUrl = getImageUrl('hero/HeroMobile.webp')
+  const desktopUrl = getImageUrl('hero/HeroDesktop.webp')
   
   return (
     <ClientHero

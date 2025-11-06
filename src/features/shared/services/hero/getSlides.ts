@@ -1,3 +1,5 @@
+import { getImageUrl } from '../../../../config/blob'
+
 export interface Slide {
   id: string
   label: string
@@ -17,7 +19,7 @@ export async function getSlides(): Promise<Slide[]> {
       content: {},
       images: [
         {
-          url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/6%20-%20Lichtbildnerei.jpg', // "do a kickflip"
+          url: getImageUrl('exhibition/6 - Lichtbildnerei.webp'), // "do a kickflip"
           alt: 'do a kickflip',
           id: 'platz-da-6'
         }
@@ -29,12 +31,12 @@ export async function getSlides(): Promise<Slide[]> {
       content: {},
       images: [
         {
-          url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/4%20-%20Lichtbildnerei.jpg', // "Covid-19"
+          url: getImageUrl('exhibition/4 - Lichtbildnerei.webp'), // "Covid-19"
           alt: 'Covid-19',
           id: 'lichtbildnerei-4'
         },
         {
-          url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/5%20-%20Lichtbildnerei.jpg', // "an expression of wealth"
+          url: getImageUrl('exhibition/5 - Lichtbildnerei.webp'), // "an expression of wealth"
           alt: 'an expression of wealth', 
           id: 'lichtbildnerei-5'
         }
@@ -46,17 +48,17 @@ export async function getSlides(): Promise<Slide[]> {
       content: {},
       images: [
         {
-          url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/Amore%20I.jpg', // "Amore I"
+          url: getImageUrl('exhibition/Amore I.webp'), // "Amore I"
           alt: 'Amore I',
           id: 'amore-1'
         },
         {
-          url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/2%20-%20Amore.jpg', // "Amore II"
+          url: getImageUrl('exhibition/2 - Amore.webp'), // "Amore II"
           alt: 'Amore II',
           id: 'amore-2'
         },
         {
-          url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/3%20-%20Amore.jpg', // "Amore III"
+          url: getImageUrl('exhibition/3 - Amore.webp'), // "Amore III"
           alt: 'Amore III',
           id: 'amore-3'
         }
@@ -68,7 +70,7 @@ export async function getSlides(): Promise<Slide[]> {
       content: {},
       images: [
         {
-          url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/2%20-%20Amore.jpg', // "Europa"
+          url: getImageUrl('exhibition/2 - Amore.webp'), // "Europa"
           alt: 'Europa',
           id: 'amore-europa-16'
         }
@@ -80,7 +82,7 @@ export async function getSlides(): Promise<Slide[]> {
       content: {},
       images: [
         {
-          url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/25%20-%20Momentum.jpg', // "Industrie und Landschaft des bezierkes karlmarx-stadt"
+          url: getImageUrl('exhibition/25 - Momentum.webp'), // "Industrie und Landschaft des bezierkes karlmarx-stadt"
           alt: 'Industrie und Landschaft des bezierkes karlmarx-stadt',
           id: 'momentum-25'
         }
@@ -92,12 +94,12 @@ export async function getSlides(): Promise<Slide[]> {
       content: {},
       images: [
         {
-          url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/28%20-%20Best%20of%20II%20-%20Visitors%20Choise.jpg', // "sinteză"
+          url: getImageUrl('exhibition/28 - Best of II - Visitors Choise.webp'), // "sinteză"
           alt: 'sinteză',
           id: 'best-of-28'
         },
         {
-          url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/29%20-%20Best%20of%20II%20-%20Visitors%20Choise.jpg', // "self potrait"
+          url: getImageUrl('exhibition/29 - Best of II - Visitors Choise.webp'), // "self potrait"
           alt: 'self potrait',
           id: 'best-of-29'
         }

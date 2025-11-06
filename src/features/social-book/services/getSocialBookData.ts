@@ -17,8 +17,8 @@ export const getSocialBookData = async (): Promise<SocialBookData> => {
   const cacheBuster = `?v=${Date.now()}`
   
   const imageUrl = isProduction 
-    ? getImageUrl('social-book/placeholderSocial.png')
-    : `/images/placeholderSocial.png${cacheBuster}`
+    ? getImageUrl('flipbook-images/Social.webp')
+    : `/media/flipbook-images/Social.webp${cacheBuster}`
   
   return {
     coverImage: {
