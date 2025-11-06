@@ -26,8 +26,11 @@ export default function ExhibitionList({ slides }: { slides: Slide[] }) {
           index={index}
         />
       ))}
+      {/* Exhibition Gallery Link */}
+      <ExhibitionGalleryLink index={slides.length} />
+      
       {/* Special Interactive Exhibition Item */}
-      <TankstelleExhibition index={slides.length} />
+      <TankstelleExhibition index={slides.length + 1} />
     </div>
   )
 }
@@ -39,6 +42,18 @@ function ExhibitionItem({
   slides: SlideWithImages
   index: number
 }) {
+  // Parse the label into components for better mobile formatting
+  const parseLabel = (label: string) => {
+    const parts = label.split(' • ')
+    return {
+      year: parts[0],
+      title: parts[1],
+      venue: parts[2],
+      type: parts[3]
+    }
+  }
+
+  const { year, title, venue, type } = parseLabel(slides.label)
 
   return (
     <motion.div
@@ -51,21 +66,99 @@ function ExhibitionItem({
         ease: smoothEasing,
       }}
     >
-      <Link
-        href="/gallery/exhibition"
-        className="w-full py-6 px-4 flex items-center justify-between hover:bg-neutral-900/30 hover:scale-[1.02] transition-all duration-300 ease-out group transform-gpu"
-      >
-        <span className="text-sm transition-transform duration-200 ease-out">{slides.label}</span>
+      <div className="w-full py-6 px-4">
+        {/* Desktop: Show full label on one line */}
+        <span className="hidden md:block text-sm">{slides.label}</span>
+        
+        {/* Mobile: Show formatted multi-line layout */}
+        <div className="md:hidden text-sm space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="text-neutral-300">{year}</span>
+            <span className="text-neutral-500">•</span>
+            <span className="font-medium">{title}</span>
+          </div>
+          <div className="text-neutral-400 text-xs leading-relaxed">
+            {venue} • {type}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
 
-        <svg
-          className="w-4 h-4 text-neutral-500 group-hover:text-white-rose transition-colors duration-200"
+function ExhibitionGalleryLink({ index }: { index: number }) {
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  return (
+    <motion.div
+      className="border-t border-neutral-700 last:border-b"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        duration: 0.4,
+        delay: index * 0.05,
+        ease: smoothEasing,
+      }}
+    >
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full py-6 px-4 flex items-center justify-between hover:bg-neutral-900/30 hover:translate-x-2 transition-all duration-300 ease-out group transform-gpu"
+      >
+        <span className="text-sm transition-transform duration-200 ease-out">
+          Exhibition Gallery
+        </span>
+
+        <motion.svg
+          className="w-4 h-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          animate={{
+            rotate: isExpanded ? 180 : 0,
+          }}
+          transition={{ duration: 0.3, ease: easing }}
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
-      </Link>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </motion.svg>
+      </button>
+
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            className="overflow-hidden"
+            initial={{ height: 0 }}
+            animate={{ height: 'auto' }}
+            exit={{ height: 0 }}
+            transition={{
+              duration: 0.4,
+              ease: easing,
+            }}
+          >
+            <motion.div
+              className="px-4 pb-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{
+                duration: 0.3,
+                delay: 0.1,
+              }}
+            >
+              <div className="text-sm text-neutral-400 mb-4">
+                Browse through all exhibition works in a curated gallery view.
+              </div>
+
+              {/* Visit Gallery Button */}
+              <Link
+                href="/gallery/exhibition"
+                className="inline-block text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px]"
+              >
+                visit exhibition gallery ↗
+              </Link>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 }
@@ -86,7 +179,7 @@ function TankstelleExhibition({ index }: { index: number }) {
     >
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full py-6 px-4 flex items-center justify-between hover:bg-neutral-900/30 hover:scale-[1.02] transition-all duration-300 ease-out group transform-gpu"
+        className="w-full py-6 px-4 flex items-center justify-between hover:bg-neutral-900/30 hover:translate-x-2 transition-all duration-300 ease-out group transform-gpu"
       >
         <div className="flex items-center gap-3">
           <span className="text-sm transition-transform duration-200 ease-out">

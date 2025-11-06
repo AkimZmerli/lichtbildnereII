@@ -171,7 +171,7 @@ export default function Works() {
                     style={{ maxWidth: '309px', margin: '12px auto 0' }}
                   >
                     <h3 className="uppercase text-xl tracking-[0.2em] whitespace-nowrap">
-                      NON-HUMAN
+                      NON HUMAN
                     </h3>
                     <Link
                       href="/gallery/non-human"
