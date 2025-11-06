@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { getImageUrl } from '../../../config/blob';
 
 export const ImageComparison: React.FC = () => {
   const [showComparison, setShowComparison] = useState(false);
@@ -22,7 +23,7 @@ export const ImageComparison: React.FC = () => {
         <div className="text-white text-center">
           <h3 className="mb-4">Original HTML Image</h3>
           <img 
-            src="/flipbook-images/1.png" 
+            src={getImageUrl('flipbook-images/1.webp')} 
             alt="Original" 
             className="max-w-[400px]"
             style={{ imageRendering: 'auto' }}

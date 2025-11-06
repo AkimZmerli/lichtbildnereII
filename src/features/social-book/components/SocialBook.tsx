@@ -36,7 +36,7 @@ export default function SocialBook() {
             className="cursor-pointer hover:opacity-90 transition-opacity duration-200"
           >
             <Image
-              src={getImageUrl('flipbook-images/Social.png')}
+              src={getImageUrl('flipbook-images/Social.webp')}
               alt="The Social Book"
               width={780}
               height={405}
