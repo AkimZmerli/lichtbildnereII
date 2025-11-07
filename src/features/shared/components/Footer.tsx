@@ -2,8 +2,29 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Heart } from 'lucide-react'
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
+import { useCallback } from 'react'
 
 export default function Footer() {
+  const { executeRecaptcha } = useGoogleReCaptcha()
+
+  const handleMailtoClick = useCallback(async (e: React.MouseEvent) => {
+    e.preventDefault()
+    
+    if (!executeRecaptcha) {
+      console.log('reCAPTCHA not yet available')
+      return
+    }
+
+    try {
+      const token = await executeRecaptcha('mailto')
+      
+      // If reCAPTCHA passes, open mailto
+      window.location.href = 'mailto:mail@valentinmici.com'
+    } catch (error) {
+      console.error('reCAPTCHA failed:', error)
+    }
+  }, [executeRecaptcha])
   return (
     <footer className="bg-grainy text-white-rose/60 py-8 text-center flex flex-col gap-2 items-center text-sm">
       <div className="w-full mb-8">
@@ -12,9 +33,9 @@ export default function Footer() {
           <h2 className="tracking-widest text-xl text-white-rose/60">MAIL@VALENTINMICI.COM</h2>
           <div className="h-[1px] bg-white-rose/60 flex-1" />
         </div>
-        <a href="mailto:mail@valentinmici.com" className="text-sm mt-1 hover:underline">
+        <button onClick={handleMailtoClick} className="text-sm mt-1 hover:underline bg-transparent border-none cursor-pointer">
           <p>write me a love letter</p>
-        </a>
+        </button>
       </div>
 
       <div className="flex gap-6 justify-center flex-wrap">

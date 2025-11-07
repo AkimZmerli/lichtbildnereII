@@ -1,5 +1,6 @@
 import React from 'react'
 import ScrollHandlerWrapper from '@/features/shared/utils/ScrollHandlerWrapper'
+import RecaptchaProvider from '@/features/shared/providers/RecaptchaProvider'
 import './styles.css'
 
 export const metadata = {
@@ -13,8 +14,10 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <ScrollHandlerWrapper />
-        <main>{children}</main>
+        <RecaptchaProvider>
+          <ScrollHandlerWrapper />
+          <main>{children}</main>
+        </RecaptchaProvider>
       </body>
     </html>
   )

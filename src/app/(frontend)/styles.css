@@ -32,3 +32,10 @@ html {
   background-position: center;
   background-size: 200px 200px;
 }
+
+/* Hide reCAPTCHA badge */
+.grecaptcha-badge {
+  z-index: -1000 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
