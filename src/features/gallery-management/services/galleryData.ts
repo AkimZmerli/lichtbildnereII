@@ -12,7 +12,7 @@ const humanImages: GalleryImage[] = [
     physicalWidth: 40,
     physicalHeight: 50,
     unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
+    material: 'silver gelatin print on baryta paper',
   },
   {
     url: getImageUrl('gallery/human/8 - Human.webp'),
@@ -23,7 +23,7 @@ const humanImages: GalleryImage[] = [
     physicalWidth: 40,
     physicalHeight: 50,
     unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
+    material: 'silver gelatin print on baryta paper',
   },
   {
     url: getImageUrl('gallery/human/13 - Human.webp'),
@@ -34,7 +34,7 @@ const humanImages: GalleryImage[] = [
     physicalWidth: 40,
     physicalHeight: 50,
     unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
+    material: 'silver gelatin print on baryta paper',
   },
   {
     url: getImageUrl('gallery/human/15 - Human.webp'),
@@ -45,7 +45,7 @@ const humanImages: GalleryImage[] = [
     physicalWidth: 40,
     physicalHeight: 50,
     unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
+    material: 'silver gelatin print on baryta paper',
   },
   {
     url: getImageUrl('gallery/human/23 - Human.webp'),
@@ -56,7 +56,7 @@ const humanImages: GalleryImage[] = [
     physicalWidth: 18,
     physicalHeight: 24,
     unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
+    material: 'silver gelatin print on baryta paper',
   },
   {
     url: getImageUrl('gallery/human/24 - Human.webp'),
@@ -67,7 +67,7 @@ const humanImages: GalleryImage[] = [
     physicalWidth: 18,
     physicalHeight: 24,
     unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
+    material: 'silver gelatin print on baryta paper',
   },
   {
     url: getImageUrl('gallery/human/26 - Human.webp'),
@@ -78,11 +78,11 @@ const humanImages: GalleryImage[] = [
     physicalWidth: 18,
     physicalHeight: 24,
     unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
+    material: 'silver gelatin print on baryta paper',
   },
   // Former inverted image integrated into human gallery
   {
-    url: getImageUrl('gallery/inverted/20 - Human.webp'),
+    url: getImageUrl('gallery/human/20 - Human.webp'),
     alt: 'waiting',
     width: 800,
     height: 1000,
@@ -90,8 +90,8 @@ const humanImages: GalleryImage[] = [
     physicalWidth: 40,
     physicalHeight: 50,
     unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
-  }
+    material: 'silver gelatin print on baryta paper',
+  },
 ]
 
 const nonHumanImages: GalleryImage[] = [
@@ -104,7 +104,7 @@ const nonHumanImages: GalleryImage[] = [
     physicalWidth: 40,
     physicalHeight: 50,
     unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
+    material: 'silver gelatin print on baryta paper',
   },
   {
     url: getImageUrl('gallery/non-human/10 - No Human.webp'),
@@ -115,7 +115,7 @@ const nonHumanImages: GalleryImage[] = [
     physicalWidth: 40,
     physicalHeight: 50,
     unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
+    material: 'silver gelatin print on baryta paper',
   },
   {
     url: getImageUrl('gallery/non-human/11 - No Human.webp'),
@@ -126,7 +126,7 @@ const nonHumanImages: GalleryImage[] = [
     physicalWidth: 40,
     physicalHeight: 50,
     unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
+    material: 'silver gelatin print on baryta paper',
   },
   {
     url: getImageUrl('gallery/non-human/12 - No Human.webp'),
@@ -137,7 +137,7 @@ const nonHumanImages: GalleryImage[] = [
     physicalWidth: 40,
     physicalHeight: 50,
     unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
+    material: 'silver gelatin print on baryta paper',
   },
   {
     url: getImageUrl('gallery/non-human/14 - No Human.webp'),
@@ -148,7 +148,7 @@ const nonHumanImages: GalleryImage[] = [
     physicalWidth: 40,
     physicalHeight: 50,
     unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
+    material: 'silver gelatin print on baryta paper',
   },
   {
     url: getImageUrl('gallery/non-human/17 - No Human.webp'),
@@ -159,10 +159,10 @@ const nonHumanImages: GalleryImage[] = [
     physicalWidth: 18,
     physicalHeight: 24,
     unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
+    material: 'silver gelatin print on baryta paper',
   },
   {
-    url: getImageUrl('gallery/inverted/18 - No Human.webp'),
+    url: getImageUrl('gallery/non-human/18 - No Human.webp'),
     alt: 'mood',
     width: 800,
     height: 1000,
@@ -170,10 +170,10 @@ const nonHumanImages: GalleryImage[] = [
     physicalWidth: 40,
     physicalHeight: 50,
     unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
+    material: 'silver gelatin print on baryta paper',
   },
   {
-    url: getImageUrl('gallery/inverted/19 - No Human.webp'),
+    url: getImageUrl('gallery/non-human/19 - No Human.webp'),
     alt: 'curtains',
     width: 800,
     height: 1000,
@@ -181,10 +181,10 @@ const nonHumanImages: GalleryImage[] = [
     physicalWidth: 40,
     physicalHeight: 50,
     unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
+    material: 'silver gelatin print on baryta paper',
   },
   {
-    url: getImageUrl('gallery/inverted/21 - No Human.webp'),
+    url: getImageUrl('gallery/non-human/21 - No Human.webp'),
     alt: 'Dark flowers',
     width: 800,
     height: 1080,
@@ -192,7 +192,7 @@ const nonHumanImages: GalleryImage[] = [
     physicalWidth: 31,
     physicalHeight: 42,
     unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
+    material: 'silver gelatin print on baryta paper',
   },
   {
     url: getImageUrl('gallery/non-human/22 - No Human.jpg'),
@@ -203,7 +203,7 @@ const nonHumanImages: GalleryImage[] = [
     physicalWidth: 80,
     physicalHeight: 108,
     unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
+    material: 'silver gelatin print on baryta paper',
   },
   {
     url: getImageUrl('gallery/non-human/27 - No Human.webp'),
@@ -214,10 +214,9 @@ const nonHumanImages: GalleryImage[] = [
     physicalWidth: 40,
     physicalHeight: 50,
     unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
+    material: 'silver gelatin print on baryta paper',
   },
 ]
-
 
 // Main function to get gallery images
 export const getGalleryImages = async (type: 'human' | 'non-human'): Promise<GalleryImage[]> => {
