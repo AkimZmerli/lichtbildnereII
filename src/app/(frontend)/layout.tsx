@@ -3,7 +3,7 @@ import ScrollHandlerWrapper from '@/features/shared/utils/ScrollHandlerWrapper'
 import './styles.css'
 
 export const metadata = {
-  description: 'Valentin Mici - Portfolio',
+  description: 'Analog photographer and visual artist Valentin Mici. Exploring human and non-human subjects through intimate portraits and conceptual photography.',
   title: 'Valentin Mici',
 }
 
