@@ -55,4 +55,4 @@ export interface GalleryLayoutProps {
   header: React.ReactNode
 }
 
-export type GalleryType = 'human' | 'non-human' | 'inverted' | 'exhibition'
+export type GalleryType = 'human' | 'non-human' | 'exhibition'

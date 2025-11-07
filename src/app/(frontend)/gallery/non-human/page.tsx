@@ -19,9 +19,9 @@ export default function NonHumanGalleryPage() {
   const [alternateLink, setAlternateLink] = useState('/gallery/human')
   
   useEffect(() => {
-    // After both galleries viewed, link to inverted
+    // After both galleries viewed, link to social book
     if (hasViewedBothMainGalleries()) {
-      setAlternateLink('/gallery/inverted')
+      setAlternateLink('/socialbook')
     } else {
       setAlternateLink('/gallery/human')
     }

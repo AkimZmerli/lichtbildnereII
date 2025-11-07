@@ -85,16 +85,16 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
         const completedGalleries = JSON.parse(sessionStorage.getItem('completedGalleries') || '[]')
 
         if (galleryType === 'human') {
-          // Only show inverted if BOTH human and non-human have been completed
+          // Show social book if both galleries completed, otherwise show non-human
           if (completedGalleries.includes('human') && completedGalleries.includes('non-human')) {
-            setDynamicAlternateLink('/gallery/inverted')
+            setDynamicAlternateLink('/socialbook')
           } else {
             setDynamicAlternateLink('/gallery/non-human')
           }
         } else if (galleryType === 'non-human') {
-          // Only show inverted if BOTH human and non-human have been completed
+          // Show social book if both galleries completed, otherwise show human
           if (completedGalleries.includes('human') && completedGalleries.includes('non-human')) {
-            setDynamicAlternateLink('/gallery/inverted')
+            setDynamicAlternateLink('/socialbook')
           } else {
             setDynamicAlternateLink('/gallery/human')
           }

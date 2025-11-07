@@ -11,7 +11,7 @@ import { createSmoothLink } from '@/features/shared/utils/smoothNavigation'
 
 interface ExtendedMasonryGalleryProps extends Omit<MasonryGalleryProps, 'title'> {
   title?: string
-  type?: 'human' | 'non-human' | 'inverted' | 'exhibition'
+  type?: 'human' | 'non-human' | 'exhibition'
   alternateGalleryLink?: string
   onBack?: () => void
 }
@@ -24,9 +24,8 @@ const MasonryGallery = ({
   onBack: _onBack,
 }: ExtendedMasonryGalleryProps) => {
   // Determine display title based on type
-  const displayTitle =
-    type === 'inverted' ? 'INVERTED' : title || (type === 'human' ? 'HUMAN' : 'NON HUMAN')
-  const alternateTitle = type === 'human' ? 'non-human' : type === 'non-human' ? 'human' : ''
+  const displayTitle = title || (type === 'human' ? 'HUMAN' : 'NON HUMAN')
+  const alternateTitle = type === 'human' ? 'NON HUMAN' : type === 'non-human' ? 'HUMAN' : ''
 
   const [popupState, setPopupState] = useState({
     isOpen: false,
@@ -78,8 +77,6 @@ const MasonryGallery = ({
                 </>
               ) : alternateGalleryLink?.includes('socialbook') ? (
                 'Social Book ↗'
-              ) : alternateGalleryLink?.includes('inverted') ? (
-                'Inverted ↗'
               ) : (
                 alternateTitle
               )}

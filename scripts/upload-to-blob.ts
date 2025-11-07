@@ -34,6 +34,7 @@ async function uploadDirectory(dirPath: string, blobPrefix: string, uploadWebPOn
         
         const { url } = await put(blobPath, fileBuffer, {
           access: 'public',
+          allowOverwrite: true,
         });
         
         console.log(`✅ Uploaded: ${url}`);

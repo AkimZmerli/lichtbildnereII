@@ -79,6 +79,18 @@ const humanImages: GalleryImage[] = [
     physicalHeight: 24,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper'
+  },
+  // Former inverted image integrated into human gallery
+  {
+    url: getImageUrl('gallery/inverted/20 - Human.webp'),
+    alt: 'waiting',
+    width: 800,
+    height: 1000,
+    name: 'waiting',
+    physicalWidth: 40,
+    physicalHeight: 50,
+    unit: 'cm',
+    material: 'silver gelatin print on baryta paper'
   }
 ]
 
@@ -170,10 +182,8 @@ const nonHumanImages: GalleryImage[] = [
     physicalHeight: 50,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper'
-  }
-]
-
-const invertedImages: GalleryImage[] = [
+  },
+  // Former inverted images integrated into non-human gallery
   {
     url: getImageUrl('gallery/inverted/18 - No Human.webp'),
     alt: 'mood',
@@ -191,17 +201,6 @@ const invertedImages: GalleryImage[] = [
     width: 800,
     height: 1000,
     name: 'curtains',
-    physicalWidth: 40,
-    physicalHeight: 50,
-    unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
-  },
-  {
-    url: getImageUrl('gallery/inverted/20 - Human.webp'),
-    alt: 'waiting',
-    width: 800,
-    height: 1000,
-    name: 'waiting',
     physicalWidth: 40,
     physicalHeight: 50,
     unit: 'cm',
@@ -231,15 +230,14 @@ const invertedImages: GalleryImage[] = [
   }
 ]
 
+
 // Main function to get gallery images
-export const getGalleryImages = async (type: 'human' | 'non-human' | 'inverted'): Promise<GalleryImage[]> => {
+export const getGalleryImages = async (type: 'human' | 'non-human'): Promise<GalleryImage[]> => {
   switch (type) {
     case 'human':
       return humanImages
     case 'non-human':
       return nonHumanImages
-    case 'inverted':
-      return invertedImages
     default:
       return []
   }

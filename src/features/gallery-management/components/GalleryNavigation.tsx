@@ -15,16 +15,7 @@ const GalleryNavigation = ({ type }: GalleryNavigationProps) => {
   const router = useRouter()
   const { hasViewedBothMainGalleries: _hasViewedBothMainGalleries, hasViewedAllGalleries } = useGalleryTracking(type)
   
-  // Redirect to socialbook if viewing inverted and all galleries have been seen
-  useEffect(() => {
-    if (type === 'inverted' && hasViewedAllGalleries()) {
-      // Small delay to let the page render before redirecting
-      const timer = setTimeout(() => {
-        router.push('/socialbook')
-      }, 3000)
-      return () => clearTimeout(timer)
-    }
-  }, [type, hasViewedAllGalleries, router])
+  // Redirect logic removed as inverted gallery no longer exists
 
   // Helper function to get viewed galleries
   const getViewedGalleries = (): string[] => {
@@ -35,7 +26,6 @@ const GalleryNavigation = ({ type }: GalleryNavigationProps) => {
   // Determine title based on gallery type
   let title = 'H U M A N'
   if (type === 'non-human') title = 'N O N   H U M A N'
-  if (type === 'inverted') title = 'I N V E R T E D'
 
   // Determine next link based on current gallery and viewing history
   let nextLink = '/gallery/human'
@@ -45,9 +35,9 @@ const GalleryNavigation = ({ type }: GalleryNavigationProps) => {
     // Check if user has seen non-human already
     const viewed = getViewedGalleries()
     if (viewed.includes('non-human')) {
-      // Both seen, go to inverted
-      nextLink = '/gallery/inverted'
-      nextText = 'inverted'
+      // Both seen, go to social book
+      nextLink = '/socialbook'
+      nextText = 'social book'
     } else {
       // Haven't seen non-human yet
       nextLink = '/gallery/non-human'
@@ -57,17 +47,14 @@ const GalleryNavigation = ({ type }: GalleryNavigationProps) => {
     // Check if user has seen human already
     const viewed = getViewedGalleries()
     if (viewed.includes('human')) {
-      // Both seen, go to inverted
-      nextLink = '/gallery/inverted'
-      nextText = 'inverted'
+      // Both seen, go to social book
+      nextLink = '/socialbook'
+      nextText = 'social book'
     } else {
       // Haven't seen human yet
       nextLink = '/gallery/human'
       nextText = 'human'
     }
-  } else if (type === 'inverted') {
-    nextLink = '/socialbook'
-    nextText = 'social book'
   }
 
   return (

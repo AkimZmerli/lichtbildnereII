@@ -67,7 +67,7 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-grainy backdrop-blur-sm"
+      className="fixed inset-0 z-[70] bg-grainy backdrop-blur-sm"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           onClose()
@@ -85,7 +85,7 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-60 p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+          className="absolute top-4 right-4 z-[80] p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all"
         >
           <X size={24} />
         </button>
@@ -99,7 +99,7 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
         </button>
 
         {/* Title */}
-        <div className="absolute top-4 left-4 z-60">
+        <div className="absolute top-4 left-4 z-[80]">
           <h2 className="text-xl font-light text-white/90">Lichtbildnerei | The Social Book</h2>
         </div>
 
@@ -128,7 +128,7 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
 
         {/* Info Overlay */}
         {showInfo && (
-          <div className="absolute inset-4 z-70 bg-black/80 backdrop-blur-sm rounded-lg flex items-center justify-center">
+          <div className="absolute inset-4 z-[90] bg-black/80 backdrop-blur-sm rounded-lg flex items-center justify-center">
             <div className="max-w-lg text-left text-white p-6">
               <h3 className="text-xl font-light mb-4 text-hot-pink">Can a book be social?</h3>
               <p className="text-sm leading-relaxed mb-4 text-white/80">

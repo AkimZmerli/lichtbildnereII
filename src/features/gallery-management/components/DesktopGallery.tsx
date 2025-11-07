@@ -30,11 +30,11 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
     if (!hintShown) {
       setShowWelcomeHint(true)
 
-      // Auto-hide after 3 seconds
+      // Auto-hide after 5 seconds
       const timer = setTimeout(() => {
         setShowWelcomeHint(false)
         sessionStorage.setItem('galleryHintShown', 'true')
-      }, 3000)
+      }, 5000)
 
       return () => clearTimeout(timer)
     }
@@ -47,16 +47,16 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
         const completedGalleries = JSON.parse(sessionStorage.getItem('completedGalleries') || '[]')
 
         if (galleryType === 'human') {
-          // Only show inverted if BOTH human and non-human have been completed
+          // Show social book if both galleries completed, otherwise show non-human
           if (completedGalleries.includes('human') && completedGalleries.includes('non-human')) {
-            setDynamicAlternateLink('/gallery/inverted')
+            setDynamicAlternateLink('/socialbook')
           } else {
             setDynamicAlternateLink('/gallery/non-human')
           }
         } else if (galleryType === 'non-human') {
-          // Only show inverted if BOTH human and non-human have been completed
+          // Show social book if both galleries completed, otherwise show human
           if (completedGalleries.includes('human') && completedGalleries.includes('non-human')) {
-            setDynamicAlternateLink('/gallery/inverted')
+            setDynamicAlternateLink('/socialbook')
           } else {
             setDynamicAlternateLink('/gallery/human')
           }
@@ -353,23 +353,36 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
           </div>
         )}
 
-        {/* Scroll down animation hint - bottom right */}
+        {/* Scroll down animation hint - bottom center */}
         <AnimatePresence>
           {showWelcomeHint && (
             <motion.div
-              className="fixed bottom-8 right-24 text-white flex flex-col items-center z-60"
+              className="fixed bottom-4 left-1/2 transform -translate-x-1/2 flex flex-col items-center z-60"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.6, ease: 'easeOut' }}
               aria-hidden="true"
             >
-              <span className="text-sm mb-2 font-light tracking-wider">SCROLL DOWN</span>
-              <div className="w-px h-16 bg-white/50 relative overflow-hidden">
+              <motion.span 
+                className="text-sm mb-2 font-light tracking-wider text-black"
+                animate={{
+                  opacity: [0.3, 1, 0.3],
+                }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 2,
+                  ease: 'easeInOut',
+                }}
+              >
+                SCROLL DOWN
+              </motion.span>
+              <div className="w-px h-16 bg-black/30 relative overflow-hidden">
                 <motion.div
-                  className="absolute top-0 left-0 w-full h-full bg-white"
+                  className="absolute top-0 left-0 w-full h-full bg-black"
                   animate={{
                     y: ['-100%', '100%'],
+                    opacity: [0.3, 1, 0.3],
                   }}
                   transition={{
                     repeat: Infinity,
@@ -406,15 +419,13 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
               >
                 {dynamicAlternateLink.includes('#exhibition')
                   ? 'Go Back ↗'
-                  : dynamicAlternateLink.includes('inverted')
-                    ? 'inverted ↗'
-                    : dynamicAlternateLink.includes('non-human')
-                      ? 'view non-human ↗'
-                      : dynamicAlternateLink.includes('#social-book')
+                  : dynamicAlternateLink.includes('non-human')
+                    ? 'view non-human ↗'
+                    : dynamicAlternateLink.includes('#social-book')
+                      ? 'social book ↗'
+                      : dynamicAlternateLink.includes('socialbook')
                         ? 'social book ↗'
-                        : dynamicAlternateLink.includes('socialbook')
-                          ? 'social book ↗'
-                          : 'view human ↗'}
+                        : 'view human ↗'}
               </Link>
             </motion.div>
           )}
