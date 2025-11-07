@@ -69,7 +69,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
   // Preload nearby images
   useEffect(() => {
     const imagesToLoad = [];
-    for (let i = Math.max(0, currentPage - 2); i <= Math.min(images.length - 1, currentPage + 4); i++) {
+    for (let i = Math.max(0, currentPage - 4); i <= Math.min(images.length - 1, currentPage + 6); i++) {
       if (!loadedImages.has(i)) {
         imagesToLoad.push(i);
       }
@@ -91,18 +91,22 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
       setDisplaySpread(currentSpread + 1);
       setIsBackFace(false);
       
-      // Set the flipping page image
-      setFlippingPageImage(spreads[currentSpread].right);
+      // Set the flipping page image (already preloaded)
+      const frontImage = spreads[currentSpread].right;
+      const nextSpread = spreads[currentSpread + 1];
+      const backImage = nextSpread?.left || nextSpread?.right;
       
-      // Swap to back face image earlier to prevent glitch
-      setTimeout(() => {
-        const nextSpread = spreads[currentSpread + 1];
-        if (nextSpread) {
-          // If next spread is back cover, show it on the left
-          setFlippingPageImage(nextSpread.left || nextSpread.right);
+      // Ensure both images are loaded before starting animation
+      if (frontImage && loadedImages.has(images.indexOf(frontImage)) && 
+          backImage && loadedImages.has(images.indexOf(backImage))) {
+        setFlippingPageImage(frontImage);
+        
+        // Swap to back face image earlier to prevent glitch
+        setTimeout(() => {
+          setFlippingPageImage(backImage);
           setIsBackFace(true);
-        }
-      }, 380); // Earlier than halfway for smoother transition
+        }, 380); // Earlier than halfway for smoother transition
+      }
       
       // Update page state AFTER the flip animation completes
       setTimeout(() => {
@@ -122,18 +126,22 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
       setDisplaySpread(currentSpread - 1);
       setIsBackFace(false);
       
-      // Start with front face image (x)
-      setFlippingPageImage(spreads[currentSpread].left);
+      // Start with front face image (already preloaded)
+      const frontImage = spreads[currentSpread].left;
+      const prevSpread = spreads[currentSpread - 1];
+      const backImage = prevSpread?.right || prevSpread?.left;
       
-      // Swap to back face image earlier to prevent glitch
-      setTimeout(() => {
-        const prevSpread = spreads[currentSpread - 1];
-        if (prevSpread) {
-          // If flipping back to front cover, show it on the right
-          setFlippingPageImage(prevSpread.right || prevSpread.left);
+      // Ensure both images are loaded before starting animation
+      if (frontImage && loadedImages.has(images.indexOf(frontImage)) && 
+          backImage && loadedImages.has(images.indexOf(backImage))) {
+        setFlippingPageImage(frontImage);
+        
+        // Swap to back face image earlier to prevent glitch
+        setTimeout(() => {
+          setFlippingPageImage(backImage);
           setIsBackFace(true);
-        }
-      }, 380); // Earlier than halfway for smoother transition
+        }, 380); // Earlier than halfway for smoother transition
+      }
       
       // Update page state AFTER the flip animation completes
       setTimeout(() => {

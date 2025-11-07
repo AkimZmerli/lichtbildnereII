@@ -56,14 +56,14 @@ export default function ExhibitionGalleryPage() {
   return isMobile ? (
     <MobileGallery 
       images={images} 
-      title="Exhibition" 
+      title="exhibitions" 
       alternateGalleryLink={alternateLink} 
       galleryType="exhibition" 
     />
   ) : (
     <DesktopGallery 
       images={images} 
-      title="Exhibition" 
+      title="exhibitions" 
       alternateGalleryLink={alternateLink} 
       galleryType="exhibition" 
     />
