@@ -195,7 +195,7 @@ const nonHumanImages: GalleryImage[] = [
     material: 'silver gelatin print on baryta paper',
   },
   {
-    url: getImageUrl('gallery/non-human/22 - No Human.jpg'),
+    url: getImageUrl('gallery/non-human/22 - No Human.webp'),
     alt: 'arrangement',
     width: 800,
     height: 1080,
