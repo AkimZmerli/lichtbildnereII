@@ -162,29 +162,6 @@ const nonHumanImages: GalleryImage[] = [
     material: 'silver gelatin print on baryta paper'
   },
   {
-    url: getImageUrl('gallery/non-human/22 - No Human.jpg'),
-    alt: 'arrangement',
-    width: 800,
-    height: 1080,
-    name: 'arrangement',
-    physicalWidth: 80,
-    physicalHeight: 108,
-    unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
-  },
-  {
-    url: getImageUrl('gallery/non-human/27 - No Human.webp'),
-    alt: 'alex',
-    width: 800,
-    height: 1000,
-    name: 'alex',
-    physicalWidth: 40,
-    physicalHeight: 50,
-    unit: 'cm',
-    material: 'silver gelatin print on baryta paper'
-  },
-  // Former inverted images integrated into non-human gallery
-  {
     url: getImageUrl('gallery/inverted/18 - No Human.webp'),
     alt: 'mood',
     width: 800,
@@ -219,15 +196,26 @@ const nonHumanImages: GalleryImage[] = [
   },
   {
     url: getImageUrl('gallery/non-human/22 - No Human.jpg'),
-    alt: 'large arrangement',
+    alt: 'arrangement',
     width: 800,
     height: 1080,
-    name: 'large arrangement',
+    name: 'arrangement',
     physicalWidth: 80,
     physicalHeight: 108,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper'
-  }
+  },
+  {
+    url: getImageUrl('gallery/non-human/27 - No Human.webp'),
+    alt: 'alex',
+    width: 800,
+    height: 1000,
+    name: 'alex',
+    physicalWidth: 40,
+    physicalHeight: 50,
+    unit: 'cm',
+    material: 'silver gelatin print on baryta paper'
+  },
 ]
 
 
