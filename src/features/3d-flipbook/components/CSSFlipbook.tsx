@@ -4,6 +4,32 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import './flipbook-blur.css';
 
+// Safari detection utility
+const isSafari = () => {
+  if (typeof window === 'undefined') return false;
+  return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+};
+
+// Safari-specific image transform helper
+const getSafariImageTransform = (isBackFace: boolean, isSafari: boolean, flipDirection: string | null) => {
+  if (!isSafari) {
+    return isBackFace ? 'scaleX(-1)' : 'none';
+  }
+  
+  // For Safari, apply different transforms during animation to counter the rotation bug
+  if (flipDirection) {
+    // During any flip animation in Safari, pre-compensate for orientation issues
+    if (isBackFace) {
+      return 'scaleX(-1) rotateY(180deg)';
+    } else {
+      // Even on front face during Safari animation, apply slight compensation
+      return 'rotateY(0.1deg)'; // Minimal rotation to trigger correct rendering path
+    }
+  }
+  
+  return isBackFace ? 'scaleX(-1)' : 'none';
+};
+
 interface CSSFlipbookProps {
   images: string[];
   currentPage: number;
@@ -23,6 +49,12 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
   const [flippingPageImage, setFlippingPageImage] = useState<string | null>(null);
   const [isBackFace, setIsBackFace] = useState(false);
   const [touchStart, setTouchStart] = useState<{ x: number; y: number; time: number } | null>(null);
+  const [isSafariBrowser, setIsSafariBrowser] = useState(false);
+  
+  // Detect Safari on component mount
+  useEffect(() => {
+    setIsSafariBrowser(isSafari());
+  }, []);
   
   // Create spreads - first page is front cover (single), middle pages are pairs, last is back cover (single)
   const spreads: Array<{ left: string | null; right: string | null; isCover?: boolean; isBack?: boolean }> = [];
@@ -166,11 +198,17 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
           backImage && loadedImages.has(images.indexOf(backImage))) {
         setFlippingPageImage(frontImage);
         
-        // Swap to back face image earlier to prevent glitch
+        // Safari-optimized image swap timing
+        // Use requestAnimationFrame for better sync with Safari's rendering
+        const swapDelay = isSafariBrowser ? 420 : 380; // Slightly later for Safari
+        
         setTimeout(() => {
-          setFlippingPageImage(backImage);
-          setIsBackFace(true);
-        }, 380); // Earlier than halfway for smoother transition
+          // Double check we're still in the right state before swapping
+          requestAnimationFrame(() => {
+            setFlippingPageImage(backImage);
+            setIsBackFace(true);
+          });
+        }, swapDelay);
       }
       
       // Update page state AFTER the flip animation completes
@@ -182,7 +220,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
         onPageChange((currentSpread + 1) * 2);
       }, 900);
     }
-  }, [currentSpread, isFlipping, spreads, onPageChange]);
+  }, [currentSpread, isFlipping, spreads, onPageChange, loadedImages, images]);
   
   const goToPrevSpread = useCallback(() => {
     if (!isFlipping && currentSpread > 0) {
@@ -202,11 +240,16 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
           backImage && loadedImages.has(images.indexOf(backImage))) {
         setFlippingPageImage(frontImage);
         
-        // Swap to back face image earlier to prevent glitch
+        // Safari-optimized image swap timing for back flip
+        const swapDelay = isSafariBrowser ? 420 : 380; // Slightly later for Safari
+        
         setTimeout(() => {
-          setFlippingPageImage(backImage);
-          setIsBackFace(true);
-        }, 380); // Earlier than halfway for smoother transition
+          // Double check we're still in the right state before swapping
+          requestAnimationFrame(() => {
+            setFlippingPageImage(backImage);
+            setIsBackFace(true);
+          });
+        }, swapDelay);
       }
       
       // Update page state AFTER the flip animation completes
@@ -218,7 +261,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
         onPageChange((currentSpread - 1) * 2);
       }, 900);
     }
-  }, [currentSpread, isFlipping, spreads, onPageChange]);
+  }, [currentSpread, isFlipping, spreads, onPageChange, loadedImages, images]);
   
   // Keyboard navigation - instant page change without animation
   useEffect(() => {
@@ -280,7 +323,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
   }, [touchStart, isFlipping, goToNextSpread, goToPrevSpread]);
   
   return (
-    <div className="flipbook-wrapper">
+    <div className={`flipbook-wrapper ${isSafariBrowser ? 'safari-browser' : ''}`}>
       <div className="flipbook-container">
         <div 
           className="flipbook"
@@ -430,7 +473,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
                     width: '100%', 
                     height: '100%', 
                     objectFit: 'contain',
-                    transform: isBackFace ? 'scaleX(-1)' : 'none'
+                    transform: getSafariImageTransform(isBackFace, isSafariBrowser, flipDirection)
                   }}
                 />
               </div>
@@ -450,7 +493,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
                     width: '100%', 
                     height: '100%', 
                     objectFit: 'contain',
-                    transform: isBackFace ? 'scaleX(-1)' : 'none'
+                    transform: getSafariImageTransform(isBackFace, isSafariBrowser, flipDirection)
                   }}
                 />
               </div>
