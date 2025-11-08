@@ -20,6 +20,8 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
   const [dragOffset, setDragOffset] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [velocity, setVelocity] = useState(0)
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set())
+  const [lastDirection, setLastDirection] = useState<'prev' | 'next' | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<number>()
   const lastTouchTime = useRef(0)
@@ -64,6 +66,51 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
     [dragOffset, currentIndex],
   )
 
+  // Progressive image loading with direction awareness
+  useEffect(() => {
+    const imagesToLoad: number[] = [];
+    const imagesToUnload: number[] = [];
+    
+    // Direction-aware preloading range
+    const baseRange = 3; // Base range for nearby images  
+    const forwardBias = lastDirection === 'next' ? 4 : 2; // Extra images forward
+    const backwardBias = lastDirection === 'prev' ? 4 : 2; // Extra images backward
+    
+    const startIndex = Math.max(0, currentIndex - backwardBias);
+    const endIndex = Math.min(images.length - 1, currentIndex + baseRange + forwardBias);
+    
+    // Find images to load
+    for (let i = startIndex; i <= endIndex; i++) {
+      if (!loadedImages.has(i)) {
+        imagesToLoad.push(i);
+      }
+    }
+    
+    // Find images to unload (far from current position to manage memory)
+    const unloadDistance = 8; // Unload images more than 8 positions away
+    loadedImages.forEach(index => {
+      if (Math.abs(index - currentIndex) > unloadDistance) {
+        imagesToUnload.push(index);
+      }
+    });
+    
+    // Load new images with staggered timing
+    imagesToLoad.forEach((index, priority) => {
+      setTimeout(() => {
+        setLoadedImages(prev => new Set(prev).add(index));
+      }, priority * 100); // Stagger loading to prevent overload
+    });
+    
+    // Unload distant images
+    if (imagesToUnload.length > 0) {
+      setLoadedImages(prev => {
+        const newSet = new Set(prev);
+        imagesToUnload.forEach(index => newSet.delete(index));
+        return newSet;
+      });
+    }
+  }, [currentIndex, images.length, lastDirection]);
+
   // Cleanup animation frame on unmount
   useEffect(() => {
     return () => {
@@ -73,10 +120,16 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
     }
   }, [])
 
-  // Ensure client-side rendering
+  // Ensure client-side rendering and load initial images
   useEffect(() => {
     setIsClient(true)
-  }, [])
+    // Load first 3 images immediately
+    const initialImages = new Set<number>()
+    for (let i = 0; i < Math.min(3, images.length); i++) {
+      initialImages.add(i)
+    }
+    setLoadedImages(initialImages)
+  }, [images.length])
 
   // Handle dynamic alternate link after client mount
   useEffect(() => {
@@ -144,6 +197,9 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
     (showClickEffect = true) => {
       if (isTransitioning) return
 
+      // Track navigation direction
+      setLastDirection('next')
+
       // Show clicked effect only when explicitly requested (button clicks)
       if (showClickEffect) {
         setClickedButton('next')
@@ -175,6 +231,9 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
   const goToPrevious = useCallback(
     (showClickEffect = true) => {
       if (isTransitioning || currentIndex === 0) return
+
+      // Track navigation direction
+      setLastDirection('prev')
 
       // Show clicked effect only when explicitly requested (button clicks)
       if (showClickEffect) {
@@ -332,6 +391,7 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
             if (shouldNavigate) {
               if (deltaX > 0 && currentIndex < images.length - 1) {
                 // Swipe left to next image - calculate slide-through animation
+                setLastDirection('next')
                 setIsTransitioning(true)
                 const targetIndex = currentIndex + 1
                 
@@ -352,6 +412,7 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
                 
               } else if (deltaX < 0 && currentIndex > 0) {
                 // Swipe right to previous image - calculate slide-through animation  
+                setLastDirection('prev')
                 setIsTransitioning(true)
                 const targetIndex = currentIndex - 1
                 
@@ -395,10 +456,16 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
                 className="h-full flex-shrink-0"
                 style={{ width: 'calc(100vw - 32px)' }} // Account for px-4 padding (16px * 2)
               >
-                <GalleryImage 
-                  image={image} 
-                  priority={Math.abs(index - currentIndex) <= 1} // Priority for current and adjacent images
-                />
+                {loadedImages.has(index) ? (
+                  <GalleryImage 
+                    image={image} 
+                    priority={Math.abs(index - currentIndex) <= 1} // Priority for current and adjacent images
+                  />
+                ) : (
+                  <div className="w-full h-full bg-neutral-800/50 flex items-center justify-center">
+                    <div className="text-white/30 text-sm">Loading...</div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
