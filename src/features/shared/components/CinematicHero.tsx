@@ -10,8 +10,6 @@ interface CinematicHeroProps {
   // Optional content
   title?: string
   subtitle?: string
-  // Optional video
-  videoUrl?: string
   // Animation settings
   initialViewportHeight?: string // Initial letterbox height
   initialViewportWidth?: string // Initial letterbox width
@@ -27,7 +25,6 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
   altText,
   title,
   subtitle,
-  videoUrl,
   initialViewportHeight = '45vh',
   initialViewportWidth = '80%',
   scrollFactor = 1.0,
@@ -327,15 +324,6 @@ const CinematicHero: React.FC<CinematicHeroProps> = ({
                   scale: imageScale,
                 }}
               >
-                {/* Video background (if provided) */}
-                {videoUrl && (
-                  <div className="absolute inset-0 w-full h-full">
-                    <video autoPlay muted loop playsInline className="w-full h-full object-cover">
-                      <source src={videoUrl} type="video/mp4" />
-                    </video>
-                  </div>
-                )}
-
                 {/* Image background with responsive picture element */}
                 <picture className="w-full h-full block">
                   <source media="(min-width: 768px)" srcSet={desktopUrl} />

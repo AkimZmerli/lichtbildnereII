@@ -18,7 +18,8 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
   const [isFlipping, setIsFlipping] = useState(false);
   const [flipDirection, setFlipDirection] = useState<'forward' | 'back' | null>(null);
   const [displaySpread, setDisplaySpread] = useState(0);
-  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set())
+  const [lastDirection, setLastDirection] = useState<'forward' | 'back' | null>(null);
   const [flippingPageImage, setFlippingPageImage] = useState<string | null>(null);
   const [isBackFace, setIsBackFace] = useState(false);
   const [touchStart, setTouchStart] = useState<{ x: number; y: number; time: number } | null>(null);
@@ -59,6 +60,34 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
   
   const currentSpread = Math.floor(currentPage / 2);
   
+  // Helper function to check if an image is loaded
+  const isImageLoaded = (imageSrc: string) => {
+    const imageIndex = images.indexOf(imageSrc);
+    return imageIndex !== -1 && loadedImages.has(imageIndex);
+  };
+  
+  // Component for image with loading state
+  const ImageWithLoader: React.FC<{ src: string; alt: string; className?: string; style?: React.CSSProperties }> = ({ src, alt, className, style }) => {
+    const loaded = isImageLoaded(src);
+    
+    return (
+      <div className="relative w-full h-full">
+        {loaded ? (
+          <img 
+            src={src} 
+            alt={alt}
+            className={className}
+            style={style}
+          />
+        ) : (
+          <div className="w-full h-full bg-neutral-800/50 flex items-center justify-center">
+            <div className="text-white/30 text-xs">Loading...</div>
+          </div>
+        )}
+      </div>
+    );
+  };
+  
   // Sync display spread with current spread when not flipping
   useEffect(() => {
     if (!isFlipping) {
@@ -66,28 +95,64 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
     }
   }, [currentSpread, isFlipping]);
   
-  // Preload nearby images
+  // Enhanced preloading with direction awareness and memory management
   useEffect(() => {
-    const imagesToLoad = [];
-    for (let i = Math.max(0, currentPage - 4); i <= Math.min(images.length - 1, currentPage + 6); i++) {
+    const imagesToLoad: number[] = [];
+    const imagesToUnload: number[] = [];
+    
+    // Direction-aware preloading range
+    const baseRange = 8; // Base range for nearby images
+    const forwardBias = lastDirection === 'forward' ? 6 : 3; // Extra pages forward
+    const backwardBias = lastDirection === 'back' ? 6 : 3; // Extra pages backward
+    
+    const startIndex = Math.max(0, currentPage - backwardBias);
+    const endIndex = Math.min(images.length - 1, currentPage + baseRange + forwardBias);
+    
+    // Find images to load
+    for (let i = startIndex; i <= endIndex; i++) {
       if (!loadedImages.has(i)) {
         imagesToLoad.push(i);
       }
     }
     
-    imagesToLoad.forEach(index => {
-      const img = new Image();
-      img.onload = () => {
-        setLoadedImages(prev => new Set(prev).add(index));
-      };
-      img.src = images[index];
+    // Find images to unload (far from current position to manage memory)
+    const unloadDistance = 20; // Unload images more than 20 positions away
+    loadedImages.forEach(index => {
+      if (Math.abs(index - currentPage) > unloadDistance) {
+        imagesToUnload.push(index);
+      }
     });
-  }, [currentPage, images, loadedImages]);
+    
+    // Load new images with priority
+    imagesToLoad.forEach((index, priority) => {
+      setTimeout(() => {
+        const img = new Image();
+        img.onload = () => {
+          setLoadedImages(prev => new Set(prev).add(index));
+        };
+        img.onerror = () => {
+          // Even on error, mark as "loaded" to prevent retry loops
+          setLoadedImages(prev => new Set(prev).add(index));
+        };
+        img.src = images[index];
+      }, priority * 50); // Stagger loading to prevent browser overload
+    });
+    
+    // Unload distant images
+    if (imagesToUnload.length > 0) {
+      setLoadedImages(prev => {
+        const newSet = new Set(prev);
+        imagesToUnload.forEach(index => newSet.delete(index));
+        return newSet;
+      });
+    }
+  }, [currentPage, images, loadedImages, lastDirection]);
   
   const goToNextSpread = useCallback(() => {
     if (!isFlipping && currentSpread < spreads.length - 1) {
       setIsFlipping(true);
       setFlipDirection('forward');
+      setLastDirection('forward'); // Track navigation direction
       setDisplaySpread(currentSpread + 1);
       setIsBackFace(false);
       
@@ -123,6 +188,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
     if (!isFlipping && currentSpread > 0) {
       setIsFlipping(true);
       setFlipDirection('back');
+      setLastDirection('back'); // Track navigation direction
       setDisplaySpread(currentSpread - 1);
       setIsBackFace(false);
       
@@ -240,7 +306,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
                     </div>
                     <div className="page page-right">
                       {!(isFlipping && flipDirection === 'forward') && spread.right && (
-                        <img 
+                        <ImageWithLoader 
                           src={spread.right} 
                           alt="Front Cover"
                           className="page-image page-cover-image"
@@ -248,7 +314,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
                       )}
                       {/* Show next right page underneath when flipping forward from cover */}
                       {isFlipping && flipDirection === 'forward' && nextSpread?.right && (
-                        <img 
+                        <ImageWithLoader 
                           src={nextSpread.right} 
                           alt="Next Page"
                           className="page-image"
@@ -269,7 +335,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
                   <>
                     <div className="page page-left">
                       {!(isFlipping && flipDirection === 'back') && spread.left && (
-                        <img 
+                        <ImageWithLoader 
                           src={spread.left} 
                           alt="Back Cover"
                           className="page-image page-cover-image"
@@ -277,7 +343,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
                       )}
                       {/* Show previous left page underneath when flipping back from back cover */}
                       {isFlipping && flipDirection === 'back' && prevSpread?.left && (
-                        <img 
+                        <ImageWithLoader 
                           src={prevSpread.left} 
                           alt="Previous Page"
                           className="page-image"
@@ -306,7 +372,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
                         if (isFlipping && flipDirection === 'back') {
                           // When flipping back, show the previous spread's left page
                           return spreads[displaySpread]?.left && (
-                            <img 
+                            <ImageWithLoader 
                               src={spreads[displaySpread].left} 
                               alt="Left Page"
                               className="page-image"
@@ -314,7 +380,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
                           );
                         }
                         return spread?.left && (
-                          <img 
+                          <ImageWithLoader 
                             src={spread.left} 
                             alt="Left Page"
                             className="page-image"
@@ -330,7 +396,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
                         if (isFlipping && flipDirection === 'forward') {
                           // When flipping forward, show the next spread's right page
                           return spreads[displaySpread]?.right && (
-                            <img 
+                            <ImageWithLoader 
                               src={spreads[displaySpread].right} 
                               alt="Right Page"
                               className="page-image"
@@ -338,7 +404,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
                           );
                         }
                         return spread?.right && (
-                          <img 
+                          <ImageWithLoader 
                             src={spread.right} 
                             alt="Right Page"
                             className="page-image"
@@ -356,7 +422,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
           {isFlipping && flipDirection === 'forward' && flippingPageImage && (
             <div className="flipping-page-container">
               <div className="flipping-page flip-forward">
-                <img 
+                <ImageWithLoader 
                   src={flippingPageImage}
                   alt="Flipping page"
                   className="page-image"
@@ -376,7 +442,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
           {isFlipping && flipDirection === 'back' && flippingPageImage && (
             <div className="flipping-page-container flipping-page-container-back">
               <div className="flipping-page flipping-page-back flip-back">
-                <img 
+                <ImageWithLoader 
                   src={flippingPageImage}
                   alt="Flipping page"
                   className="page-image"

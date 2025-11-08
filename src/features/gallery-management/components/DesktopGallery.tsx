@@ -8,6 +8,20 @@ import LoadingSpinner from '@/features/shared/components/LoadingSpinner'
 import { createSmoothLink } from '@/features/shared/utils/smoothNavigation'
 
 // Utility functions for responsive text formatting
+const formatName = (name: string) => {
+  if (name === 'Industrie und Landschaft - Karl-Marx-Stadt') {
+    return (
+      <>
+        <div>
+          Industrie und Landschaft <br />
+          Karl-Marx-Stadt
+        </div>
+      </>
+    )
+  }
+  return name
+}
+
 const formatMaterial = (material: string) => {
   if (material === 'silver gelatin print on baryta paper') {
     return (
@@ -19,10 +33,56 @@ const formatMaterial = (material: string) => {
       </>
     )
   }
+  if (material === 'silver gelatin print on panchromatic film') {
+    return (
+      <>
+        <div>
+          silver gelatin print <br className="md:inline xl:hidden" />
+          on panchromatic film
+        </div>
+      </>
+    )
+  }
+  if (material === 'silver gelatin print on orwo document paper') {
+    return (
+      <>
+        <div>
+          silver gelatin print <br />
+          on orwo document paper
+        </div>
+      </>
+    )
+  }
   return material
 }
 
 const formatExhibition = (exhibition: string) => {
+  // Special case for "Momentum x Betrieb.kollektiv • Momentum • 2025" - break at dot before Momentum on all screens
+  if (exhibition === 'Momentum x Betrieb.kollektiv • Momentum • 2025') {
+    return (
+      <div className="mb-4">
+        <span>
+          Momentum x Betrieb.kollektiv{' • '}
+          <br />
+          Momentum • 2025
+        </span>
+      </div>
+    )
+  }
+  
+  // Special case for "Best of II - Visitors Choice • Museum Gunzenhauser • 2025" - break at dash before Visitors Choice on all screens
+  if (exhibition === 'Best of II - Visitors Choice • Museum Gunzenhauser • 2025') {
+    return (
+      <div className="mb-4">
+        <span>
+          Best of II - Visitors Choice{' • '}
+          <br />
+          Museum Gunzenhauser • 2025
+        </span>
+      </div>
+    )
+  }
+  
   // For md/lg screens, break at dots: "name • gallery • year" becomes "name •\n gallery •\n year"
   const parts = exhibition.split(' • ')
   if (parts.length > 1) {
@@ -363,7 +423,7 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
             }`}
           >
             {images[currentIndex].name && (
-              <div className="text-white-rose">{images[currentIndex].name}</div>
+              <div className="text-white-rose">{formatName(images[currentIndex].name)}</div>
             )}
             {images[currentIndex].physicalWidth && images[currentIndex].physicalHeight && (
               <div>
@@ -371,7 +431,7 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
               </div>
             )}
             {images[currentIndex].material && (
-              <div>{formatMaterial(images[currentIndex].material)}</div>
+              <div className="mb-2">{formatMaterial(images[currentIndex].material)}</div>
             )}
             {images[currentIndex].exhibition && (
               <div>{formatExhibition(images[currentIndex].exhibition)}</div>

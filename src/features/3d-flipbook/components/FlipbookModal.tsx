@@ -23,25 +23,34 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
   ],
 }) => {
   const [currentPage, setCurrentPage] = useState(0)
-  const [imagesLoaded, setImagesLoaded] = useState(false)
+  const [initialImagesLoaded, setInitialImagesLoaded] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
 
-  // Preload all images when modal opens
+  // Preload only initial images (cover + first 2 spreads = ~5-6 images)
   useEffect(() => {
-    if (isOpen && !imagesLoaded) {
+    if (isOpen && !initialImagesLoaded) {
+      const initialImageCount = Math.min(6, images.length) // Cover + first 2 spreads
+      const initialImages = images.slice(0, initialImageCount)
+      
       let loadedCount = 0
-      images.forEach((src, _index) => {
+      initialImages.forEach((src) => {
         const img = new Image()
         img.onload = () => {
           loadedCount++
-          if (loadedCount === images.length) {
-            setImagesLoaded(true)
+          if (loadedCount === initialImages.length) {
+            setInitialImagesLoaded(true)
+          }
+        }
+        img.onerror = () => {
+          loadedCount++
+          if (loadedCount === initialImages.length) {
+            setInitialImagesLoaded(true)
           }
         }
         img.src = src
       })
     }
-  }, [isOpen, images, imagesLoaded])
+  }, [isOpen, images, initialImagesLoaded])
 
   // Handle ESC key only - arrow navigation is handled by CSSFlipbook
   useEffect(() => {
@@ -104,7 +113,7 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
         </div>
 
         {/* Loading Message */}
-        {!imagesLoaded && (
+        {!initialImagesLoaded && (
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <LoadingSpinner size="lg" showText={true} />
             <div className="text-white-rose/60 text-sm tracking-wider mt-4 text-center">
@@ -114,7 +123,7 @@ export const FlipbookModal: React.FC<FlipbookModalProps> = ({
         )}
 
         {/* CSS Flipbook Container */}
-        {imagesLoaded && (
+        {initialImagesLoaded && (
           <div className="w-full h-[85vh] md:max-w-[90vw] md:h-[85vh] rounded-lg flex items-center justify-center">
             <div className="w-full h-full flex items-center justify-center">
               <CSSFlipbook

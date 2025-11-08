@@ -9,7 +9,6 @@ interface ClientHeroProps {
   altText: string
   title?: string
   subtitle?: string
-  videoUrl?: string
 }
 
 export default function ClientHero({
@@ -18,7 +17,6 @@ export default function ClientHero({
   altText,
   title,
   subtitle,
-  videoUrl,
 }: ClientHeroProps) {
   const [imageUrl, setImageUrl] = useState(desktopUrl)
 

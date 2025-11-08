@@ -10,7 +10,6 @@ export default function About() {
         {/* PROFILE VIDEO - autoplay loop like a GIF */}
         <div className="mb-8 md:mb-12">
           <video autoPlay loop muted playsInline className="w-full h-auto object-cover">
-            <source src="/images/animation.mp4" type="video/mp4" />
             <source src="/images/animation.webm" type="video/webm" />
             {/* Fallback to GIF if video not supported */}
             <Image

@@ -54,7 +54,6 @@ next-env.d.ts
 public/images/gif.gif
 
 # Keep these static files in repo
-!public/images/animation.mp4
 !public/images/animation.webm
 !public/images/Grainy_texture.png
 !public/images/BurgerPlaceholder.png
