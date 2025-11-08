@@ -12,17 +12,21 @@ export default function Footer() {
     e.preventDefault()
     
     if (!executeRecaptcha) {
-      console.log('reCAPTCHA not yet available')
+      console.log('reCAPTCHA not yet available, opening mailto anyway')
+      window.location.href = 'mailto:mail@valentinmici.com'
       return
     }
 
     try {
       const token = await executeRecaptcha('mailto')
+      console.log('reCAPTCHA passed, opening mailto')
       
       // If reCAPTCHA passes, open mailto
       window.location.href = 'mailto:mail@valentinmici.com'
     } catch (error) {
-      console.error('reCAPTCHA failed:', error)
+      console.error('reCAPTCHA failed, opening mailto anyway:', error)
+      // Still open mailto even if reCAPTCHA fails
+      window.location.href = 'mailto:mail@valentinmici.com'
     }
   }, [executeRecaptcha])
   return (
