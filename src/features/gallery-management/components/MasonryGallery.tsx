@@ -78,7 +78,7 @@ const MasonryGallery = ({
               ) : alternateGalleryLink?.includes('socialbook') ? (
                 'Social Book ↗'
               ) : (
-                alternateTitle
+                `view ${alternateTitle.toLowerCase()} ↗`
               )}
             </span>
           </Link>

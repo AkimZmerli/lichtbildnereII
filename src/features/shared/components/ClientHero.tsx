@@ -18,20 +18,21 @@ export default function ClientHero({
   title,
   subtitle,
 }: ClientHeroProps) {
-  const [imageUrl, setImageUrl] = useState(desktopUrl)
+  // Remove JavaScript-based image switching - let CSS handle it
+  // const [imageUrl, setImageUrl] = useState(desktopUrl)
 
   useEffect(() => {
-    // Check viewport width and set appropriate image
-    const checkViewport = () => {
-      if (window.innerWidth < 768) {
-        setImageUrl(mobileUrl)
-      } else {
-        setImageUrl(desktopUrl)
-      }
-    }
-
-    checkViewport()
-    window.addEventListener('resize', checkViewport)
+    // Remove image switching logic - handled by CSS now
+    // const checkViewport = () => {
+    //   if (window.innerWidth < 768) {
+    //     setImageUrl(mobileUrl)
+    //   } else {
+    //     setImageUrl(desktopUrl)
+    //   }
+    // }
+    //
+    // checkViewport()
+    // window.addEventListener('resize', checkViewport)
 
     // Check if we're coming from an internal navigation (like from Works link)
     const shouldScrollToWorks = sessionStorage.getItem('scrollToWorks') === 'true'
@@ -72,12 +73,14 @@ export default function ClientHero({
       }, 1000)
     }
 
-    return () => window.removeEventListener('resize', checkViewport)
-  }, [mobileUrl, desktopUrl])
+    // Remove resize listener cleanup - no longer needed
+    // return () => window.removeEventListener('resize', checkViewport)
+  }, [])
 
   return (
     <CinematicHeroScroll
-      imageUrl={imageUrl}
+      mobileUrl={mobileUrl}
+      desktopUrl={desktopUrl}
       altText={altText}
       title={title}
       subtitle={subtitle}

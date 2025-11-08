@@ -6,7 +6,8 @@ import Image from 'next/image'
 import LoadingSpinner from './LoadingSpinner'
 
 interface CinematicHeroScrollProps {
-  imageUrl: string
+  mobileUrl: string
+  desktopUrl: string
   altText: string
   title?: string
   subtitle?: string
@@ -15,7 +16,8 @@ interface CinematicHeroScrollProps {
 }
 
 export default function CinematicHeroScroll({
-  imageUrl,
+  mobileUrl,
+  desktopUrl,
   altText,
   title,
   subtitle,
@@ -28,15 +30,12 @@ export default function CinematicHeroScroll({
   const containerRef = useRef<HTMLDivElement>(null)
   const heroRef = useRef<HTMLDivElement>(null)
 
-  // Debug props (disabled)
-  // console.log('CinematicHeroScroll received imageUrl:', imageUrl)
-
   // Reset scroll position on mount to ensure animation starts from beginning
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
 
-  // Check if mobile on mount and window resize
+  // Check if mobile on mount and window resize (still needed for scroll behavior)
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768) // Using Tailwind's md breakpoint
@@ -163,20 +162,25 @@ export default function CinematicHeroScroll({
             animate={{ opacity: isReady ? 1 : 0 }}
             transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1] }}
           >
-            <Image
-              src={imageUrl}
-              alt={altText}
-              fill
-              priority
-              className="object-contain"
-              sizes="100vw"
-              onLoad={() => setImageLoaded(true)}
-              onError={(e) => {
-                console.error('Hero image failed to load:', imageUrl)
-                console.error('Error details:', e)
-                setImageLoaded(true)
-              }}
-            />
+            {/* Responsive picture element - no JavaScript switching needed */}
+            <picture className="w-full h-full">
+              <source media="(min-width: 768px)" srcSet={desktopUrl} />
+              <source media="(max-width: 767px)" srcSet={mobileUrl} />
+              <Image
+                src={desktopUrl} // Fallback
+                alt={altText}
+                fill
+                priority
+                className="object-contain"
+                sizes="100vw"
+                onLoad={() => setImageLoaded(true)}
+                onError={(e) => {
+                  console.error('Hero image failed to load')
+                  console.error('Error details:', e)
+                  setImageLoaded(true)
+                }}
+              />
+            </picture>
           </motion.div>
 
           {/* Masking elements - hide image outside letterbox */}

@@ -22,10 +22,12 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
   const [velocity, setVelocity] = useState(0)
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set())
   const [lastDirection, setLastDirection] = useState<'prev' | 'next' | null>(null)
+  const [hasCommittedToSwipe, setHasCommittedToSwipe] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<number>()
   const lastTouchTime = useRef(0)
   const lastTouchX = useRef(0)
+  const swipeCommitTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Momentum scrolling animation
   const animateToPosition = useCallback(
@@ -65,6 +67,48 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
     },
     [dragOffset, currentIndex],
   )
+
+  // Commit to swipe when threshold is met
+  const commitToSwipe = useCallback((direction: 'next' | 'prev') => {
+    if (hasCommittedToSwipe || isTransitioning) return
+    
+    setHasCommittedToSwipe(true)
+    setIsTransitioning(true)
+    setLastDirection(direction)
+    
+    if (direction === 'next') {
+      if (currentIndex < images.length - 1) {
+        const targetIndex = currentIndex + 1
+        const imageWidth = window.innerWidth - 32
+        const finalOffset = -(imageWidth + 48)
+        animateToPosition(finalOffset, 400, targetIndex, true)
+        
+        setTimeout(() => {
+          setIsTransitioning(false)
+          setHasCommittedToSwipe(false)
+        }, 400)
+      } else {
+        // Last image - go to masonry
+        setShowMasonryView(true)
+        setHasCommittedToSwipe(false)
+      }
+    } else {
+      if (currentIndex > 0) {
+        const targetIndex = currentIndex - 1
+        const imageWidth = window.innerWidth - 32
+        const finalOffset = imageWidth + 48
+        animateToPosition(finalOffset, 400, targetIndex, true)
+        
+        setTimeout(() => {
+          setIsTransitioning(false)
+          setHasCommittedToSwipe(false)
+        }, 400)
+      } else {
+        setHasCommittedToSwipe(false)
+      }
+    }
+  }, [hasCommittedToSwipe, isTransitioning, currentIndex, images.length, animateToPosition])
+  
 
   // Progressive image loading with direction awareness
   useEffect(() => {
@@ -116,6 +160,9 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current)
+      }
+      if (swipeCommitTimeoutRef.current) {
+        clearTimeout(swipeCommitTimeoutRef.current)
       }
     }
   }, [])
@@ -311,19 +358,26 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
             if (animationRef.current) {
               cancelAnimationFrame(animationRef.current)
             }
+            
+            // Clear any pending commit timeout
+            if (swipeCommitTimeoutRef.current) {
+              clearTimeout(swipeCommitTimeoutRef.current)
+              swipeCommitTimeoutRef.current = null
+            }
 
             const touch = e.touches[0]
             const startTime = Date.now()
             setTouchStart({ x: touch.clientX, y: touch.clientY, time: startTime })
             setIsDragging(true)
             setVelocity(0)
+            setHasCommittedToSwipe(false)
 
             // Initialize velocity tracking
             lastTouchTime.current = startTime
             lastTouchX.current = touch.clientX
           }}
           onTouchMove={(e) => {
-            if (!isDragging) return
+            if (!isDragging || hasCommittedToSwipe) return
 
             const touch = e.touches[0]
             const currentTime = Date.now()
@@ -348,6 +402,21 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
               let offset = -deltaX
               const imageWidth = window.innerWidth - 32 // Account for padding
               const maxSwipe = imageWidth * 0.9
+              
+              // Check for momentum commit threshold
+              const commitThreshold = imageWidth * 0.35 // 35% of screen width
+              const velocityThreshold = 0.4
+              
+              if (!hasCommittedToSwipe && Math.abs(deltaX) > commitThreshold && Math.abs(velocity) > velocityThreshold) {
+                // Commit to swipe direction
+                if (deltaX > 0 && (currentIndex < images.length - 1 || currentIndex === images.length - 1)) {
+                  commitToSwipe('next')
+                  return
+                } else if (deltaX < 0 && currentIndex > 0) {
+                  commitToSwipe('prev')
+                  return
+                }
+              }
 
               // Add resistance at the edges with smoother falloff
               if (currentIndex === 0 && offset > 0) {
@@ -371,6 +440,11 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
             const deltaTime = Date.now() - touchStart.time
 
             setIsDragging(false)
+            
+            // If already committed to swipe, don't process touch end
+            if (hasCommittedToSwipe) {
+              return
+            }
 
             // Check for tap (short touch with minimal movement)
             if (Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10 && deltaTime < 200) {
