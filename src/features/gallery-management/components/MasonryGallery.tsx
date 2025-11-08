@@ -58,8 +58,8 @@ const MasonryGallery = ({
         {' '}
         {/* Increased padding to prevent header cropping */}
         {/* Header with gallery switch button */}
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-white-rose text-2xl tracking-[0.5em] uppercase max-w-[70%]">
+        <div className="flex items-center justify-between mb-8 gap-4">
+          <h2 className="text-white-rose text-xl md:text-2xl tracking-[0.3em] md:tracking-[0.5em] uppercase max-w-[55%] leading-tight">
             {displayTitle}
           </h2>
 

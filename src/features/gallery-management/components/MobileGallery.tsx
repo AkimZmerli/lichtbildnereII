@@ -343,7 +343,7 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
       <Header />
 
       {/* Title */}
-      <div className="pt-24 pl-8 pr-4 pb-0">
+      <div className="pt-24 pl-8 pr-4 pb-6">
         <h1 className="text-white-rose text-lg tracking-[0.3em] uppercase text-center">{title}</h1>
       </div>
 
@@ -547,7 +547,7 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
       </div>
 
       {/* Navigation */}
-      <div className="px-6  pb-4  flex justify-between items-center">
+      <div className="px-6 pt-12 pb-4 flex justify-between items-center">
         <span className="text-white-rose/50 text-base font-light">
           {currentIndex + 1} / {images.length}
         </span>
