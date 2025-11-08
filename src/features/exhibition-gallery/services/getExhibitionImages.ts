@@ -64,7 +64,7 @@ export async function getExhibitionImages(): Promise<GalleryImage[]> {
       exhibition: 'Best of II - Visitors Choice • Museum Gunzenhauser • 2025',
     },
     {
-      url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/29%20-%20Best%20of%20II%20-%20Visitors%20Choise.webpn',
+      url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/29%20-%20Best%20of%20II%20-%20Visitors%20Choise.webp',
       alt: 'self potrait - photogram artwork',
       name: 'self potrait',
       physicalWidth: 108,

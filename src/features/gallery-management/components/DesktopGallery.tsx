@@ -7,6 +7,44 @@ import Header from '@/features/shared/components/Header'
 import LoadingSpinner from '@/features/shared/components/LoadingSpinner'
 import { createSmoothLink } from '@/features/shared/utils/smoothNavigation'
 
+// Utility functions for responsive text formatting
+const formatMaterial = (material: string) => {
+  if (material === 'silver gelatin print on baryta paper') {
+    return (
+      <>
+        <div>
+          silver gelatin print <br className="md:inline xl:hidden" />
+          on baryta paper
+        </div>
+      </>
+    )
+  }
+  return material
+}
+
+const formatExhibition = (exhibition: string) => {
+  // For md/lg screens, break at dots: "name • gallery • year" becomes "name •\n gallery •\n year"
+  const parts = exhibition.split(' • ')
+  if (parts.length > 1) {
+    return (
+      <div className="mb-4">
+        {parts.map((part, index) => (
+          <span key={index}>
+            {part}
+            {index < parts.length - 1 && (
+              <>
+                {' • '}
+                <br className="md:inline xl:hidden" />
+              </>
+            )}
+          </span>
+        ))}
+      </div>
+    )
+  }
+  return exhibition
+}
+
 const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: GalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [uiVisible, setUiVisible] = useState(true)
@@ -333,18 +371,11 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
               </div>
             )}
             {images[currentIndex].material && (
-              <div>
-                {images[currentIndex].material === 'silver gelatin print on baryta paper' ? (
-                  <>
-                    <div>silver gelatin print</div>
-                    <div>on baryta paper</div>
-                  </>
-                ) : (
-                  images[currentIndex].material
-                )}
-              </div>
+              <div>{formatMaterial(images[currentIndex].material)}</div>
             )}
-            {images[currentIndex].exhibition && <div>{images[currentIndex].exhibition}</div>}
+            {images[currentIndex].exhibition && (
+              <div>{formatExhibition(images[currentIndex].exhibition)}</div>
+            )}
             <div className="text-white-rose/50">
               <Link href="/impressum" className="text-hot-pink/70 hover:text-hot-pink underline">
                 Impressum
@@ -364,7 +395,7 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
               transition={{ duration: 0.6, ease: 'easeOut' }}
               aria-hidden="true"
             >
-              <motion.span 
+              <motion.span
                 className="text-sm mb-2 font-light tracking-wider text-black"
                 animate={{
                   opacity: [0.3, 1, 0.3],
