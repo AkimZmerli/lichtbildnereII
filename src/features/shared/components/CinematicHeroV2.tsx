@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion'
 import Image from 'next/image'
-import LoadingSpinner from './LoadingSpinner'
+import LoadingSpinner from '@/shared/ui/LoadingSpinner'
 
 interface CinematicHeroV2Props {
   imageUrl: string
