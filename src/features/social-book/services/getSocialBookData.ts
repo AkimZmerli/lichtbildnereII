@@ -1,4 +1,4 @@
-import { getImageUrl } from '../../../config/blob'
+import { getImageUrl } from '../../../lib/blob'
 
 interface SocialBookData {
   coverImage: {
