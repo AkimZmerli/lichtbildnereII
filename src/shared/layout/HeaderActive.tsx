@@ -49,24 +49,24 @@ function HeaderActive({ isOpen, toggleMenu }: HeaderActiveProps) {
         const cinematicHero = document.querySelector('[data-cinematic-hero]')
         const heroHeight = cinematicHero?.getBoundingClientRect().height || 0
         const currentScroll = window.scrollY
-        
+
         // If we're at the top and hero animation might be active
         if (currentScroll < heroHeight * 0.5) {
           // First, force skip the hero animation if it exists
           window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
-          
+
           // Small delay to let the animation complete
           setTimeout(() => {
             // Scroll to top first
             window.scrollTo({ top: 0, behavior: 'smooth' })
-            
+
             // Then scroll to works
             setTimeout(() => {
               const worksElement = document.querySelector('#works')
               if (worksElement) {
-                worksElement.scrollIntoView({ 
+                worksElement.scrollIntoView({
                   behavior: 'smooth',
-                  block: 'start'
+                  block: 'start',
                 })
               }
             }, 600)
@@ -75,9 +75,9 @@ function HeaderActive({ isOpen, toggleMenu }: HeaderActiveProps) {
           // Hero animation is already done, just scroll to works
           const worksElement = document.querySelector('#works')
           if (worksElement) {
-            worksElement.scrollIntoView({ 
+            worksElement.scrollIntoView({
               behavior: 'smooth',
-              block: 'start'
+              block: 'start',
             })
           }
         }
@@ -86,7 +86,7 @@ function HeaderActive({ isOpen, toggleMenu }: HeaderActiveProps) {
         // Set flag to skip hero animation
         sessionStorage.setItem('skipHeroAnimation', 'true')
         sessionStorage.setItem('scrollToWorks', 'true')
-        
+
         // Navigate to home page with hash
         router.push('/#works')
       }
@@ -159,13 +159,6 @@ function HeaderActive({ isOpen, toggleMenu }: HeaderActiveProps) {
             className="hover:underline hover:decoration-black-almost transition-opacity"
           >
             A B O U T
-          </Link>
-          <Link
-            href="/about-exhibition#exhibition"
-            onClick={(e) => handleNavigation(e, '/about-exhibition#exhibition')}
-            className="hover:underline hover:decoration-black-almost transition-opacity"
-          >
-            E X H I B I T I O N S
           </Link>
         </nav>
       </div>
