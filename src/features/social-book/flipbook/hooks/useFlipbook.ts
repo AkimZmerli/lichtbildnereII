@@ -18,7 +18,8 @@ export const useFlipbook = (options: UseFlipbookOptions) => {
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Memoize images to prevent re-renders
-  const memoizedImages = useMemo(() => options.images, [JSON.stringify(options.images)]);
+  const imagesKey = JSON.stringify(options.images)
+  const memoizedImages = useMemo(() => options.images, [imagesKey]);
 
   const initializeEngine = () => {
     console.log('🔧 Attempting to initialize engine...', {
@@ -110,7 +111,7 @@ export const useFlipbook = (options: UseFlipbookOptions) => {
       setIsAnimating(false);
       setCurrentPage(0);
     };
-  }, [memoizedImages, options.enabled]); // Use memoized images and enabled flag
+  }, [memoizedImages, options.images, options.enabled, initializeEngine]); // Use memoized images and enabled flag
   
 
   const nextPage = () => {

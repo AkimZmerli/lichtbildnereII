@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -56,15 +56,15 @@ export default function ImageSlideshow({
       window.removeEventListener('keydown', handleKeyPress)
       document.body.style.overflow = 'unset'
     }
-  }, [isOpen, currentIndex])
+  }, [isOpen, currentIndex, onClose])
 
-  const goToNext = () => {
+  const goToNext = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % images.length)
-  }
+  }, [images.length])
 
-  const goToPrevious = () => {
+  const goToPrevious = useCallback(() => {
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
-  }
+  }, [images.length])
 
   const goToSlide = (index: number) => {
     setCurrentIndex(index)

@@ -55,6 +55,7 @@ export async function getExhibitionImages(): Promise<GalleryImage[]> {
       physicalHeight: 29.7,
       material: 'silver gelatin print on orwo document paper',
       exhibition: 'Momentum x Betrieb.kollektiv • Momentum • 2025',
+      rotation: 180,
     },
     {
       url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/28%20-%20Best%20of%20II%20-%20Visitors%20Choise.webp',

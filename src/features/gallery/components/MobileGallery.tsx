@@ -178,7 +178,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
         return newSet;
       });
     }
-  }, [currentIndex, images.length, lastDirection]);
+  }, [currentIndex, images.length, lastDirection, loadedImages]);
 
   // Cleanup animation frame on unmount
   useEffect(() => {

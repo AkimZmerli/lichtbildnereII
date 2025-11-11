@@ -2,6 +2,7 @@ export interface GalleryProps {
   images: GalleryImage[]
   title: string
   galleryType: GalleryType
+  alternateGalleryLink?: string
 }
 
 export interface NavigationProps {
@@ -36,6 +37,7 @@ export interface GalleryImage {
   material?: string
   fabrication?: string
   exhibition?: string
+  rotation?: number
 }
 
 export interface GalleryHeaderProps {

@@ -13,7 +13,7 @@ export default function NonHumanGalleryPage() {
   const [isMobile, setIsMobile] = useState<boolean | null>(null)
   
   // Track that this gallery has been viewed
-  const { hasViewedBothMainGalleries } = useGalleryTracking('non-human')
+  useGalleryTracking('non-human')
   
 
   useEffect(() => {

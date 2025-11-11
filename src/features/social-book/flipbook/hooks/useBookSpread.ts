@@ -17,7 +17,8 @@ export const useBookSpread = (options: UseBookSpreadOptions) => {
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Memoize images to prevent re-renders
-  const memoizedImages = useMemo(() => options.images, [JSON.stringify(options.images)]);
+  const imagesKey = JSON.stringify(options.images)
+  const memoizedImages = useMemo(() => options.images, [imagesKey]);
 
   const initializeEngine = () => {
     console.log('🔧 Attempting to initialize book spread engine...', {
@@ -109,7 +110,7 @@ export const useBookSpread = (options: UseBookSpreadOptions) => {
       setIsAnimating(false);
       setCurrentSpread(0);
     };
-  }, [memoizedImages, options.enabled]);
+  }, [memoizedImages, options.images, options.enabled, initializeEngine]);
 
   const nextPage = () => {
     if (engineRef.current && !isAnimating) {

@@ -6,7 +6,7 @@ interface BurgerMenuProps {
   isDark?: boolean
 }
 
-export function BurgerMenu({ isOpen, isDark = false }: BurgerMenuProps) {
+export function BurgerMenu({ isOpen }: BurgerMenuProps) {
   return (
     <div className="w-[50px] h-[50px] relative flex flex-col justify-center items-center">
       <motion.span

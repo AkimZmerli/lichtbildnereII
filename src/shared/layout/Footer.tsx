@@ -1,5 +1,4 @@
 'use client'
-import Image from 'next/image'
 import Link from 'next/link'
 import { Heart } from 'lucide-react'
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
@@ -18,7 +17,7 @@ export default function Footer() {
     }
 
     try {
-      const token = await executeRecaptcha('mailto')
+      await executeRecaptcha('mailto')
       console.log('reCAPTCHA passed, opening mailto')
       
       // If reCAPTCHA passes, open mailto

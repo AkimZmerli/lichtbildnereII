@@ -1,8 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
 import { GalleryType } from '@/types/gallery'
 import HeaderDesktop from '@/shared/layout/HeaderDesktop'
 import { useGalleryTracking } from '../hooks/useGalleryTracking'
@@ -12,8 +10,7 @@ interface GalleryNavigationProps {
 }
 
 const GalleryNavigation = ({ type }: GalleryNavigationProps) => {
-  const router = useRouter()
-  const { hasViewedBothMainGalleries: _hasViewedBothMainGalleries, hasViewedAllGalleries } = useGalleryTracking(type)
+  useGalleryTracking(type)
   
   // Redirect logic removed as inverted gallery no longer exists
 

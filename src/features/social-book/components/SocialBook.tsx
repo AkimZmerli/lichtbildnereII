@@ -2,7 +2,6 @@
 import { useInView } from 'framer-motion'
 import { useRef, useState } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import { FlipbookModal } from '../flipbook/components/FlipbookModal'
 import { getImageUrl } from '../../../lib/blob'
 

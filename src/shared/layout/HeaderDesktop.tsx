@@ -5,12 +5,8 @@ import HeaderActive from './HeaderActive'
 import Link from 'next/link'
 import Image from 'next/image'
 
-import { usePathname } from 'next/navigation'
-
 function HeaderDesktop() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-
-  const pathname = usePathname()
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)

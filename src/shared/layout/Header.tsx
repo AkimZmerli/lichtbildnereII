@@ -11,7 +11,6 @@ function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(false) // Start hidden, will be set by useEffect
   const [isScrolled, setIsScrolled] = useState(false)
-  const [headerHeight, setHeaderHeight] = useState(0)
   const [hasScrolledDown, setHasScrolledDown] = useState(false)
   const [cinematicHeroCompleted, setCinematicHeroCompleted] = useState(false)
   const headerRef = useRef<HTMLDivElement>(null)

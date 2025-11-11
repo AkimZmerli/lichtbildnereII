@@ -61,7 +61,6 @@ export default function DisplayScan() {
 
           {/* Responsive Video Container */}
           <div className="relative w-full h-[270px] md:h-[400px] lg:h-[600px]">
-            {/* @ts-ignore - Custom element, TypeScript doesn't recognize it */}
             <mux-player
               ref={videoRef}
               playback-id="SvNv6eqQ602PZet4XCY17Jlpyak1GbwjsjQlogQCldF4"
@@ -72,7 +71,7 @@ export default function DisplayScan() {
               autoplay={true}
               muted={isMuted}
               preload="metadata"
-              onError={(e: any) => {
+              onError={(e: React.SyntheticEvent) => {
                 console.warn('Mux Player error:', e)
                 // Retry with different settings on Safari
                 if (videoRef.current && /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)) {

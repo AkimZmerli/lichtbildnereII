@@ -220,7 +220,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
         onPageChange((currentSpread + 1) * 2);
       }, 900);
     }
-  }, [currentSpread, isFlipping, spreads, onPageChange, loadedImages, images]);
+  }, [currentSpread, isFlipping, spreads, onPageChange, loadedImages, images, isSafariBrowser]);
   
   const goToPrevSpread = useCallback(() => {
     if (!isFlipping && currentSpread > 0) {
@@ -261,7 +261,7 @@ export const CSSFlipbook: React.FC<CSSFlipbookProps> = ({
         onPageChange((currentSpread - 1) * 2);
       }, 900);
     }
-  }, [currentSpread, isFlipping, spreads, onPageChange, loadedImages, images]);
+  }, [currentSpread, isFlipping, spreads, onPageChange, loadedImages, images, isSafariBrowser]);
   
   // Keyboard navigation - instant page change without animation
   useEffect(() => {

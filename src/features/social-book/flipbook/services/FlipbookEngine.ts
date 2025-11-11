@@ -97,7 +97,7 @@ export class FlipbookEngine {
     // No tone mapping to maintain original photo colors
     this.renderer.toneMapping = THREE.NoToneMapping;
     // Don't apply any color space conversion
-    // @ts-ignore - Disable color management completely
+    // @ts-expect-error - Disable color management completely
     this.renderer.outputEncoding = THREE.LinearEncoding;
     
     // Set clear color to pure black
@@ -137,7 +137,7 @@ export class FlipbookEngine {
             texture.magFilter = THREE.LinearFilter;
             texture.format = THREE.RGBAFormat; // Use RGBA instead of RGB
             // Set encoding to linear to avoid gamma correction
-            // @ts-ignore
+            // @ts-expect-error
             texture.encoding = THREE.LinearEncoding;
             texture.generateMipmaps = false;
             texture.flipY = false; // Prevent texture flipping issues

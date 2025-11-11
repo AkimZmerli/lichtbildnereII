@@ -128,15 +128,9 @@ const DesktopGallery = ({ images, title, galleryType }: GalleryProps) => {
       setStaticAlternateLink('/socialbook')
     }
   }, [shouldTrackProgress, hasViewedBothMainGalleries])
-  const [isClient, setIsClient] = useState(false)
   const [showWelcomeHint, setShowWelcomeHint] = useState(false)
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
-
-  // Ensure client-side rendering
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
 
   // Welcome hint - show only once per session
   useEffect(() => {

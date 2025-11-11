@@ -3,7 +3,7 @@ import { getImageUrl } from '../../../../lib/blob'
 export interface Slide {
   id: string
   label: string
-  content: any
+  content: Record<string, unknown>
   images?: {
     url: string
     alt: string
