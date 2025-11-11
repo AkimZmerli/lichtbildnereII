@@ -11,8 +11,6 @@ export default function ExhibitionGalleryPage() {
   const [images, setImages] = useState<GalleryImage[]>([])
   const [isMobile, setIsMobile] = useState<boolean | null>(null)
   
-  // Link back to exhibition section
-  const alternateLink = '/about-exhibition#exhibition'
 
   useEffect(() => {
     const checkMobile = () => {
@@ -57,14 +55,12 @@ export default function ExhibitionGalleryPage() {
     <MobileGallery 
       images={images} 
       title="exhibitions" 
-      alternateGalleryLink={alternateLink} 
       galleryType="exhibition" 
     />
   ) : (
     <DesktopGallery 
       images={images} 
       title="exhibitions" 
-      alternateGalleryLink={alternateLink} 
       galleryType="exhibition" 
     />
   )

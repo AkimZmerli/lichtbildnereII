@@ -1,10 +1,9 @@
 import { GalleryImage } from '../../../types/gallery'
-import { getImageUrl } from '../../../lib/blob'
 
 // Static gallery data extracted from PDF
 const humanImages: GalleryImage[] = [
   {
-    url: getImageUrl('gallery/human/7 - Human.webp'),
+    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/gallery/human/7%20-%20Human.webp',
     alt: 'hiking',
     width: 800,
     height: 1000,
@@ -15,7 +14,7 @@ const humanImages: GalleryImage[] = [
     material: 'silver gelatin print on baryta paper',
   },
   {
-    url: getImageUrl('gallery/human/8 - Human.webp'),
+    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/gallery/human/8%20-%20Human.webp',
     alt: 'summer',
     width: 800,
     height: 1000,
@@ -26,7 +25,7 @@ const humanImages: GalleryImage[] = [
     material: 'silver gelatin print on baryta paper',
   },
   {
-    url: getImageUrl('gallery/human/13 - Human.webp'),
+    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/gallery/human/13%20-%20Human.webp',
     alt: 'hungry',
     width: 800,
     height: 1000,
@@ -37,7 +36,7 @@ const humanImages: GalleryImage[] = [
     material: 'silver gelatin print on baryta paper',
   },
   {
-    url: getImageUrl('gallery/human/15 - Human.webp'),
+    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/gallery/human/15%20-%20Human.webp',
     alt: 'bogey',
     width: 800,
     height: 1000,
@@ -48,7 +47,7 @@ const humanImages: GalleryImage[] = [
     material: 'silver gelatin print on baryta paper',
   },
   {
-    url: getImageUrl('gallery/human/23 - Human.webp'),
+    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/gallery/human/23%20-%20Human.webp',
     alt: 'dieter',
     width: 800,
     height: 1200,
@@ -59,7 +58,7 @@ const humanImages: GalleryImage[] = [
     material: 'silver gelatin print on baryta paper',
   },
   {
-    url: getImageUrl('gallery/human/24 - Human.webp'),
+    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/gallery/human/24%20-%20Human.webp',
     alt: 'another day',
     width: 800,
     height: 1200,
@@ -70,7 +69,7 @@ const humanImages: GalleryImage[] = [
     material: 'silver gelatin print on baryta paper',
   },
   {
-    url: getImageUrl('gallery/human/26 - Human.webp'),
+    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/gallery/human/26%20-%20Human.webp',
     alt: 'thomas',
     width: 800,
     height: 1200,
@@ -82,7 +81,7 @@ const humanImages: GalleryImage[] = [
   },
   // Former inverted image integrated into human gallery
   {
-    url: getImageUrl('gallery/human/20 - Human.webp'),
+    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/gallery/human/20%20-%20Human.webp',
     alt: 'waiting',
     width: 800,
     height: 1000,
@@ -96,7 +95,7 @@ const humanImages: GalleryImage[] = [
 
 const nonHumanImages: GalleryImage[] = [
   {
-    url: getImageUrl('gallery/non-human/9 - No Human.webp'),
+    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/gallery/non-human/9%20-%20No%20Human.webp',
     alt: 'flowers',
     width: 800,
     height: 1000,
@@ -107,7 +106,7 @@ const nonHumanImages: GalleryImage[] = [
     material: 'silver gelatin print on baryta paper',
   },
   {
-    url: getImageUrl('gallery/non-human/10 - No Human.webp'),
+    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/gallery/non-human/10%20-%20No%20Human.webp',
     alt: 'mood II',
     width: 800,
     height: 1000,
@@ -118,7 +117,7 @@ const nonHumanImages: GalleryImage[] = [
     material: 'silver gelatin print on baryta paper',
   },
   {
-    url: getImageUrl('gallery/non-human/11 - No Human.webp'),
+    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/gallery/non-human/11%20-%20No%20Human.webp',
     alt: 'curtains II',
     width: 800,
     height: 1000,
@@ -129,7 +128,7 @@ const nonHumanImages: GalleryImage[] = [
     material: 'silver gelatin print on baryta paper',
   },
   {
-    url: getImageUrl('gallery/non-human/12 - No Human.webp'),
+    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/gallery/non-human/12%20-%20No%20Human.webp',
     alt: 'bubbles',
     width: 800,
     height: 1000,
@@ -140,7 +139,7 @@ const nonHumanImages: GalleryImage[] = [
     material: 'silver gelatin print on baryta paper',
   },
   {
-    url: getImageUrl('gallery/non-human/14 - No Human.webp'),
+    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/gallery/non-human/14%20-%20No%20Human.webp',
     alt: 'be careful',
     width: 800,
     height: 1000,
@@ -151,7 +150,7 @@ const nonHumanImages: GalleryImage[] = [
     material: 'silver gelatin print on baryta paper',
   },
   {
-    url: getImageUrl('gallery/non-human/17 - No Human.webp'),
+    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/gallery/non-human/17%20-%20No%20Human.webp',
     alt: 'humans',
     width: 800,
     height: 1200,
@@ -162,7 +161,7 @@ const nonHumanImages: GalleryImage[] = [
     material: 'silver gelatin print on baryta paper',
   },
   {
-    url: getImageUrl('gallery/non-human/22 - No Human.jpg'),
+    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/gallery/non-human/22%20-%20No%20Human.jpg',
     alt: 'arrangement',
     width: 800,
     height: 1080,
@@ -173,7 +172,7 @@ const nonHumanImages: GalleryImage[] = [
     material: 'silver gelatin print on baryta paper',
   },
   {
-    url: getImageUrl('gallery/non-human/27 - No Human.webp'),
+    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/gallery/non-human/27%20-%20No%20Human.webp',
     alt: 'alex',
     width: 800,
     height: 1000,
@@ -184,7 +183,7 @@ const nonHumanImages: GalleryImage[] = [
     material: 'silver gelatin print on baryta paper',
   },
   {
-    url: getImageUrl('gallery/non-human/18 - No Human.webp'),
+    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/gallery/non-human/18%20-%20No%20Human.webp',
     alt: 'mood',
     width: 800,
     height: 1000,
@@ -195,7 +194,7 @@ const nonHumanImages: GalleryImage[] = [
     material: 'silver gelatin print on baryta paper',
   },
   {
-    url: getImageUrl('gallery/non-human/19 - No Human.webp'),
+    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/gallery/non-human/19%20-%20No%20Human.webp',
     alt: 'curtains',
     width: 800,
     height: 1000,
@@ -206,7 +205,7 @@ const nonHumanImages: GalleryImage[] = [
     material: 'silver gelatin print on baryta paper',
   },
   {
-    url: getImageUrl('gallery/non-human/21 - No Human.webp'),
+    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/gallery/non-human/21%20-%20No%20Human.webp',
     alt: 'Dark flowers',
     width: 800,
     height: 1080,

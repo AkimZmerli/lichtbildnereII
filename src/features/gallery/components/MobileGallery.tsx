@@ -7,14 +7,32 @@ import Header from '@/shared/layout/Header'
 import Footer from '@/shared/layout/Footer'
 import LoadingSpinner from '@/shared/ui/LoadingSpinner'
 import { GalleryProps } from '@/types/gallery'
+import { useGalleryTracking } from '@/features/gallery/hooks/useGalleryTracking'
 
-const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: GalleryProps) => {
+const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [showMasonryView, setShowMasonryView] = useState(false)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [touchStart, setTouchStart] = useState({ x: 0, y: 0, time: 0 })
   const [showMetadata, setShowMetadata] = useState(false)
-  const [dynamicAlternateLink, setDynamicAlternateLink] = useState(alternateGalleryLink)
+  // Dynamic alternate links - lightweight using only viewedGalleries  
+  const [staticAlternateLink, setStaticAlternateLink] = useState(
+    galleryType === 'exhibition' 
+      ? '/about-exhibition#exhibition'
+      : galleryType === 'human' 
+        ? '/gallery/non-human' 
+        : '/gallery/human'
+  )
+
+  // Only track and update for human/non-human galleries
+  const shouldTrackProgress = galleryType === 'human' || galleryType === 'non-human'
+  const { hasViewedBothMainGalleries } = useGalleryTracking(galleryType)
+
+  useEffect(() => {
+    if (shouldTrackProgress && hasViewedBothMainGalleries()) {
+      setStaticAlternateLink('/socialbook')
+    }
+  }, [shouldTrackProgress, hasViewedBothMainGalleries])
   const [isClient, setIsClient] = useState(false)
   const [clickedButton, setClickedButton] = useState<'prev' | 'next' | null>(null)
   const [dragOffset, setDragOffset] = useState(0)
@@ -131,7 +149,7 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
     }
     
     // Find images to unload (far from current position to manage memory)
-    const unloadDistance = 8; // Unload images more than 8 positions away
+    const unloadDistance = 3; // Unload images more than 3 positions away (reduced from 8)
     loadedImages.forEach(index => {
       if (Math.abs(index - currentIndex) > unloadDistance) {
         imagesToUnload.push(index);
@@ -139,11 +157,18 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
     });
     
     // Load new images with staggered timing
+    const timeouts: NodeJS.Timeout[] = [];
     imagesToLoad.forEach((index, priority) => {
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         setLoadedImages(prev => new Set(prev).add(index));
       }, priority * 100); // Stagger loading to prevent overload
+      timeouts.push(timeout);
     });
+    
+    // Cleanup function to clear timeouts
+    return () => {
+      timeouts.forEach(timeout => clearTimeout(timeout));
+    };
     
     // Unload distant images
     if (imagesToUnload.length > 0) {
@@ -178,52 +203,7 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
     setLoadedImages(initialImages)
   }, [images.length])
 
-  // Handle dynamic alternate link after client mount
-  useEffect(() => {
-    if (isClient) {
-      const updateAlternateLink = () => {
-        const completedGalleries = JSON.parse(sessionStorage.getItem('completedGalleries') || '[]')
 
-        if (galleryType === 'human') {
-          // Show social book if both galleries completed, otherwise show non-human
-          if (completedGalleries.includes('human') && completedGalleries.includes('non-human')) {
-            setDynamicAlternateLink('/socialbook')
-          } else {
-            setDynamicAlternateLink('/gallery/non-human')
-          }
-        } else if (galleryType === 'non-human') {
-          // Show social book if both galleries completed, otherwise show human
-          if (completedGalleries.includes('human') && completedGalleries.includes('non-human')) {
-            setDynamicAlternateLink('/socialbook')
-          } else {
-            setDynamicAlternateLink('/gallery/human')
-          }
-        }
-      }
-
-      updateAlternateLink()
-
-      // Listen for storage changes
-      const handleStorageChange = () => updateAlternateLink()
-      window.addEventListener('storage', handleStorageChange)
-
-      return () => window.removeEventListener('storage', handleStorageChange)
-    }
-  }, [isClient, galleryType])
-
-  // Mark gallery as completed only when user reaches the last image (not masonry view)
-  useEffect(() => {
-    if (isClient && galleryType && currentIndex === images.length - 1) {
-      const completedGalleries = JSON.parse(sessionStorage.getItem('completedGalleries') || '[]')
-      if (!completedGalleries.includes(galleryType)) {
-        completedGalleries.push(galleryType)
-        sessionStorage.setItem('completedGalleries', JSON.stringify(completedGalleries))
-
-        // Trigger storage event manually for same-window updates
-        window.dispatchEvent(new Event('storage'))
-      }
-    }
-  }, [isClient, currentIndex, images.length, galleryType, showMasonryView])
 
   // Keyboard handler for spacebar
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -328,7 +308,7 @@ const MobileGallery = ({ images, title, alternateGalleryLink, galleryType }: Gal
         images={images}
         title={title}
         type={galleryType}
-        alternateGalleryLink={dynamicAlternateLink}
+        alternateGalleryLink={staticAlternateLink}
         onBack={() => {
           setShowMasonryView(false)
           setCurrentIndex(images.length - 1)

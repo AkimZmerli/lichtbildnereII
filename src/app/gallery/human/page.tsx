@@ -15,9 +15,6 @@ export default function HumanGalleryPage() {
   // Track that this gallery has been viewed
   const { hasViewedBothMainGalleries: _hasViewedBothMainGalleries } = useGalleryTracking('human')
   
-  // Always start with non-human to avoid hydration mismatch
-  // The component itself will handle the logic internally
-  const alternateLink = '/gallery/non-human'
 
   useEffect(() => {
     const checkMobile = () => {
@@ -59,8 +56,8 @@ export default function HumanGalleryPage() {
   }
 
   return isMobile ? (
-    <MobileGallery images={images} title="Human" alternateGalleryLink={alternateLink} galleryType="human" />
+    <MobileGallery images={images} title="Human" galleryType="human" />
   ) : (
-    <DesktopGallery images={images} title="Human" alternateGalleryLink={alternateLink} galleryType="human" />
+    <DesktopGallery images={images} title="Human" galleryType="human" />
   )
 }

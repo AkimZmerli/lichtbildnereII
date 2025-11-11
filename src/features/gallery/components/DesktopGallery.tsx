@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GalleryProps } from '@/types/gallery'
+import { useGalleryTracking } from '@/features/gallery/hooks/useGalleryTracking'
 import GalleryImage from './GalleryImage'
 import Header from '@/shared/layout/Header'
 import LoadingSpinner from '@/shared/ui/LoadingSpinner'
@@ -105,11 +106,28 @@ const formatExhibition = (exhibition: string) => {
   return exhibition
 }
 
-const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: GalleryProps) => {
+const DesktopGallery = ({ images, title, galleryType }: GalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [uiVisible, setUiVisible] = useState(true)
   const [isTransitioning, setIsTransitioning] = useState(false)
-  const [dynamicAlternateLink, setDynamicAlternateLink] = useState(alternateGalleryLink)
+  // Dynamic alternate links - lightweight using only viewedGalleries  
+  const [staticAlternateLink, setStaticAlternateLink] = useState(
+    galleryType === 'exhibition' 
+      ? '/about-exhibition#exhibition'
+      : galleryType === 'human' 
+        ? '/gallery/non-human' 
+        : '/gallery/human'
+  )
+
+  // Only track and update for human/non-human galleries
+  const shouldTrackProgress = galleryType === 'human' || galleryType === 'non-human'
+  const { hasViewedBothMainGalleries } = useGalleryTracking(galleryType)
+
+  useEffect(() => {
+    if (shouldTrackProgress && hasViewedBothMainGalleries()) {
+      setStaticAlternateLink('/socialbook')
+    }
+  }, [shouldTrackProgress, hasViewedBothMainGalleries])
   const [isClient, setIsClient] = useState(false)
   const [showWelcomeHint, setShowWelcomeHint] = useState(false)
 
@@ -138,52 +156,7 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
     }
   }, [])
 
-  // Handle dynamic alternate link after client mount
-  useEffect(() => {
-    if (isClient) {
-      const updateAlternateLink = () => {
-        const completedGalleries = JSON.parse(sessionStorage.getItem('completedGalleries') || '[]')
 
-        if (galleryType === 'human') {
-          // Show social book if both galleries completed, otherwise show non-human
-          if (completedGalleries.includes('human') && completedGalleries.includes('non-human')) {
-            setDynamicAlternateLink('/socialbook')
-          } else {
-            setDynamicAlternateLink('/gallery/non-human')
-          }
-        } else if (galleryType === 'non-human') {
-          // Show social book if both galleries completed, otherwise show human
-          if (completedGalleries.includes('human') && completedGalleries.includes('non-human')) {
-            setDynamicAlternateLink('/socialbook')
-          } else {
-            setDynamicAlternateLink('/gallery/human')
-          }
-        }
-      }
-
-      updateAlternateLink()
-
-      // Listen for storage changes
-      const handleStorageChange = () => updateAlternateLink()
-      window.addEventListener('storage', handleStorageChange)
-
-      return () => window.removeEventListener('storage', handleStorageChange)
-    }
-  }, [isClient, galleryType])
-
-  // Mark gallery as completed when user reaches the last image
-  useEffect(() => {
-    if (isClient && currentIndex === images.length - 1 && galleryType) {
-      const completedGalleries = JSON.parse(sessionStorage.getItem('completedGalleries') || '[]')
-      if (!completedGalleries.includes(galleryType)) {
-        completedGalleries.push(galleryType)
-        sessionStorage.setItem('completedGalleries', JSON.stringify(completedGalleries))
-
-        // Trigger storage event manually for same-window updates
-        window.dispatchEvent(new Event('storage'))
-      }
-    }
-  }, [isClient, currentIndex, images.length, galleryType])
   const scrollTimerRef = useRef<NodeJS.Timeout | null>(null)
   const touchStartX = useRef(0)
   const touchStartTime = useRef(0)
@@ -504,24 +477,75 @@ const DesktopGallery = ({ images, title, alternateGalleryLink, galleryType }: Ga
               }}
             >
               <Link
-                href={dynamicAlternateLink}
-                onClick={createSmoothLink(dynamicAlternateLink)}
-                className="inline-block text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px] text-base font-medium bg-grainy/80 backdrop-blur-sm px-4 py-2 rounded-md border border-hot-pink/30"
+                href={staticAlternateLink}
+                onClick={createSmoothLink(staticAlternateLink)}
+                className="relative inline-block text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px] text-base font-medium bg-grainy/80 backdrop-blur-sm px-4 py-2 rounded-md border border-hot-pink/30 overflow-hidden group"
               >
-                {dynamicAlternateLink.includes('#exhibition')
-                  ? 'Go Back ↗'
-                  : dynamicAlternateLink.includes('non-human')
-                    ? 'view non-human ↗'
-                    : dynamicAlternateLink.includes('#social-book')
-                      ? 'social book ↗'
-                      : dynamicAlternateLink.includes('socialbook')
-                        ? 'social book ↗'
+                {/* Gentle glow effect */}
+                <div className="absolute inset-0 rounded-md bg-hot-pink/10 animate-[glow_3s_ease-in-out_infinite]" />
+                
+                {/* Running ray on border only */}
+                <div className="absolute inset-0 rounded-md">
+                  <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-hot-pink/80 to-transparent animate-[rayTop_3.6s_ease-in-out_infinite]" />
+                  <div className="absolute right-0 top-0 w-[2px] h-full bg-gradient-to-b from-transparent via-hot-pink/80 to-transparent animate-[rayRight_3.6s_ease-in-out_infinite_0.9s]" />
+                  <div className="absolute bottom-0 right-0 w-full h-[2px] bg-gradient-to-l from-transparent via-hot-pink/80 to-transparent animate-[rayBottom_3.6s_ease-in-out_infinite_1.8s]" />
+                  <div className="absolute left-0 bottom-0 w-[2px] h-full bg-gradient-to-t from-transparent via-hot-pink/80 to-transparent animate-[rayLeft_3.6s_ease-in-out_infinite_2.7s]" />
+                </div>
+                
+                {/* Content */}
+                <span className="relative z-10">
+                  {staticAlternateLink.includes('socialbook')
+                    ? 'social book ↗'
+                    : staticAlternateLink.includes('#exhibition')
+                      ? 'Go Back ↗'
+                      : staticAlternateLink.includes('non-human')
+                        ? 'view non-human ↗'
                         : 'view human ↗'}
+                </span>
               </Link>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+      
+      {/* Custom animations */}
+      <style jsx>{`
+        @keyframes glow {
+          0%, 100% { 
+            opacity: 0.45; 
+            transform: scale(1); 
+          }
+          50% { 
+            opacity: 0.75; 
+            transform: scale(1.02); 
+          }
+        }
+        
+        
+        @keyframes rayTop {
+          0% { transform: translateX(-100%); opacity: 0; }
+          50% { opacity: 1; }
+          100% { transform: translateX(100%); opacity: 0; }
+        }
+        
+        @keyframes rayRight {
+          0% { transform: translateY(-100%); opacity: 0; }
+          50% { opacity: 1; }
+          100% { transform: translateY(100%); opacity: 0; }
+        }
+        
+        @keyframes rayBottom {
+          0% { transform: translateX(100%); opacity: 0; }
+          50% { opacity: 1; }
+          100% { transform: translateX(-100%); opacity: 0; }
+        }
+        
+        @keyframes rayLeft {
+          0% { transform: translateY(100%); opacity: 0; }
+          50% { opacity: 1; }
+          100% { transform: translateY(-100%); opacity: 0; }
+        }
+      `}</style>
     </>
   )
 }

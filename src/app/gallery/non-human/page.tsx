@@ -15,17 +15,6 @@ export default function NonHumanGalleryPage() {
   // Track that this gallery has been viewed
   const { hasViewedBothMainGalleries } = useGalleryTracking('non-human')
   
-  // Determine next link based on whether both galleries have been viewed
-  const [alternateLink, setAlternateLink] = useState('/gallery/human')
-  
-  useEffect(() => {
-    // After both galleries viewed, link to social book
-    if (hasViewedBothMainGalleries()) {
-      setAlternateLink('/socialbook')
-    } else {
-      setAlternateLink('/gallery/human')
-    }
-  }, [hasViewedBothMainGalleries])
 
   useEffect(() => {
     const checkMobile = () => {
@@ -67,8 +56,8 @@ export default function NonHumanGalleryPage() {
   }
 
   return isMobile ? (
-    <MobileGallery images={images} title="Non Human" alternateGalleryLink={alternateLink} galleryType="non-human" />
+    <MobileGallery images={images} title="Non Human" galleryType="non-human" />
   ) : (
-    <DesktopGallery images={images} title="Non Human" alternateGalleryLink={alternateLink} galleryType="non-human" />
+    <DesktopGallery images={images} title="Non Human" galleryType="non-human" />
   )
 }
