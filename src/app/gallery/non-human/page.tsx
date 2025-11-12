@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { getGalleryImages } from '@/features/gallery/services/galleryData'
 import DesktopGallery from '@/features/gallery/components/DesktopGallery'
 import MobileGallery from '@/features/gallery/components/MobileGallery'
@@ -11,32 +11,36 @@ import LoadingSpinner from '@/shared/ui/LoadingSpinner'
 export default function NonHumanGalleryPage() {
   const [images, setImages] = useState<GalleryImage[]>([])
   const [isMobile, setIsMobile] = useState<boolean | null>(null)
+  const timeoutIdRef = useRef<NodeJS.Timeout | null>(null)
   
   // Track that this gallery has been viewed
   useGalleryTracking('non-human')
-  
+
+  const checkMobile = useCallback(() => {
+    const width = window.innerWidth
+    setIsMobile(width < 768)
+  }, [])
+
+  const handleResize = useCallback(() => {
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current)
+    }
+    timeoutIdRef.current = setTimeout(checkMobile, 100)
+  }, [checkMobile])
 
   useEffect(() => {
-    const checkMobile = () => {
-      const width = window.innerWidth
-      setIsMobile(width < 768)
-    }
-
     // Initial check
     checkMobile()
-
-    let timeoutId: NodeJS.Timeout
-    const handleResize = () => {
-      clearTimeout(timeoutId)
-      timeoutId = setTimeout(checkMobile, 100)
-    }
 
     window.addEventListener('resize', handleResize)
     return () => {
       window.removeEventListener('resize', handleResize)
-      clearTimeout(timeoutId)
+      if (timeoutIdRef.current) {
+        clearTimeout(timeoutIdRef.current)
+        timeoutIdRef.current = null
+      }
     }
-  }, [])
+  }, [checkMobile, handleResize])
 
   useEffect(() => {
     const loadImages = async () => {
