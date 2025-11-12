@@ -33,6 +33,18 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
       setStaticAlternateLink('/socialbook')
     }
   }, [shouldTrackProgress, hasViewedBothMainGalleries])
+
+  // Cache viewport width to avoid recalculating on every touch event
+  useEffect(() => {
+    const updateViewportWidth = () => {
+      setViewportWidth(window.innerWidth)
+    }
+    
+    updateViewportWidth()
+    window.addEventListener('resize', updateViewportWidth)
+    
+    return () => window.removeEventListener('resize', updateViewportWidth)
+  }, [])
   const [isClient, setIsClient] = useState(false)
   const [clickedButton, setClickedButton] = useState<'prev' | 'next' | null>(null)
   const [dragOffset, setDragOffset] = useState(0)
@@ -41,11 +53,15 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set())
   const [lastDirection, setLastDirection] = useState<'prev' | 'next' | null>(null)
   const [hasCommittedToSwipe, setHasCommittedToSwipe] = useState(false)
+  const [viewportWidth, setViewportWidth] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<number>()
   const lastTouchTime = useRef(0)
   const lastTouchX = useRef(0)
   const swipeCommitTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const clickEffectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const transitionTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const bounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Momentum scrolling animation
   const animateToPosition = useCallback(
@@ -59,6 +75,9 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
       const startIndex = currentIndex
 
       const animate = () => {
+        // Safety check: exit if animation was cancelled
+        if (!animationRef.current) return
+
         const elapsed = Date.now() - startTime
         const progress = Math.min(elapsed / duration, 1)
 
@@ -75,15 +94,19 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
 
         if (progress < 1) {
           animationRef.current = requestAnimationFrame(animate)
-        } else if (resetAfter) {
-          // Reset drag offset after animation completes
-          setDragOffset(0)
+        } else {
+          // Clear ref when animation completes
+          animationRef.current = undefined
+          if (resetAfter) {
+            // Reset drag offset after animation completes
+            setDragOffset(0)
+          }
         }
       }
 
       animationRef.current = requestAnimationFrame(animate)
     },
-    [dragOffset, currentIndex],
+    [dragOffset, currentIndex, viewportWidth],
   )
 
   // Commit to swipe when threshold is met
@@ -97,11 +120,12 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
     if (direction === 'next') {
       if (currentIndex < images.length - 1) {
         const targetIndex = currentIndex + 1
-        const imageWidth = window.innerWidth - 32
+        const imageWidth = viewportWidth - 32
         const finalOffset = -(imageWidth + 48)
         animateToPosition(finalOffset, 400, targetIndex, true)
         
-        setTimeout(() => {
+        if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current)
+        transitionTimeoutRef.current = setTimeout(() => {
           setIsTransitioning(false)
           setHasCommittedToSwipe(false)
         }, 400)
@@ -113,11 +137,12 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
     } else {
       if (currentIndex > 0) {
         const targetIndex = currentIndex - 1
-        const imageWidth = window.innerWidth - 32
+        const imageWidth = viewportWidth - 32
         const finalOffset = imageWidth + 48
         animateToPosition(finalOffset, 400, targetIndex, true)
         
-        setTimeout(() => {
+        if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current)
+        transitionTimeoutRef.current = setTimeout(() => {
           setIsTransitioning(false)
           setHasCommittedToSwipe(false)
         }, 400)
@@ -178,16 +203,26 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
         return newSet;
       });
     }
-  }, [currentIndex, images.length, lastDirection, loadedImages]);
+  }, [currentIndex, images.length, lastDirection]);
 
   // Cleanup animation frame on unmount
   useEffect(() => {
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current)
+        animationRef.current = undefined
       }
       if (swipeCommitTimeoutRef.current) {
         clearTimeout(swipeCommitTimeoutRef.current)
+      }
+      if (clickEffectTimeoutRef.current) {
+        clearTimeout(clickEffectTimeoutRef.current)
+      }
+      if (transitionTimeoutRef.current) {
+        clearTimeout(transitionTimeoutRef.current)
+      }
+      if (bounceTimeoutRef.current) {
+        clearTimeout(bounceTimeoutRef.current)
       }
     }
   }, [])
@@ -230,7 +265,8 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
       // Show clicked effect only when explicitly requested (button clicks)
       if (showClickEffect) {
         setClickedButton('next')
-        setTimeout(() => setClickedButton(null), 400)
+        if (clickEffectTimeoutRef.current) clearTimeout(clickEffectTimeoutRef.current)
+        clickEffectTimeoutRef.current = setTimeout(() => setClickedButton(null), 400)
       }
 
       // If we're at the last image, go to masonry view
@@ -248,7 +284,8 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
       // Animate directly from current position to target position
       animateToPosition(0, 350, targetIndex)
 
-      setTimeout(() => {
+      if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current)
+      transitionTimeoutRef.current = setTimeout(() => {
         setIsTransitioning(false)
       }, 350)
     },
@@ -265,7 +302,8 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
       // Show clicked effect only when explicitly requested (button clicks)
       if (showClickEffect) {
         setClickedButton('prev')
-        setTimeout(() => setClickedButton(null), 300)
+        if (clickEffectTimeoutRef.current) clearTimeout(clickEffectTimeoutRef.current)
+        clickEffectTimeoutRef.current = setTimeout(() => setClickedButton(null), 300)
       }
 
       setIsTransitioning(true)
@@ -277,7 +315,8 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
       // Animate directly from current position to target position
       animateToPosition(0, 350, targetIndex)
 
-      setTimeout(() => {
+      if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current)
+      transitionTimeoutRef.current = setTimeout(() => {
         setIsTransitioning(false)
       }, 350)
     },
@@ -380,7 +419,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
 
               // Calculate drag offset relative to image width + gap
               let offset = -deltaX
-              const imageWidth = window.innerWidth - 32 // Account for padding
+              const imageWidth = viewportWidth - 32 // Account for padding
               const maxSwipe = imageWidth * 0.9
               
               // Check for momentum commit threshold
@@ -436,7 +475,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
             // Velocity-based navigation with momentum
             const swipeThreshold = 50
             const velocityThreshold = 0.3
-            const distanceThreshold = (window.innerWidth - 32) * 0.25 // Account for padding
+            const distanceThreshold = (viewportWidth - 32) * 0.25 // Account for padding
 
             const shouldNavigate =
               (Math.abs(deltaX) > swipeThreshold && Math.abs(velocity) > velocityThreshold) ||
@@ -450,13 +489,14 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
                 const targetIndex = currentIndex + 1
                 
                 // Calculate final position: slide completely out of view
-                const imageWidth = window.innerWidth - 32 // Account for padding
+                const imageWidth = viewportWidth - 32 // Account for padding
                 const finalOffset = -(imageWidth + 48)
                 
                 // Animate to final position while changing index mid-way
                 animateToPosition(finalOffset, 300, targetIndex, true)
                 
-                setTimeout(() => {
+                if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current)
+                transitionTimeoutRef.current = setTimeout(() => {
                   setIsTransitioning(false)
                 }, 300)
                 
@@ -471,13 +511,14 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
                 const targetIndex = currentIndex - 1
                 
                 // Calculate final position: slide completely out of view
-                const imageWidth = window.innerWidth - 32 // Account for padding
+                const imageWidth = viewportWidth - 32 // Account for padding
                 const finalOffset = imageWidth + 48
                 
                 // Animate to final position while changing index mid-way
                 animateToPosition(finalOffset, 300, targetIndex, true)
                 
-                setTimeout(() => {
+                if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current)
+                transitionTimeoutRef.current = setTimeout(() => {
                   setIsTransitioning(false)
                 }, 300)
                 
@@ -485,7 +526,8 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
                 // Snap back with momentum if can't navigate
                 const bounceDistance = Math.abs(dragOffset) * 0.3
                 animateToPosition(deltaX > 0 ? bounceDistance : -bounceDistance, 150)
-                setTimeout(() => animateToPosition(0, 200), 150)
+                if (bounceTimeoutRef.current) clearTimeout(bounceTimeoutRef.current)
+                bounceTimeoutRef.current = setTimeout(() => animateToPosition(0, 200), 150)
               }
             } else {
               // Snap back with easing for insufficient swipe

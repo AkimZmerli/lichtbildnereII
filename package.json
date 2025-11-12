@@ -15,6 +15,7 @@
     "start:standalone": "node .next/standalone/server.js",
     "upload:previews": "tsx scripts/upload-previews.ts",
     "upload:all": "tsx scripts/upload-to-blob.ts",
+    "upload:collections": "npx tsx scripts/upload-collections.ts",
     "convert:webp": "tsx scripts/convert-to-webp.ts"
   },
   "dependencies": {
