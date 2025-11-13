@@ -143,9 +143,6 @@ const SwiperGallery = ({ images, title, galleryType }: GalleryProps) => {
                     src={image.url}
                     alt={image.alt || ''}
                     className="swiper-lazy w-full h-full object-contain"
-                    style={{
-                      transform: image.rotation ? `rotate(${image.rotation}deg)` : undefined
-                    }}
                   />
                   <div className="swiper-lazy-preloader">
                     <div className="flex items-center justify-center h-full">

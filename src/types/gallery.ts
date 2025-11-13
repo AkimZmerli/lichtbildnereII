@@ -37,7 +37,6 @@ export interface GalleryImage {
   material?: string
   fabrication?: string
   exhibition?: string
-  rotation?: number
 }
 
 export interface GalleryHeaderProps {

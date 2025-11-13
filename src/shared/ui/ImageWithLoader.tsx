@@ -33,9 +33,6 @@ const ImageWithLoader = ({ image, priority = false, onLoad }: GalleryImageProps)
         className={`object-contain transition-opacity duration-500 ${
           isLoading ? 'opacity-0' : 'opacity-100'
         }`}
-        style={{
-          transform: image.rotation ? `rotate(${image.rotation}deg)` : undefined
-        }}
         priority={priority}
         onLoad={() => {
           setIsLoading(false)

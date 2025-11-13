@@ -299,8 +299,14 @@ export default function CinematicHeroScroll({
 
             {/* Loading state */}
             {!imageLoaded && (
-              <div className="absolute inset-0 bg-neutral-900 flex items-center justify-center">
-                <LoadingSpinner size="md" showText={true} />
+              <div 
+                className="absolute top-1/2 flex items-center justify-center"
+                style={{
+                  left: isMobile ? '40%' : '50%',
+                  transform: 'translate(-50%, -50%)'
+                }}
+              >
+                <LoadingSpinner size="md" showText={false} />
               </div>
             )}
 
