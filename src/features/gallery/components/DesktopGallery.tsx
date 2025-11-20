@@ -110,24 +110,16 @@ const DesktopGallery = ({ images, title, galleryType }: GalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [uiVisible, setUiVisible] = useState(true)
   const [isTransitioning, setIsTransitioning] = useState(false)
-  // Dynamic alternate links - lightweight using only viewedGalleries  
-  const [staticAlternateLink, setStaticAlternateLink] = useState(
+  // Static alternate links - same as exhibition gallery
+  const staticAlternateLink = 
     galleryType === 'exhibition' 
       ? '/about-exhibition#exhibition'
       : galleryType === 'human' 
         ? '/gallery/non-human' 
         : '/gallery/human'
-  )
 
-  // Only track and update for human/non-human galleries
-  const shouldTrackProgress = galleryType === 'human' || galleryType === 'non-human'
-  const { hasViewedBothMainGalleries } = useGalleryTracking(galleryType)
-
-  useEffect(() => {
-    if (shouldTrackProgress && hasViewedBothMainGalleries()) {
-      setStaticAlternateLink('/socialbook')
-    }
-  }, [shouldTrackProgress, hasViewedBothMainGalleries])
+  // Track gallery viewing for analytics (no dynamic navigation changes)
+  useGalleryTracking(galleryType)
   const [showWelcomeHint, setShowWelcomeHint] = useState(false)
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)

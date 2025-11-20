@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getGalleryImages } from '@/features/gallery/services/galleryData'
+import { getHumanImages } from '@/features/gallery/services/galleryData'
 import DesktopGallery from '@/features/gallery/components/DesktopGallery'
 import MobileGallery from '@/features/gallery/components/MobileGallery'
 import { GalleryImage } from '@/types/gallery'
@@ -36,7 +36,7 @@ export default function HumanGalleryPage() {
 
   useEffect(() => {
     const loadImages = async () => {
-      const galleryImages = await getGalleryImages('human')
+      const galleryImages = await getHumanImages()
       setImages(galleryImages)
     }
     loadImages()

@@ -217,13 +217,22 @@ const nonHumanImages: GalleryImage[] = [
   },
 ]
 
-// Main function to get gallery images
+// Individual functions for each gallery type
+export const getHumanImages = async (): Promise<GalleryImage[]> => {
+  return humanImages
+}
+
+export const getNonHumanImages = async (): Promise<GalleryImage[]> => {
+  return nonHumanImages
+}
+
+// Legacy function for backward compatibility
 export const getGalleryImages = async (type: 'human' | 'non-human'): Promise<GalleryImage[]> => {
   switch (type) {
     case 'human':
-      return humanImages
+      return getHumanImages()
     case 'non-human':
-      return nonHumanImages
+      return getNonHumanImages()
     default:
       return []
   }
