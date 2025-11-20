@@ -1,5 +1,5 @@
 'use client'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -36,6 +36,24 @@ const MasonryGallery = ({
 
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set())
   const [allImagesLoaded, setAllImagesLoaded] = useState(false)
+  const [minimumLoadingComplete, setMinimumLoadingComplete] = useState(false)
+  const [showContent, setShowContent] = useState(false)
+
+  // Set minimum loading time of 2 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMinimumLoadingComplete(true)
+    }, 2000)
+
+    return () => clearTimeout(timer)
+  }, [])
+
+  // Show content only when both conditions are met
+  useEffect(() => {
+    if (allImagesLoaded && minimumLoadingComplete) {
+      setShowContent(true)
+    }
+  }, [allImagesLoaded, minimumLoadingComplete])
 
   const handleImageLoad = useCallback((index: number) => {
     setLoadedImages(prev => {
@@ -107,7 +125,7 @@ const MasonryGallery = ({
           </Link>
         </div>
         {/* Loading Spinner */}
-        {!allImagesLoaded && (
+        {!showContent && (
           <div className="fixed inset-0 bg-grainy bg-opacity-90 flex items-center justify-center z-40">
             <LoadingSpinner size="lg" showText={true} />
           </div>
@@ -117,7 +135,7 @@ const MasonryGallery = ({
         <motion.div
           className="columns-2 gap-4"
           initial={{ opacity: 0 }}
-          animate={{ opacity: allImagesLoaded ? 1 : 0 }}
+          animate={{ opacity: showContent ? 1 : 0 }}
           transition={{ duration: 0.5 }}
         >
           {images.map((image, index) => (
@@ -127,7 +145,7 @@ const MasonryGallery = ({
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{
-                delay: allImagesLoaded ? index * 0.05 : 0,
+                delay: showContent ? index * 0.05 : 0,
                 duration: 0.4,
                 ease: 'easeOut',
               }}

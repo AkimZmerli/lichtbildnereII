@@ -3,7 +3,6 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { FreeMode } from 'swiper/modules'
-import Link from 'next/link'
 import GalleryImage from './GalleryImage'
 import MasonryGallery from './MasonryGallery'
 import Header from '@/shared/layout/Header'
@@ -769,14 +768,6 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
                     </div>
                   )}
 
-                  <div className="pt-2 mt-4">
-                    <Link
-                      href="/impressum"
-                      className="text-hot-pink/70 hover:text-hot-pink text-left"
-                    >
-                      Impressum
-                    </Link>
-                  </div>
                 </div>
               </div>
             </SwiperSlide>
