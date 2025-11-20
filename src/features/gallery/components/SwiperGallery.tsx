@@ -23,24 +23,16 @@ const SwiperGallery = ({ images, title, galleryType }: GalleryProps) => {
   const [isClient, setIsClient] = useState(false)
   const swiperRef = useRef<any>(null)
   
-  // Dynamic alternate links - lightweight using only viewedGalleries  
-  const [staticAlternateLink, setStaticAlternateLink] = useState(
+  // Static alternate links - same as exhibition gallery
+  const staticAlternateLink = 
     galleryType === 'exhibition' 
       ? '/about-exhibition#exhibition'
       : galleryType === 'human' 
         ? '/gallery/non-human' 
         : '/gallery/human'
-  )
 
-  // Only track and update for human/non-human galleries
-  const shouldTrackProgress = galleryType === 'human' || galleryType === 'non-human'
-  const { hasViewedBothMainGalleries } = useGalleryTracking(galleryType)
-
-  useEffect(() => {
-    if (shouldTrackProgress && hasViewedBothMainGalleries()) {
-      setStaticAlternateLink('/socialbook')
-    }
-  }, [shouldTrackProgress, hasViewedBothMainGalleries])
+  // Track gallery viewing for analytics (no dynamic navigation changes)
+  useGalleryTracking(galleryType)
 
   // Ensure client-side rendering
   useEffect(() => {

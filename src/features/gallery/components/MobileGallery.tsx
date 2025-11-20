@@ -15,34 +15,26 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [touchStart, setTouchStart] = useState({ x: 0, y: 0, time: 0 })
   const [showMetadata, setShowMetadata] = useState(false)
-  // Dynamic alternate links - lightweight using only viewedGalleries  
-  const [staticAlternateLink, setStaticAlternateLink] = useState(
-    galleryType === 'exhibition' 
+  // Static alternate links - same as exhibition gallery
+  const staticAlternateLink = 
+    galleryType === 'exhibition'
       ? '/about-exhibition#exhibition'
-      : galleryType === 'human' 
-        ? '/gallery/non-human' 
+      : galleryType === 'human'
+        ? '/gallery/non-human'
         : '/gallery/human'
-  )
 
-  // Only track and update for human/non-human galleries
-  const shouldTrackProgress = galleryType === 'human' || galleryType === 'non-human'
-  const { hasViewedBothMainGalleries } = useGalleryTracking(galleryType)
-
-  useEffect(() => {
-    if (shouldTrackProgress && hasViewedBothMainGalleries()) {
-      setStaticAlternateLink('/socialbook')
-    }
-  }, [shouldTrackProgress, hasViewedBothMainGalleries])
+  // Track gallery viewing for analytics (no dynamic navigation changes)
+  useGalleryTracking(galleryType)
 
   // Cache viewport width to avoid recalculating on every touch event
   useEffect(() => {
     const updateViewportWidth = () => {
       setViewportWidth(window.innerWidth)
     }
-    
+
     updateViewportWidth()
     window.addEventListener('resize', updateViewportWidth)
-    
+
     return () => window.removeEventListener('resize', updateViewportWidth)
   }, [])
   const [isClient, setIsClient] = useState(false)
@@ -110,100 +102,110 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
   )
 
   // Commit to swipe when threshold is met
-  const commitToSwipe = useCallback((direction: 'next' | 'prev') => {
-    if (hasCommittedToSwipe || isTransitioning) return
-    
-    setHasCommittedToSwipe(true)
-    setIsTransitioning(true)
-    setLastDirection(direction)
-    
-    if (direction === 'next') {
-      if (currentIndex < images.length - 1) {
-        const targetIndex = currentIndex + 1
-        const imageWidth = viewportWidth - 32
-        const finalOffset = -(imageWidth + 48)
-        animateToPosition(finalOffset, 400, targetIndex, true)
-        
-        if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current)
-        transitionTimeoutRef.current = setTimeout(() => {
-          setIsTransitioning(false)
+  const commitToSwipe = useCallback(
+    (direction: 'next' | 'prev') => {
+      if (hasCommittedToSwipe || isTransitioning) return
+
+      setHasCommittedToSwipe(true)
+      setIsTransitioning(true)
+      setLastDirection(direction)
+
+      if (direction === 'next') {
+        if (currentIndex < images.length - 1) {
+          const targetIndex = currentIndex + 1
+          const imageWidth = viewportWidth - 32
+          const finalOffset = -(imageWidth + 48)
+          animateToPosition(finalOffset, 400, targetIndex, true)
+
+          if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current)
+          transitionTimeoutRef.current = setTimeout(() => {
+            setIsTransitioning(false)
+            setHasCommittedToSwipe(false)
+          }, 400)
+        } else {
+          // Last image - go to masonry
+          setShowMasonryView(true)
           setHasCommittedToSwipe(false)
-        }, 400)
+        }
       } else {
-        // Last image - go to masonry
-        setShowMasonryView(true)
-        setHasCommittedToSwipe(false)
-      }
-    } else {
-      if (currentIndex > 0) {
-        const targetIndex = currentIndex - 1
-        const imageWidth = viewportWidth - 32
-        const finalOffset = imageWidth + 48
-        animateToPosition(finalOffset, 400, targetIndex, true)
-        
-        if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current)
-        transitionTimeoutRef.current = setTimeout(() => {
-          setIsTransitioning(false)
+        if (currentIndex > 0) {
+          const targetIndex = currentIndex - 1
+          const imageWidth = viewportWidth - 32
+          const finalOffset = imageWidth + 48
+          animateToPosition(finalOffset, 400, targetIndex, true)
+
+          if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current)
+          transitionTimeoutRef.current = setTimeout(() => {
+            setIsTransitioning(false)
+            setHasCommittedToSwipe(false)
+          }, 400)
+        } else {
           setHasCommittedToSwipe(false)
-        }, 400)
-      } else {
-        setHasCommittedToSwipe(false)
+        }
       }
-    }
-  }, [hasCommittedToSwipe, isTransitioning, currentIndex, images.length, animateToPosition])
-  
+    },
+    [hasCommittedToSwipe, isTransitioning, currentIndex, images.length, animateToPosition],
+  )
 
   // Progressive image loading with direction awareness
   useEffect(() => {
-    const imagesToLoad: number[] = [];
-    const imagesToUnload: number[] = [];
-    
+    const imagesToLoad: number[] = []
+    const imagesToUnload: number[] = []
+
     // Direction-aware preloading range
-    const baseRange = 3; // Base range for nearby images  
-    const forwardBias = lastDirection === 'next' ? 4 : 2; // Extra images forward
-    const backwardBias = lastDirection === 'prev' ? 4 : 2; // Extra images backward
-    
-    const startIndex = Math.max(0, currentIndex - backwardBias);
-    const endIndex = Math.min(images.length - 1, currentIndex + baseRange + forwardBias);
-    
+    const baseRange = 3 // Base range for nearby images
+    const forwardBias = lastDirection === 'next' ? 4 : 2 // Extra images forward
+    const backwardBias = lastDirection === 'prev' ? 4 : 2 // Extra images backward
+
+    const startIndex = Math.max(0, currentIndex - backwardBias)
+    const endIndex = Math.min(images.length - 1, currentIndex + baseRange + forwardBias)
+
     // Find images to load
     for (let i = startIndex; i <= endIndex; i++) {
       if (!loadedImages.has(i)) {
-        imagesToLoad.push(i);
+        imagesToLoad.push(i)
       }
     }
-    
+
     // Find images to unload (far from current position to manage memory)
-    const unloadDistance = 3; // Unload images more than 3 positions away (reduced from 8)
-    loadedImages.forEach(index => {
+    // Increased from 3 to 5 to prevent re-downloading when swiping back and forth
+    const unloadDistance = 5
+    loadedImages.forEach((index) => {
       if (Math.abs(index - currentIndex) > unloadDistance) {
-        imagesToUnload.push(index);
+        imagesToUnload.push(index)
       }
-    });
-    
+    })
+
     // Load new images with staggered timing
-    const timeouts: NodeJS.Timeout[] = [];
+    const timeouts: NodeJS.Timeout[] = []
     imagesToLoad.forEach((index, priority) => {
+      // Calculate distance from current index
+      const distance = Math.abs(index - currentIndex)
+
+      // No delay for immediate neighbors (current, next, prev)
+      // This ensures instant loading when swiping
+      const delay = distance <= 1 ? 0 : priority * 100
+
       const timeout = setTimeout(() => {
-        setLoadedImages(prev => new Set(prev).add(index));
-      }, priority * 100); // Stagger loading to prevent overload
-      timeouts.push(timeout);
-    });
-    
+        setLoadedImages((prev) => new Set(prev).add(index))
+      }, delay)
+      timeouts.push(timeout)
+    })
+
     // Cleanup function to clear timeouts
     return () => {
-      timeouts.forEach(timeout => clearTimeout(timeout));
-    };
-    
+      timeouts.forEach((timeout) => clearTimeout(timeout))
+    }
+
     // Unload distant images
     if (imagesToUnload.length > 0) {
-      setLoadedImages(prev => {
-        const newSet = new Set(prev);
-        imagesToUnload.forEach(index => newSet.delete(index));
-        return newSet;
-      });
+      setLoadedImages((prev) => {
+        const newSet = new Set(prev)
+        imagesToUnload.forEach((index) => newSet.delete(index))
+        return newSet
+      })
     }
-  }, [currentIndex, images.length, lastDirection]);
+  }, [currentIndex, images.length, lastDirection])
 
   // Cleanup animation frame on unmount
   useEffect(() => {
@@ -237,8 +239,6 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
     }
     setLoadedImages(initialImages)
   }, [images.length])
-
-
 
   // Keyboard handler for spacebar
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -280,7 +280,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
 
       // Calculate the target position for next image (accounting for spacing)
       const targetIndex = currentIndex + 1
-      
+
       // Animate directly from current position to target position
       animateToPosition(0, 350, targetIndex)
 
@@ -311,7 +311,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
 
       // Calculate the target position for previous image (accounting for spacing)
       const targetIndex = currentIndex - 1
-      
+
       // Animate directly from current position to target position
       animateToPosition(0, 350, targetIndex)
 
@@ -377,7 +377,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
             if (animationRef.current) {
               cancelAnimationFrame(animationRef.current)
             }
-            
+
             // Clear any pending commit timeout
             if (swipeCommitTimeoutRef.current) {
               clearTimeout(swipeCommitTimeoutRef.current)
@@ -421,14 +421,21 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
               let offset = -deltaX
               const imageWidth = viewportWidth - 32 // Account for padding
               const maxSwipe = imageWidth * 0.9
-              
+
               // Check for momentum commit threshold
               const commitThreshold = imageWidth * 0.35 // 35% of screen width
               const velocityThreshold = 0.4
-              
-              if (!hasCommittedToSwipe && Math.abs(deltaX) > commitThreshold && Math.abs(velocity) > velocityThreshold) {
+
+              if (
+                !hasCommittedToSwipe &&
+                Math.abs(deltaX) > commitThreshold &&
+                Math.abs(velocity) > velocityThreshold
+              ) {
                 // Commit to swipe direction
-                if (deltaX > 0 && (currentIndex < images.length - 1 || currentIndex === images.length - 1)) {
+                if (
+                  deltaX > 0 &&
+                  (currentIndex < images.length - 1 || currentIndex === images.length - 1)
+                ) {
                   commitToSwipe('next')
                   return
                 } else if (deltaX < 0 && currentIndex > 0) {
@@ -459,7 +466,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
             const deltaTime = Date.now() - touchStart.time
 
             setIsDragging(false)
-            
+
             // If already committed to swipe, don't process touch end
             if (hasCommittedToSwipe) {
               return
@@ -487,41 +494,38 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
                 setLastDirection('next')
                 setIsTransitioning(true)
                 const targetIndex = currentIndex + 1
-                
+
                 // Calculate final position: slide completely out of view
                 const imageWidth = viewportWidth - 32 // Account for padding
                 const finalOffset = -(imageWidth + 48)
-                
+
                 // Animate to final position while changing index mid-way
                 animateToPosition(finalOffset, 300, targetIndex, true)
-                
+
                 if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current)
                 transitionTimeoutRef.current = setTimeout(() => {
                   setIsTransitioning(false)
                 }, 300)
-                
               } else if (deltaX > 0 && currentIndex === images.length - 1) {
                 // Swipe right on last image - go to masonry
                 setShowMasonryView(true)
-                
               } else if (deltaX < 0 && currentIndex > 0) {
-                // Swipe right to previous image - calculate slide-through animation  
+                // Swipe right to previous image - calculate slide-through animation
                 setLastDirection('prev')
                 setIsTransitioning(true)
                 const targetIndex = currentIndex - 1
-                
+
                 // Calculate final position: slide completely out of view
                 const imageWidth = viewportWidth - 32 // Account for padding
                 const finalOffset = imageWidth + 48
-                
+
                 // Animate to final position while changing index mid-way
                 animateToPosition(finalOffset, 300, targetIndex, true)
-                
+
                 if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current)
                 transitionTimeoutRef.current = setTimeout(() => {
                   setIsTransitioning(false)
                 }, 300)
-                
               } else {
                 // Snap back with momentum if can't navigate
                 const bounceDistance = Math.abs(dragOffset) * 0.3
@@ -547,15 +551,16 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
             }}
           >
             {images.map((image, index) => (
-              <div 
+              <div
                 key={index}
                 className="h-full flex-shrink-0"
                 style={{ width: 'calc(100vw - 32px)' }} // Account for px-4 padding (16px * 2)
               >
                 {loadedImages.has(index) ? (
-                  <GalleryImage 
-                    image={image} 
+                  <GalleryImage
+                    image={image}
                     priority={Math.abs(index - currentIndex) <= 1} // Priority for current and adjacent images
+                    sizes="100vw"
                   />
                 ) : (
                   <div className="w-full h-full bg-neutral-800/50 flex items-center justify-center">

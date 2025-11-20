@@ -16,6 +16,7 @@ export interface GalleryImageProps {
   image: GalleryImage
   priority?: boolean
   onLoad?: () => void
+  sizes?: string
 }
 
 export interface MasonryGalleryProps {

@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import ImageWithLoader from '@/shared/ui/ImageWithLoader'
 import { GalleryImageProps } from '@/types/gallery'
 
-const GalleryImage = ({ image, priority, onLoad }: GalleryImageProps) => {
+const GalleryImage = ({ image, priority, onLoad, sizes }: GalleryImageProps) => {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -10,7 +10,7 @@ const GalleryImage = ({ image, priority, onLoad }: GalleryImageProps) => {
       exit={{ opacity: 0 }}
       className="w-full h-full relative"
     >
-      <ImageWithLoader image={image} priority={priority} onLoad={onLoad} />
+      <ImageWithLoader image={image} priority={priority} onLoad={onLoad} sizes={sizes} />
     </motion.div>
   )
 }
