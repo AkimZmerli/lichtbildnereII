@@ -131,7 +131,9 @@ export default function Works() {
             animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
           />
-          <h2 className="tracking-widest text-2xl text-white-rose">W O R K S</h2>
+          <h2 id="human" className="tracking-widest text-2xl text-white-rose">
+            W O R K S
+          </h2>
           <motion.div
             className="h-[1px] bg-white-rose flex-1"
             initial={{ scaleX: 0 }}
@@ -150,7 +152,7 @@ export default function Works() {
           >
             <div className="flex flex-col gap-12">
               {/* NON-HUMAN - Mobile */}
-              <motion.div id="nonhuman" className="w-full max-w-[430px] mx-auto" variants={mobileItemVariants}>
+              <motion.div className="w-full max-w-[430px] mx-auto" variants={mobileItemVariants}>
                 <div>
                   <div className="flex justify-center">
                     <Link
@@ -184,11 +186,12 @@ export default function Works() {
               </motion.div>
 
               {/* HUMAN - Mobile */}
-              <motion.div id="human" className="w-full max-w-[430px] mx-auto" variants={mobileItemVariants}>
+              <motion.div className="w-full max-w-[430px] mx-auto" variants={mobileItemVariants}>
                 <div>
                   <div className="flex justify-center">
                     <Link
                       href="/gallery/human"
+                      id="human"
                       className="block hover:opacity-90 transition-opacity duration-200"
                     >
                       <Image

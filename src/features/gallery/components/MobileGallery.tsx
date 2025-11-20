@@ -271,7 +271,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSwipeHint(false)
-    }, 3000)
+    }, 4000)
 
     return () => clearTimeout(timer)
   }, [])

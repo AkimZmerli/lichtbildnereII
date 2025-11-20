@@ -1,7 +1,8 @@
 'use client'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
+import LoadingSpinner from '@/shared/ui/LoadingSpinner'
 
 interface ImagePopupProps {
   src: string
@@ -11,8 +12,13 @@ interface ImagePopupProps {
 }
 
 export default function ImagePopup({ src, alt, isOpen, onClose }: ImagePopupProps) {
+  const [isImageLoaded, setIsImageLoaded] = useState(false)
+
   useEffect(() => {
-    if (!isOpen) return
+    if (!isOpen) {
+      setIsImageLoaded(false)
+      return
+    }
 
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -72,11 +78,18 @@ export default function ImagePopup({ src, alt, isOpen, onClose }: ImagePopupProp
               className="flex-1 flex items-center justify-center relative cursor-pointer"
               onClick={onClose}
             >
+              {/* Loading Spinner */}
+              {!isImageLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <LoadingSpinner size="lg" showText={true} />
+                </div>
+              )}
+
               <motion.div
                 className="relative max-w-full max-h-full"
                 onClick={(e) => e.stopPropagation()}
                 initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
+                animate={{ opacity: isImageLoaded ? 1 : 0, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
               >
@@ -87,6 +100,7 @@ export default function ImagePopup({ src, alt, isOpen, onClose }: ImagePopupProp
                   height={800}
                   className="max-w-full max-h-[80vh] w-auto h-auto object-contain"
                   priority
+                  onLoad={() => setIsImageLoaded(true)}
                 />
               </motion.div>
             </div>
