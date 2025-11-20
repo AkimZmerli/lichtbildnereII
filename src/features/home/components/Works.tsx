@@ -150,7 +150,7 @@ export default function Works() {
           >
             <div className="flex flex-col gap-12">
               {/* NON-HUMAN - Mobile */}
-              <motion.div className="w-full max-w-[430px] mx-auto" variants={mobileItemVariants}>
+              <motion.div id="nonhuman" className="w-full max-w-[430px] mx-auto" variants={mobileItemVariants}>
                 <div>
                   <div className="flex justify-center">
                     <Link
@@ -184,7 +184,7 @@ export default function Works() {
               </motion.div>
 
               {/* HUMAN - Mobile */}
-              <motion.div className="w-full max-w-[430px] mx-auto" variants={mobileItemVariants}>
+              <motion.div id="human" className="w-full max-w-[430px] mx-auto" variants={mobileItemVariants}>
                 <div>
                   <div className="flex justify-center">
                     <Link

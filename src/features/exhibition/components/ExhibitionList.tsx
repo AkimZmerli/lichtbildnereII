@@ -20,28 +20,18 @@ export default function ExhibitionList({ slides }: { slides: Slide[] }) {
   return (
     <div className="space-y-0.5">
       {slides.map((slide, index) => (
-        <ExhibitionItem
-          key={slide.id}
-          slides={slide as SlideWithImages}
-          index={index}
-        />
+        <ExhibitionItem key={slide.id} slides={slide as SlideWithImages} index={index} />
       ))}
       {/* Exhibition Gallery Link */}
       <ExhibitionGalleryLink index={slides.length} />
-      
+
       {/* Special Interactive Exhibition Item */}
       <TankstelleExhibition index={slides.length + 1} />
     </div>
   )
 }
 
-function ExhibitionItem({
-  slides,
-  index,
-}: {
-  slides: SlideWithImages
-  index: number
-}) {
+function ExhibitionItem({ slides, index }: { slides: SlideWithImages; index: number }) {
   // Parse the label into components for better mobile formatting
   const parseLabel = (label: string) => {
     const parts = label.split(' • ')
@@ -49,7 +39,7 @@ function ExhibitionItem({
       year: parts[0],
       title: parts[1],
       venue: parts[2],
-      type: parts[3]
+      type: parts[3],
     }
   }
 
@@ -69,7 +59,7 @@ function ExhibitionItem({
       <div className="w-full py-6 px-4">
         {/* Desktop: Show full label on one line */}
         <span className="hidden md:block text-sm">{slides.label}</span>
-        
+
         {/* Mobile: Show formatted multi-line layout */}
         <div className="md:hidden text-sm space-y-1">
           <div className="flex items-center gap-2">
@@ -245,7 +235,7 @@ function TankstelleExhibition({ index }: { index: number }) {
                 href="/tankstelle"
                 className="inline-block text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px]"
               >
-                visit exhibition ↗
+                visit Projektraum ↗
               </Link>
             </motion.div>
           </motion.div>

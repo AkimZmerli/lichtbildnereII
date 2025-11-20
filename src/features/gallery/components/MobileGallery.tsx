@@ -1,5 +1,7 @@
 'use client'
 import { useState, useCallback, useEffect, useRef } from 'react'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { FreeMode } from 'swiper/modules'
 import Link from 'next/link'
 import GalleryImage from './GalleryImage'
 import MasonryGallery from './MasonryGallery'
@@ -13,8 +15,10 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [showMasonryView, setShowMasonryView] = useState(false)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const [isTransitioningToMasonry, setIsTransitioningToMasonry] = useState(false)
   const [touchStart, setTouchStart] = useState({ x: 0, y: 0, time: 0 })
   const [showMetadata, setShowMetadata] = useState(false)
+  const [showSwipeHint, setShowSwipeHint] = useState(true)
   // Static alternate links - same as exhibition gallery
   const staticAlternateLink = 
     galleryType === 'exhibition'
@@ -25,6 +29,23 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
 
   // Track gallery viewing for analytics (no dynamic navigation changes)
   useGalleryTracking(galleryType)
+
+  // Generic swipe up handler for opening metadata
+  const handleSwipeUp = useCallback((e: React.TouchEvent) => {
+    const touch = e.changedTouches[0]
+    const startY = (e.target as any).touchStartY || 0
+    const deltaY = startY - touch.clientY
+    
+    if (deltaY > 50) { // 50px minimum swipe distance
+      setShowMetadata(true)
+      setShowSwipeHint(false) // Hide hint when user opens metadata
+    }
+  }, [])
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    (e.target as any).touchStartY = touch.clientY
+  }, [])
 
   // Cache viewport width to avoid recalculating on every touch event
   useEffect(() => {
@@ -124,7 +145,11 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
           }, 400)
         } else {
           // Last image - go to masonry
-          setShowMasonryView(true)
+          setIsTransitioningToMasonry(true)
+          setTimeout(() => {
+            setShowMasonryView(true)
+            setIsTransitioningToMasonry(false)
+          }, 300)
           setHasCommittedToSwipe(false)
         }
       } else {
@@ -240,6 +265,15 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
     setLoadedImages(initialImages)
   }, [images.length])
 
+  // Hide swipe hint after 4 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSwipeHint(false)
+    }, 4000)
+    
+    return () => clearTimeout(timer)
+  }, [])
+
   // Keyboard handler for spacebar
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.code === 'Space') {
@@ -253,6 +287,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [handleKeyDown])
+
 
   // Navigation functions
   const goToNext = useCallback(
@@ -271,7 +306,11 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
 
       // If we're at the last image, go to masonry view
       if (currentIndex === images.length - 1) {
-        setShowMasonryView(true)
+        setIsTransitioningToMasonry(true)
+        setTimeout(() => {
+          setShowMasonryView(true)
+          setIsTransitioningToMasonry(false)
+        }, 300)
         return
       }
 
@@ -340,6 +379,19 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
     )
   }
 
+  // Show transition loading spinner
+  if (isTransitioningToMasonry) {
+    return (
+      <div className="min-h-screen bg-grainy flex flex-col">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <LoadingSpinner size="lg" showText={true} />
+        </div>
+        <Footer />
+      </div>
+    )
+  }
+
   // Show masonry view
   if (showMasonryView) {
     return (
@@ -371,7 +423,6 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
         <div
           className="w-full h-full relative rounded-sm overflow-hidden cursor-pointer"
           style={{ maxHeight: '70vh' }}
-          onClick={() => setShowMetadata(!showMetadata)}
           onTouchStart={(e) => {
             // Cancel any ongoing animations
             if (animationRef.current) {
@@ -412,6 +463,15 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
 
             lastTouchTime.current = currentTime
             lastTouchX.current = touch.clientX
+
+            // Check for vertical swipe up to show metadata
+            if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 50) {
+              // Swipe up detected - show metadata
+              setShowMetadata(true)
+              setShowSwipeHint(false) // Hide hint when user opens metadata
+              setIsDragging(false)
+              return
+            }
 
             // Only handle horizontal swipes
             if (Math.abs(deltaY) < Math.abs(deltaX)) {
@@ -472,9 +532,8 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
               return
             }
 
-            // Check for tap (short touch with minimal movement)
+            // Check for tap (short touch with minimal movement) - removed since using swipe up now
             if (Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10 && deltaTime < 200) {
-              setShowMetadata(!showMetadata)
               animateToPosition(0, 200)
               return
             }
@@ -508,7 +567,11 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
                 }, 300)
               } else if (deltaX > 0 && currentIndex === images.length - 1) {
                 // Swipe right on last image - go to masonry
-                setShowMasonryView(true)
+                setIsTransitioningToMasonry(true)
+                setTimeout(() => {
+                  setShowMasonryView(true)
+                  setIsTransitioningToMasonry(false)
+                }, 300)
               } else if (deltaX < 0 && currentIndex > 0) {
                 // Swipe right to previous image - calculate slide-through animation
                 setLastDirection('prev')
@@ -570,11 +633,40 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
               </div>
             ))}
           </div>
+
         </div>
       </div>
 
+      {/* Swipe Up Hint Animation */}
+      {showSwipeHint && (
+        <div className="px-6 pt-4 flex justify-center pointer-events-none">
+          <div className="flex flex-col items-center space-y-2 animate-pulse">
+            <svg 
+              className="w-6 h-6 text-white-rose/80" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={1.5} 
+                d="M12 19l0-14m-4 4l4-4 4 4" 
+              />
+            </svg>
+            <span className="text-white-rose/60 text-sm font-light tracking-wider uppercase">
+              Swipe Up for Info
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Navigation */}
-      <div className="px-6 pt-12 pb-4 flex justify-between items-center">
+      <div 
+        className="px-6 pt-12 pb-4 flex justify-between items-center"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleSwipeUp}
+      >
         <span className="text-white-rose/50 text-base font-light">
           {currentIndex + 1} / {images.length}
         </span>
@@ -587,7 +679,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
               currentIndex === 0
                 ? 'bg-neutral-800/50 text-neutral-600 cursor-not-allowed'
                 : `bg-neutral-700/60 text-white-rose/70 hover:bg-neutral-600 hover:text-white-rose active:scale-95 ${
-                    clickedButton === 'prev' ? 'ring-4 ring-hot-pink' : ''
+                    clickedButton === 'prev' ? 'ring-4 ring-hot-pink bg-hot-pink/20 text-hot-pink' : ''
                   }`
             }`}
           >
@@ -605,7 +697,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
             onClick={() => goToNext()}
             disabled={isTransitioning}
             className={`p-2 rounded-full bg-neutral-700/60 text-white-rose/70 hover:bg-neutral-600 hover:text-white-rose active:scale-95 transition-all duration-200 ${
-              clickedButton === 'next' ? 'ring-4 ring-hot-pink' : ''
+              clickedButton === 'next' ? 'ring-4 ring-hot-pink bg-hot-pink/20 text-hot-pink' : ''
             }`}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -618,57 +710,83 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
       {/* Metadata Drawer */}
       {showMetadata && images[currentIndex] && (
         <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setShowMetadata(false)}>
-          <div
-            className="absolute bottom-0 left-0 right-0 bg-grainy text-white-rose p-6 rounded-t-2xl transform transition-transform duration-300 ease-out"
-            onClick={(e) => e.stopPropagation()}
+          <Swiper
+            direction="vertical"
+            modules={[FreeMode]}
+            freeMode={true}
+            spaceBetween={0}
+            slidesPerView={1}
+            className="h-full"
+            initialSlide={1}
+            onSlideChange={(swiper) => {
+              if (swiper.activeIndex === 0) {
+                setShowMetadata(false)
+              }
+            }}
           >
-            {/* Close indicator */}
-            <div className="w-12 h-1 bg-white-rose/30 rounded-full mx-auto mb-4" />
+            {/* Empty slide for swipe down to close */}
+            <SwiperSlide className="h-full" />
+            
+            {/* Modal content slide */}
+            <SwiperSlide className="h-full flex items-end">
+              <div
+                className="w-full bg-grainy text-white-rose p-6 rounded-t-2xl transform transition-transform duration-300 ease-out"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Swipe indicator */}
+                <div className="w-12 h-1 bg-white-rose/30 rounded-full mx-auto mb-4" />
 
-            {/* Metadata content */}
-            <div className="space-y-3">
-              {images[currentIndex].name && (
-                <div className="text-white-rose font-medium text-lg mb-2">
-                  {images[currentIndex].name}
+                {/* Metadata content */}
+                <div className="space-y-3">
+                  {images[currentIndex].name && (
+                    <div className="text-white-rose font-medium text-lg mb-2">
+                      {images[currentIndex].name}
+                    </div>
+                  )}
+
+                  {images[currentIndex].physicalWidth && images[currentIndex].physicalHeight && (
+                    <div className="flex justify-between">
+                      <span className="text-white-rose/70">Dimensions:</span>
+                      <span>
+                        {images[currentIndex].physicalWidth} × {images[currentIndex].physicalHeight}{' '}
+                        {images[currentIndex].unit}
+                      </span>
+                    </div>
+                  )}
+
+                  {images[currentIndex].material && (
+                    <div className="flex justify-between">
+                      <span className="text-white-rose/70">Media:</span>
+                      <span>{images[currentIndex].material}</span>
+                    </div>
+                  )}
+
+                  {images[currentIndex].exhibition && (
+                    <div className="flex justify-between">
+                      <span className="text-white-rose/70">Exhibition:</span>
+                      <span>{images[currentIndex].exhibition}</span>
+                    </div>
+                  )}
+
+                  <div className="pt-2 mt-4">
+                    <Link href="/impressum" className="text-hot-pink/70 hover:text-hot-pink text-left">
+                      Impressum
+                    </Link>
+                  </div>
                 </div>
-              )}
-
-              {images[currentIndex].physicalWidth && images[currentIndex].physicalHeight && (
-                <div className="flex justify-between">
-                  <span className="text-white-rose/70">Dimensions:</span>
-                  <span>
-                    {images[currentIndex].physicalWidth} × {images[currentIndex].physicalHeight}{' '}
-                    {images[currentIndex].unit}
-                  </span>
-                </div>
-              )}
-
-              {images[currentIndex].material && (
-                <div className="flex justify-between">
-                  <span className="text-white-rose/70">Media:</span>
-                  <span>{images[currentIndex].material}</span>
-                </div>
-              )}
-
-              {images[currentIndex].exhibition && (
-                <div className="flex justify-between">
-                  <span className="text-white-rose/70">Exhibition:</span>
-                  <span>{images[currentIndex].exhibition}</span>
-                </div>
-              )}
-
-              <div className="pt-2 mt-4">
-                <Link href="/impressum" className="text-hot-pink/70 hover:text-hot-pink text-left">
-                  Impressum
-                </Link>
               </div>
-            </div>
-          </div>
+            </SwiperSlide>
+          </Swiper>
         </div>
       )}
 
       {/* Footer */}
-      <Footer />
+      <div 
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleSwipeUp}
+      >
+        <Footer />
+      </div>
     </div>
   )
 }

@@ -1,11 +1,12 @@
 'use client'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import Header from '@/shared/layout/Header'
 import Footer from '@/shared/layout/Footer'
 import ImagePopup from '@/shared/ui/ImagePopup'
+import LoadingSpinner from '@/shared/ui/LoadingSpinner'
 import { MasonryGalleryProps } from '@/types/gallery'
 import { createSmoothLink } from '@/shared/utils/smoothNavigation'
 
@@ -32,6 +33,20 @@ const MasonryGallery = ({
     src: '',
     alt: '',
   })
+
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set())
+  const [allImagesLoaded, setAllImagesLoaded] = useState(false)
+
+  const handleImageLoad = useCallback((index: number) => {
+    setLoadedImages(prev => {
+      const newSet = new Set(prev)
+      newSet.add(index)
+      if (newSet.size === images.length) {
+        setAllImagesLoaded(true)
+      }
+      return newSet
+    })
+  }, [images.length])
 
   const openPopup = (imageIndex: number) => {
     const image = images[imageIndex]
@@ -67,12 +82,16 @@ const MasonryGallery = ({
             href={
               type === 'exhibition'
                 ? alternateGalleryLink || '/about-exhibition#exhibition'
-                : '/works'
+                : type === 'human'
+                ? '/works#human'
+                : '/works#nonhuman'
             }
             onClick={createSmoothLink(
               type === 'exhibition'
                 ? alternateGalleryLink || '/about-exhibition#exhibition'
-                : '/works',
+                : type === 'human'
+                ? '/works#human'
+                : '/works#nonhuman',
             )}
             className="group inline-flex items-center px-4 py-2 text-hot-pink hover:text-white-rose hover:scale-105 active:scale-95 transition-all duration-300 ease-out text-sm font-light tracking-wider uppercase whitespace-nowrap"
           >
@@ -87,11 +106,18 @@ const MasonryGallery = ({
             </span>
           </Link>
         </div>
+        {/* Loading Spinner */}
+        {!allImagesLoaded && (
+          <div className="fixed inset-0 bg-grainy bg-opacity-90 flex items-center justify-center z-40">
+            <LoadingSpinner size="lg" showText={true} />
+          </div>
+        )}
+
         {/* Masonry Grid */}
         <motion.div
           className="columns-2 gap-4"
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          animate={{ opacity: allImagesLoaded ? 1 : 0 }}
           transition={{ duration: 0.5 }}
         >
           {images.map((image, index) => (
@@ -101,7 +127,7 @@ const MasonryGallery = ({
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{
-                delay: index * 0.05,
+                delay: allImagesLoaded ? index * 0.05 : 0,
                 duration: 0.4,
                 ease: 'easeOut',
               }}
@@ -118,6 +144,7 @@ const MasonryGallery = ({
                   className="w-full h-auto object-cover"
                   sizes="(max-width: 768px) 50vw, 33vw"
                   priority={index < 4}
+                  onLoad={() => handleImageLoad(index)}
                 />
               </div>
             </motion.div>
