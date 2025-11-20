@@ -10,7 +10,7 @@ export default function DisplayScan() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowHelp(false)
-    }, 4000) // Hide after 4 second
+    }, 4000) // Hide after 4 secon
 
     return () => clearTimeout(timer)
   }, [])
