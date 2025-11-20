@@ -10,7 +10,7 @@ export default function DisplayScan() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowHelp(false)
-    }, 4000) // Hide after 4 seconds
+    }, 4000) // Hide after 4 second
 
     return () => clearTimeout(timer)
   }, [])
@@ -29,7 +29,7 @@ export default function DisplayScan() {
             ← go back
           </Link>
         </div>
-        
+
         <div className="w-full max-w-4xl mt-[0%]">
           <h1 className="text-xl md:text-2xl text-center tracking-[0.3em] md:tracking-[0.5em] font-normal font-lato mb-12 md:mb-16">
             T A N K S T E L L E
@@ -46,15 +46,25 @@ export default function DisplayScan() {
                 src="https://sketchfab.com/models/7064a9e443aa4493a995a7a39320c6f6/embed?ui_theme=dark&ui_color=8B5CF6&annotations=0&ui_stop=0&ui_watermark=0&ui_hint=0&ui_controls=1&ui_infos=0&ui_inspector=0"
                 className="absolute inset-0 w-full h-full border-0"
               />
-              
+
               {/* Navigation Help Overlay */}
               {showHelp && (
                 <div className="absolute top-4 left-4 right-4 md:right-auto pointer-events-none">
                   <div className="bg-black/70 backdrop-blur-sm border border-white/20 rounded-lg p-3 md:p-4 max-w-xs md:max-w-sm transition-opacity duration-500">
                     <div className="flex items-start gap-2 md:gap-3">
                       <div className="flex-shrink-0">
-                        <svg className="w-4 h-4 md:w-5 md:h-5 text-hot-pink mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <svg
+                          className="w-4 h-4 md:w-5 md:h-5 text-hot-pink mt-0.5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
                         </svg>
                       </div>
                       <div className="text-white-rose text-xs md:text-sm space-y-1">
@@ -75,7 +85,7 @@ export default function DisplayScan() {
               )}
             </div>
           </div>
-          
+
           {/* Back Link for mobile - stays below media */}
           <div className="mt-8 md:hidden">
             <Link
