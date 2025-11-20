@@ -1,5 +1,6 @@
 'use client'
 import { useState, useCallback, useEffect, useRef } from 'react'
+import { motion } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { FreeMode } from 'swiper/modules'
 import Link from 'next/link'
@@ -20,7 +21,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
   const [showMetadata, setShowMetadata] = useState(false)
   const [showSwipeHint, setShowSwipeHint] = useState(true)
   // Static alternate links - same as exhibition gallery
-  const staticAlternateLink = 
+  const staticAlternateLink =
     galleryType === 'exhibition'
       ? '/about-exhibition#exhibition'
       : galleryType === 'human'
@@ -35,16 +36,17 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
     const touch = e.changedTouches[0]
     const startY = (e.target as any).touchStartY || 0
     const deltaY = startY - touch.clientY
-    
-    if (deltaY > 50) { // 50px minimum swipe distance
+
+    if (deltaY > 50) {
+      // 50px minimum swipe distance
       setShowMetadata(true)
       setShowSwipeHint(false) // Hide hint when user opens metadata
     }
   }, [])
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    (e.target as any).touchStartY = touch.clientY
+    const touch = e.touches[0]
+    ;(e.target as any).touchStartY = touch.clientY
   }, [])
 
   // Cache viewport width to avoid recalculating on every touch event
@@ -265,12 +267,12 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
     setLoadedImages(initialImages)
   }, [images.length])
 
-  // Hide swipe hint after 4 seconds
+  // Hide swipe hint after 3 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSwipeHint(false)
-    }, 4000)
-    
+    }, 3000)
+
     return () => clearTimeout(timer)
   }, [])
 
@@ -287,7 +289,6 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [handleKeyDown])
-
 
   // Navigation functions
   const goToNext = useCallback(
@@ -633,43 +634,41 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
               </div>
             ))}
           </div>
-
         </div>
       </div>
 
-      {/* Swipe Up Hint Animation */}
-      {showSwipeHint && (
-        <div className="px-6 pt-4 flex justify-center pointer-events-none">
-          <div className="flex flex-col items-center space-y-2 animate-pulse">
-            <svg 
-              className="w-6 h-6 text-white-rose/80" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={1.5} 
-                d="M12 19l0-14m-4 4l4-4 4 4" 
-              />
-            </svg>
-            <span className="text-white-rose/60 text-sm font-light tracking-wider uppercase">
-              Swipe Up for Info
-            </span>
-          </div>
-        </div>
-      )}
+      {/* Swipe Up Hint Animation - Lean line going upward */}
 
       {/* Navigation */}
-      <div 
-        className="px-6 pt-12 pb-4 flex justify-between items-center"
+      <div
+        className="px-6 pt-12 pb-4 flex justify-between items-center relative"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleSwipeUp}
       >
         <span className="text-white-rose/50 text-base font-light">
           {currentIndex + 1} / {images.length}
         </span>
+
+        {showSwipeHint && (
+          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none flex flex-col items-center">
+            <div className="w-px h-16 bg-white-rose/50 relative overflow-hidden">
+              <motion.div
+                className="absolute bottom-0 left-0 w-full h-full bg-white-rose"
+                animate={{
+                  y: ['100%', '-100%'],
+                }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 1.8,
+                  ease: 'easeInOut',
+                }}
+              />
+            </div>
+            <span className="text-white-rose/60 text-sm mt-2 font-light tracking-wider uppercase">
+              Swipe Up for Info
+            </span>
+          </div>
+        )}
 
         <div className="flex gap-4">
           <button
@@ -679,7 +678,9 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
               currentIndex === 0
                 ? 'bg-neutral-800/50 text-neutral-600 cursor-not-allowed'
                 : `bg-neutral-700/60 text-white-rose/70 hover:bg-neutral-600 hover:text-white-rose active:scale-95 ${
-                    clickedButton === 'prev' ? 'ring-4 ring-hot-pink bg-hot-pink/20 text-hot-pink' : ''
+                    clickedButton === 'prev'
+                      ? 'ring-4 ring-hot-pink bg-hot-pink/20 text-hot-pink'
+                      : ''
                   }`
             }`}
           >
@@ -726,7 +727,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
           >
             {/* Empty slide for swipe down to close */}
             <SwiperSlide className="h-full" />
-            
+
             {/* Modal content slide */}
             <SwiperSlide className="h-full flex items-end">
               <div
@@ -769,7 +770,10 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
                   )}
 
                   <div className="pt-2 mt-4">
-                    <Link href="/impressum" className="text-hot-pink/70 hover:text-hot-pink text-left">
+                    <Link
+                      href="/impressum"
+                      className="text-hot-pink/70 hover:text-hot-pink text-left"
+                    >
                       Impressum
                     </Link>
                   </div>
@@ -781,10 +785,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
       )}
 
       {/* Footer */}
-      <div 
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleSwipeUp}
-      >
+      <div onTouchStart={handleTouchStart} onTouchEnd={handleSwipeUp}>
         <Footer />
       </div>
     </div>
