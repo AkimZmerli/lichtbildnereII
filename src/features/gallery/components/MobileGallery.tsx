@@ -2,7 +2,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { FreeMode } from 'swiper/modules'
+import { FreeMode, Navigation, A11y } from 'swiper/modules'
 import GalleryImage from './GalleryImage'
 import MasonryGallery from './MasonryGallery'
 import Header from '@/shared/layout/Header'
@@ -11,14 +11,21 @@ import LoadingSpinner from '@/shared/ui/LoadingSpinner'
 import { GalleryProps } from '@/types/gallery'
 import { useGalleryTracking } from '@/features/gallery/hooks/useGalleryTracking'
 
+// Import Swiper styles
+import 'swiper/css'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
+
 const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [showMasonryView, setShowMasonryView] = useState(false)
-  const [isTransitioning, setIsTransitioning] = useState(false)
   const [isTransitioningToMasonry, setIsTransitioningToMasonry] = useState(false)
-  const [touchStart, setTouchStart] = useState({ x: 0, y: 0, time: 0 })
   const [showMetadata, setShowMetadata] = useState(false)
   const [showSwipeHint, setShowSwipeHint] = useState(true)
+  const [isClient, setIsClient] = useState(false)
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set())
+  const swiperRef = useRef<any>(null)
+
   // Static alternate links - same as exhibition gallery
   const staticAlternateLink =
     galleryType === 'exhibition'
@@ -48,143 +55,15 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
     ;(e.target as any).touchStartY = touch.clientY
   }, [])
 
-  // Cache viewport width to avoid recalculating on every touch event
-  useEffect(() => {
-    const updateViewportWidth = () => {
-      setViewportWidth(window.innerWidth)
-    }
-
-    updateViewportWidth()
-    window.addEventListener('resize', updateViewportWidth)
-
-    return () => window.removeEventListener('resize', updateViewportWidth)
-  }, [])
-  const [isClient, setIsClient] = useState(false)
-  const [clickedButton, setClickedButton] = useState<'prev' | 'next' | null>(null)
-  const [dragOffset, setDragOffset] = useState(0)
-  const [isDragging, setIsDragging] = useState(false)
-  const [velocity, setVelocity] = useState(0)
-  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set())
-  const [lastDirection, setLastDirection] = useState<'prev' | 'next' | null>(null)
-  const [hasCommittedToSwipe, setHasCommittedToSwipe] = useState(false)
-  const [viewportWidth, setViewportWidth] = useState(0)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const animationRef = useRef<number>()
-  const lastTouchTime = useRef(0)
-  const lastTouchX = useRef(0)
-  const swipeCommitTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const clickEffectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const transitionTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const bounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-
-  // Momentum scrolling animation
-  const animateToPosition = useCallback(
-    (targetOffset: number, duration = 400, targetIndex?: number, resetAfter = false) => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current)
-      }
-
-      const startOffset = dragOffset
-      const startTime = Date.now()
-      const startIndex = currentIndex
-
-      const animate = () => {
-        // Safety check: exit if animation was cancelled
-        if (!animationRef.current) return
-
-        const elapsed = Date.now() - startTime
-        const progress = Math.min(elapsed / duration, 1)
-
-        // Smooth easing curve (cubic-bezier equivalent to ease-out)
-        const easeOut = 1 - Math.pow(1 - progress, 3)
-        const currentOffset = startOffset + (targetOffset - startOffset) * easeOut
-
-        // If we're transitioning to a new index, update it at the very end to avoid flickering
-        if (targetIndex !== undefined && progress >= 1 && currentIndex === startIndex) {
-          setCurrentIndex(targetIndex)
-        }
-
-        setDragOffset(currentOffset)
-
-        if (progress < 1) {
-          animationRef.current = requestAnimationFrame(animate)
-        } else {
-          // Clear ref when animation completes
-          animationRef.current = undefined
-          if (resetAfter) {
-            // Reset drag offset after animation completes
-            setDragOffset(0)
-          }
-        }
-      }
-
-      animationRef.current = requestAnimationFrame(animate)
-    },
-    [dragOffset, currentIndex, viewportWidth],
-  )
-
-  // Commit to swipe when threshold is met
-  const commitToSwipe = useCallback(
-    (direction: 'next' | 'prev') => {
-      if (hasCommittedToSwipe || isTransitioning) return
-
-      setHasCommittedToSwipe(true)
-      setIsTransitioning(true)
-      setLastDirection(direction)
-
-      if (direction === 'next') {
-        if (currentIndex < images.length - 1) {
-          const targetIndex = currentIndex + 1
-          const imageWidth = viewportWidth - 32
-          const finalOffset = -(imageWidth + 48)
-          animateToPosition(finalOffset, 400, targetIndex, true)
-
-          if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current)
-          transitionTimeoutRef.current = setTimeout(() => {
-            setIsTransitioning(false)
-            setHasCommittedToSwipe(false)
-          }, 400)
-        } else {
-          // Last image - go to masonry
-          setIsTransitioningToMasonry(true)
-          setTimeout(() => {
-            setShowMasonryView(true)
-            setIsTransitioningToMasonry(false)
-          }, 300)
-          setHasCommittedToSwipe(false)
-        }
-      } else {
-        if (currentIndex > 0) {
-          const targetIndex = currentIndex - 1
-          const imageWidth = viewportWidth - 32
-          const finalOffset = imageWidth + 48
-          animateToPosition(finalOffset, 400, targetIndex, true)
-
-          if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current)
-          transitionTimeoutRef.current = setTimeout(() => {
-            setIsTransitioning(false)
-            setHasCommittedToSwipe(false)
-          }, 400)
-        } else {
-          setHasCommittedToSwipe(false)
-        }
-      }
-    },
-    [hasCommittedToSwipe, isTransitioning, currentIndex, images.length, animateToPosition],
-  )
-
-  // Progressive image loading with direction awareness
+  // Progressive image loading
   useEffect(() => {
     const imagesToLoad: number[] = []
     const imagesToUnload: number[] = []
 
-    // Direction-aware preloading range
-    const baseRange = 3 // Base range for nearby images
-    const forwardBias = lastDirection === 'next' ? 4 : 2 // Extra images forward
-    const backwardBias = lastDirection === 'prev' ? 4 : 2 // Extra images backward
-
-    const startIndex = Math.max(0, currentIndex - backwardBias)
-    const endIndex = Math.min(images.length - 1, currentIndex + baseRange + forwardBias)
+    // Preload range
+    const range = 2
+    const startIndex = Math.max(0, currentIndex - range)
+    const endIndex = Math.min(images.length - 1, currentIndex + range)
 
     // Find images to load
     for (let i = startIndex; i <= endIndex; i++) {
@@ -194,7 +73,6 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
     }
 
     // Find images to unload (far from current position to manage memory)
-    // Increased from 3 to 5 to prevent re-downloading when swiping back and forth
     const unloadDistance = 5
     loadedImages.forEach((index) => {
       if (Math.abs(index - currentIndex) > unloadDistance) {
@@ -202,25 +80,13 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
       }
     })
 
-    // Load new images with staggered timing
-    const timeouts: NodeJS.Timeout[] = []
-    imagesToLoad.forEach((index, priority) => {
-      // Calculate distance from current index
-      const distance = Math.abs(index - currentIndex)
-
-      // No delay for immediate neighbors (current, next, prev)
-      // This ensures instant loading when swiping
-      const delay = distance <= 1 ? 0 : priority * 100
-
-      const timeout = setTimeout(() => {
-        setLoadedImages((prev) => new Set(prev).add(index))
-      }, delay)
-      timeouts.push(timeout)
-    })
-
-    // Cleanup function to clear timeouts
-    return () => {
-      timeouts.forEach((timeout) => clearTimeout(timeout))
+    // Load new images
+    if (imagesToLoad.length > 0) {
+      setLoadedImages((prev) => {
+        const newSet = new Set(prev)
+        imagesToLoad.forEach((index) => newSet.add(index))
+        return newSet
+      })
     }
 
     // Unload distant images
@@ -231,29 +97,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
         return newSet
       })
     }
-  }, [currentIndex, images.length, lastDirection])
-
-  // Cleanup animation frame on unmount
-  useEffect(() => {
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current)
-        animationRef.current = undefined
-      }
-      if (swipeCommitTimeoutRef.current) {
-        clearTimeout(swipeCommitTimeoutRef.current)
-      }
-      if (clickEffectTimeoutRef.current) {
-        clearTimeout(clickEffectTimeoutRef.current)
-      }
-      if (transitionTimeoutRef.current) {
-        clearTimeout(transitionTimeoutRef.current)
-      }
-      if (bounceTimeoutRef.current) {
-        clearTimeout(bounceTimeoutRef.current)
-      }
-    }
-  }, [])
+  }, [currentIndex, images.length])
 
   // Ensure client-side rendering and load initial images
   useEffect(() => {
@@ -266,7 +110,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
     setLoadedImages(initialImages)
   }, [images.length])
 
-  // Hide swipe hint after 3 seconds
+  // Hide swipe hint after 4 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSwipeHint(false)
@@ -288,79 +132,6 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [handleKeyDown])
-
-  // Navigation functions
-  const goToNext = useCallback(
-    (showClickEffect = true) => {
-      if (isTransitioning) return
-
-      // Track navigation direction
-      setLastDirection('next')
-
-      // Show clicked effect only when explicitly requested (button clicks)
-      if (showClickEffect) {
-        setClickedButton('next')
-        if (clickEffectTimeoutRef.current) clearTimeout(clickEffectTimeoutRef.current)
-        clickEffectTimeoutRef.current = setTimeout(() => setClickedButton(null), 400)
-      }
-
-      // If we're at the last image, go to masonry view
-      if (currentIndex === images.length - 1) {
-        setIsTransitioningToMasonry(true)
-        setTimeout(() => {
-          setShowMasonryView(true)
-          setIsTransitioningToMasonry(false)
-        }, 300)
-        return
-      }
-
-      setIsTransitioning(true)
-      setVelocity(0)
-
-      // Calculate the target position for next image (accounting for spacing)
-      const targetIndex = currentIndex + 1
-
-      // Animate directly from current position to target position
-      animateToPosition(0, 350, targetIndex)
-
-      if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current)
-      transitionTimeoutRef.current = setTimeout(() => {
-        setIsTransitioning(false)
-      }, 350)
-    },
-    [currentIndex, images.length, isTransitioning, animateToPosition],
-  )
-
-  const goToPrevious = useCallback(
-    (showClickEffect = true) => {
-      if (isTransitioning || currentIndex === 0) return
-
-      // Track navigation direction
-      setLastDirection('prev')
-
-      // Show clicked effect only when explicitly requested (button clicks)
-      if (showClickEffect) {
-        setClickedButton('prev')
-        if (clickEffectTimeoutRef.current) clearTimeout(clickEffectTimeoutRef.current)
-        clickEffectTimeoutRef.current = setTimeout(() => setClickedButton(null), 300)
-      }
-
-      setIsTransitioning(true)
-      setVelocity(0)
-
-      // Calculate the target position for previous image (accounting for spacing)
-      const targetIndex = currentIndex - 1
-
-      // Animate directly from current position to target position
-      animateToPosition(0, 350, targetIndex)
-
-      if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current)
-      transitionTimeoutRef.current = setTimeout(() => {
-        setIsTransitioning(false)
-      }, 350)
-    },
-    [currentIndex, isTransitioning, animateToPosition],
-  )
 
   // Prevent hydration mismatch by ensuring consistent initial render
   if (!isClient) {
@@ -420,223 +191,62 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
 
       {/* Photo Area - Large and simple */}
       <div className="px-4" style={{ height: '45vh' }}>
-        <div
-          className="w-full h-full relative rounded-sm overflow-hidden cursor-pointer"
-          style={{ maxHeight: '70vh' }}
-          onTouchStart={(e) => {
-            // Cancel any ongoing animations
-            if (animationRef.current) {
-              cancelAnimationFrame(animationRef.current)
-            }
+        <div className="w-full h-full relative rounded-sm overflow-hidden">
+          <Swiper
+            modules={[Navigation, A11y]}
+            spaceBetween={48}
+            slidesPerView={1}
+            initialSlide={currentIndex}
+            onSlideChange={(swiper) => setCurrentIndex(swiper.activeIndex)}
+            onReachEnd={() => {
+              // We handle the transition in onTouchEnd to ensure it requires a pull
+            }}
+            onTouchEnd={(swiper) => {
+              if (swiper.isEnd) {
+                // Check if user is pulling to the left (next)
+                // diff is negative when pulling left
+                const { diff } = swiper.touches
+                const threshold = -50 // 50px threshold
 
-            // Clear any pending commit timeout
-            if (swipeCommitTimeoutRef.current) {
-              clearTimeout(swipeCommitTimeoutRef.current)
-              swipeCommitTimeoutRef.current = null
-            }
-
-            const touch = e.touches[0]
-            const startTime = Date.now()
-            setTouchStart({ x: touch.clientX, y: touch.clientY, time: startTime })
-            setIsDragging(true)
-            setVelocity(0)
-            setHasCommittedToSwipe(false)
-
-            // Initialize velocity tracking
-            lastTouchTime.current = startTime
-            lastTouchX.current = touch.clientX
-          }}
-          onTouchMove={(e) => {
-            if (!isDragging || hasCommittedToSwipe) return
-
-            const touch = e.touches[0]
-            const currentTime = Date.now()
-            const deltaX = touchStart.x - touch.clientX
-            const deltaY = touchStart.y - touch.clientY
-
-            // Calculate velocity for momentum
-            const timeDiff = currentTime - lastTouchTime.current
-            if (timeDiff > 0) {
-              const positionDiff = touch.clientX - lastTouchX.current
-              setVelocity(positionDiff / timeDiff)
-            }
-
-            lastTouchTime.current = currentTime
-            lastTouchX.current = touch.clientX
-
-            // Check for vertical swipe up to show metadata
-            if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 50) {
-              // Swipe up detected - show metadata
-              setShowMetadata(true)
-              setShowSwipeHint(false) // Hide hint when user opens metadata
-              setIsDragging(false)
-              return
-            }
-
-            // Only handle horizontal swipes
-            if (Math.abs(deltaY) < Math.abs(deltaX)) {
-              e.preventDefault()
-
-              // Calculate drag offset relative to image width + gap
-              let offset = -deltaX
-              const imageWidth = viewportWidth - 32 // Account for padding
-              const maxSwipe = imageWidth * 0.9
-
-              // Check for momentum commit threshold
-              const commitThreshold = imageWidth * 0.35 // 35% of screen width
-              const velocityThreshold = 0.4
-
-              if (
-                !hasCommittedToSwipe &&
-                Math.abs(deltaX) > commitThreshold &&
-                Math.abs(velocity) > velocityThreshold
-              ) {
-                // Commit to swipe direction
-                if (
-                  deltaX > 0 &&
-                  (currentIndex < images.length - 1 || currentIndex === images.length - 1)
-                ) {
-                  commitToSwipe('next')
-                  return
-                } else if (deltaX < 0 && currentIndex > 0) {
-                  commitToSwipe('prev')
-                  return
+                if (diff < threshold) {
+                  // User is pulling past the last slide
+                  setIsTransitioningToMasonry(true)
+                  setTimeout(() => {
+                    setShowMasonryView(true)
+                    setIsTransitioningToMasonry(false)
+                  }, 300)
                 }
               }
-
-              // Add resistance at the edges with smoother falloff
-              if (currentIndex === 0 && offset > 0) {
-                // Resistance when trying to swipe right on first image
-                const resistanceStrength = Math.abs(offset) / (imageWidth * 0.5)
-                const resistance = Math.pow(resistanceStrength, 1.5) * 0.8
-                offset = offset * Math.max(0.1, 1 - resistance)
-              }
-              // Note: Removed resistance for last image left swipe to allow masonry navigation
-
-              // Limit maximum swipe distance
-              offset = Math.max(-maxSwipe, Math.min(maxSwipe, offset))
-
-              setDragOffset(offset)
-            }
-          }}
-          onTouchEnd={(e) => {
-            const touch = e.changedTouches[0]
-            const deltaX = touchStart.x - touch.clientX
-            const deltaY = touchStart.y - touch.clientY
-            const deltaTime = Date.now() - touchStart.time
-
-            setIsDragging(false)
-
-            // If already committed to swipe, don't process touch end
-            if (hasCommittedToSwipe) {
-              return
-            }
-
-            // Check for tap (short touch with minimal movement) - removed since using swipe up now
-            if (Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10 && deltaTime < 200) {
-              animateToPosition(0, 200)
-              return
-            }
-
-            // Velocity-based navigation with momentum
-            const swipeThreshold = 50
-            const velocityThreshold = 0.3
-            const distanceThreshold = (viewportWidth - 32) * 0.25 // Account for padding
-
-            const shouldNavigate =
-              (Math.abs(deltaX) > swipeThreshold && Math.abs(velocity) > velocityThreshold) ||
-              Math.abs(deltaX) > distanceThreshold
-
-            if (shouldNavigate) {
-              if (deltaX > 0 && currentIndex < images.length - 1) {
-                // Swipe left to next image - calculate slide-through animation
-                setLastDirection('next')
-                setIsTransitioning(true)
-                const targetIndex = currentIndex + 1
-
-                // Calculate final position: slide completely out of view
-                const imageWidth = viewportWidth - 32 // Account for padding
-                const finalOffset = -(imageWidth + 48)
-
-                // Animate to final position while changing index mid-way
-                animateToPosition(finalOffset, 300, targetIndex, true)
-
-                if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current)
-                transitionTimeoutRef.current = setTimeout(() => {
-                  setIsTransitioning(false)
-                }, 300)
-              } else if (deltaX > 0 && currentIndex === images.length - 1) {
-                // Swipe right on last image - go to masonry
-                setIsTransitioningToMasonry(true)
-                setTimeout(() => {
-                  setShowMasonryView(true)
-                  setIsTransitioningToMasonry(false)
-                }, 300)
-              } else if (deltaX < 0 && currentIndex > 0) {
-                // Swipe right to previous image - calculate slide-through animation
-                setLastDirection('prev')
-                setIsTransitioning(true)
-                const targetIndex = currentIndex - 1
-
-                // Calculate final position: slide completely out of view
-                const imageWidth = viewportWidth - 32 // Account for padding
-                const finalOffset = imageWidth + 48
-
-                // Animate to final position while changing index mid-way
-                animateToPosition(finalOffset, 300, targetIndex, true)
-
-                if (transitionTimeoutRef.current) clearTimeout(transitionTimeoutRef.current)
-                transitionTimeoutRef.current = setTimeout(() => {
-                  setIsTransitioning(false)
-                }, 300)
-              } else {
-                // Snap back with momentum if can't navigate
-                const bounceDistance = Math.abs(dragOffset) * 0.3
-                animateToPosition(deltaX > 0 ? bounceDistance : -bounceDistance, 150)
-                if (bounceTimeoutRef.current) clearTimeout(bounceTimeoutRef.current)
-                bounceTimeoutRef.current = setTimeout(() => animateToPosition(0, 200), 150)
-              }
-            } else {
-              // Snap back with easing for insufficient swipe
-              animateToPosition(0, 250)
-            }
-          }}
-        >
-          {/* Container for all images with smooth drag transform */}
-          <div
-            ref={containerRef}
-            className="h-full flex"
-            style={{
-              width: `calc(${images.length} * (100vw - 32px) + ${(images.length - 1) * 48}px)`,
-              transform: `translateX(calc(-${currentIndex} * (100vw - 32px) - ${currentIndex * 48}px + ${dragOffset}px))`,
-              willChange: 'transform',
-              gap: '48px',
             }}
+            onSwiper={(swiper) => {
+              swiperRef.current = swiper
+            }}
+            className="w-full h-full"
           >
             {images.map((image, index) => (
-              <div
-                key={index}
-                className="h-full flex-shrink-0"
-                style={{ width: 'calc(100vw - 32px)' }} // Account for px-4 padding (16px * 2)
-              >
-                {loadedImages.has(index) ? (
-                  <GalleryImage
-                    image={image}
-                    priority={Math.abs(index - currentIndex) <= 1} // Priority for current and adjacent images
-                    sizes="100vw"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-neutral-800/50 flex items-center justify-center">
-                    <div className="text-white/30 text-sm">Loading...</div>
-                  </div>
-                )}
-              </div>
+              <SwiperSlide key={index}>
+                <div
+                  className="w-full h-full relative"
+                  onTouchStart={handleTouchStart}
+                  onTouchEnd={handleSwipeUp}
+                >
+                  {loadedImages.has(index) ? (
+                    <GalleryImage
+                      image={image}
+                      priority={Math.abs(index - currentIndex) <= 1}
+                      sizes="100vw"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-neutral-800/50 flex items-center justify-center">
+                      <div className="text-white/30 text-sm">Loading...</div>
+                    </div>
+                  )}
+                </div>
+              </SwiperSlide>
             ))}
-          </div>
+          </Swiper>
         </div>
       </div>
-
-      {/* Swipe Up Hint Animation - Lean line going upward */}
 
       {/* Navigation */}
       <div
@@ -671,16 +281,14 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
 
         <div className="flex gap-4">
           <button
-            onClick={() => goToPrevious()}
-            disabled={currentIndex === 0 || isTransitioning}
+            onClick={() => {
+              if (swiperRef.current) swiperRef.current.slidePrev()
+            }}
+            disabled={currentIndex === 0}
             className={`p-2 rounded-full transition-all duration-200 ${
               currentIndex === 0
                 ? 'bg-neutral-800/50 text-neutral-600 cursor-not-allowed'
-                : `bg-neutral-700/60 text-white-rose/70 hover:bg-neutral-600 hover:text-white-rose active:scale-95 ${
-                    clickedButton === 'prev'
-                      ? 'ring-4 ring-hot-pink bg-hot-pink/20 text-hot-pink'
-                      : ''
-                  }`
+                : 'bg-neutral-700/60 text-white-rose/70 hover:bg-neutral-600 hover:text-white-rose active:scale-95'
             }`}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -694,11 +302,14 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
           </button>
 
           <button
-            onClick={() => goToNext()}
-            disabled={isTransitioning}
-            className={`p-2 rounded-full bg-neutral-700/60 text-white-rose/70 hover:bg-neutral-600 hover:text-white-rose active:scale-95 transition-all duration-200 ${
-              clickedButton === 'next' ? 'ring-4 ring-hot-pink bg-hot-pink/20 text-hot-pink' : ''
-            }`}
+            onClick={() => {
+              if (currentIndex === images.length - 1) {
+                setShowMasonryView(true)
+              } else if (swiperRef.current) {
+                swiperRef.current.slideNext()
+              }
+            }}
+            className="p-2 rounded-full bg-neutral-700/60 text-white-rose/70 hover:bg-neutral-600 hover:text-white-rose active:scale-95 transition-all duration-200"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -767,7 +378,6 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
                       <span>{images[currentIndex].exhibition}</span>
                     </div>
                   )}
-
                 </div>
               </div>
             </SwiperSlide>
