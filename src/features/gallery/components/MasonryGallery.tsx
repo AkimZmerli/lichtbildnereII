@@ -34,37 +34,7 @@ const MasonryGallery = ({
     alt: '',
   })
 
-  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set())
-  const [allImagesLoaded, setAllImagesLoaded] = useState(false)
-  const [minimumLoadingComplete, setMinimumLoadingComplete] = useState(false)
-  const [showContent, setShowContent] = useState(false)
-
-  // Set minimum loading time of 2 seconds
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setMinimumLoadingComplete(true)
-    }, 2000)
-
-    return () => clearTimeout(timer)
-  }, [])
-
-  // Show content only when both conditions are met
-  useEffect(() => {
-    if (allImagesLoaded && minimumLoadingComplete) {
-      setShowContent(true)
-    }
-  }, [allImagesLoaded, minimumLoadingComplete])
-
-  const handleImageLoad = useCallback((index: number) => {
-    setLoadedImages(prev => {
-      const newSet = new Set(prev)
-      newSet.add(index)
-      if (newSet.size === images.length) {
-        setAllImagesLoaded(true)
-      }
-      return newSet
-    })
-  }, [images.length])
+  // Removed blocking load states
 
   const openPopup = (imageIndex: number) => {
     const image = images[imageIndex]
@@ -101,15 +71,15 @@ const MasonryGallery = ({
               type === 'exhibition'
                 ? alternateGalleryLink || '/about-exhibition#exhibition'
                 : type === 'human'
-                ? '/works#human'
-                : '/works#nonhuman'
+                  ? '/works#human'
+                  : '/works#nonhuman'
             }
             onClick={createSmoothLink(
               type === 'exhibition'
                 ? alternateGalleryLink || '/about-exhibition#exhibition'
                 : type === 'human'
-                ? '/works#human'
-                : '/works#nonhuman',
+                  ? '/works#human'
+                  : '/works#nonhuman',
             )}
             className="group inline-flex items-center px-4 py-2 text-hot-pink hover:text-white-rose hover:scale-105 active:scale-95 transition-all duration-300 ease-out text-sm font-light tracking-wider uppercase whitespace-nowrap"
           >
@@ -124,31 +94,16 @@ const MasonryGallery = ({
             </span>
           </Link>
         </div>
-        {/* Loading Spinner */}
-        {!showContent && (
-          <div className="fixed inset-0 bg-grainy bg-opacity-90 flex items-center justify-center z-40">
-            <LoadingSpinner size="lg" showText={true} />
-          </div>
-        )}
-
-        {/* Masonry Grid */}
-        <motion.div
-          className="columns-2 gap-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: showContent ? 1 : 0 }}
-          transition={{ duration: 0.5 }}
-        >
+        {/* Loading Spinner removed - images load progressively */}
+        <div className="columns-2 gap-4">
           {images.map((image, index) => (
             <motion.div
               key={`${image.url}-${index}`}
               className="mb-4 break-inside-avoid"
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{
-                delay: showContent ? index * 0.05 : 0,
-                duration: 0.4,
-                ease: 'easeOut',
-              }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '50px' }}
+              transition={{ duration: 0.5 }}
             >
               <div
                 className="relative overflow-hidden rounded-sm bg-neutral-800 cursor-pointer"
@@ -162,12 +117,12 @@ const MasonryGallery = ({
                   className="w-full h-auto object-cover"
                   sizes="(max-width: 768px) 50vw, 33vw"
                   priority={index < 4}
-                  onLoad={() => handleImageLoad(index)}
+                  onLoad={() => {}}
                 />
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
 
       <Footer />

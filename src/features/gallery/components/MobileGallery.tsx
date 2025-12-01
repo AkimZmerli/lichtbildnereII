@@ -2,7 +2,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { FreeMode, Navigation, A11y } from 'swiper/modules'
+import { FreeMode, Navigation, A11y, Virtual } from 'swiper/modules'
 import GalleryImage from './GalleryImage'
 import MasonryGallery from './MasonryGallery'
 import Header from '@/shared/layout/Header'
@@ -15,6 +15,8 @@ import { useGalleryTracking } from '@/features/gallery/hooks/useGalleryTracking'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
+import 'swiper/css/free-mode'
+import 'swiper/css/virtual'
 
 const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -23,7 +25,6 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
   const [showMetadata, setShowMetadata] = useState(false)
   const [showSwipeHint, setShowSwipeHint] = useState(true)
   const [isClient, setIsClient] = useState(false)
-  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set())
   const swiperRef = useRef<any>(null)
 
   // Static alternate links - same as exhibition gallery
@@ -55,60 +56,10 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
     ;(e.target as any).touchStartY = touch.clientY
   }, [])
 
-  // Progressive image loading
-  useEffect(() => {
-    const imagesToLoad: number[] = []
-    const imagesToUnload: number[] = []
-
-    // Preload range
-    const range = 2
-    const startIndex = Math.max(0, currentIndex - range)
-    const endIndex = Math.min(images.length - 1, currentIndex + range)
-
-    // Find images to load
-    for (let i = startIndex; i <= endIndex; i++) {
-      if (!loadedImages.has(i)) {
-        imagesToLoad.push(i)
-      }
-    }
-
-    // Find images to unload (far from current position to manage memory)
-    const unloadDistance = 5
-    loadedImages.forEach((index) => {
-      if (Math.abs(index - currentIndex) > unloadDistance) {
-        imagesToUnload.push(index)
-      }
-    })
-
-    // Load new images
-    if (imagesToLoad.length > 0) {
-      setLoadedImages((prev) => {
-        const newSet = new Set(prev)
-        imagesToLoad.forEach((index) => newSet.add(index))
-        return newSet
-      })
-    }
-
-    // Unload distant images
-    if (imagesToUnload.length > 0) {
-      setLoadedImages((prev) => {
-        const newSet = new Set(prev)
-        imagesToUnload.forEach((index) => newSet.delete(index))
-        return newSet
-      })
-    }
-  }, [currentIndex, images.length])
-
-  // Ensure client-side rendering and load initial images
+  // Ensure client-side rendering
   useEffect(() => {
     setIsClient(true)
-    // Load first 3 images immediately
-    const initialImages = new Set<number>()
-    for (let i = 0; i < Math.min(3, images.length); i++) {
-      initialImages.add(i)
-    }
-    setLoadedImages(initialImages)
-  }, [images.length])
+  }, [])
 
   // Hide swipe hint after 4 seconds
   useEffect(() => {
@@ -193,9 +144,10 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
       <div className="px-4" style={{ height: '45vh' }}>
         <div className="w-full h-full relative rounded-sm overflow-hidden">
           <Swiper
-            modules={[Navigation, A11y]}
+            modules={[Navigation, A11y, Virtual]}
             spaceBetween={48}
             slidesPerView={1}
+            virtual
             initialSlide={currentIndex}
             onSlideChange={(swiper) => setCurrentIndex(swiper.activeIndex)}
             onReachEnd={() => {
@@ -224,23 +176,17 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
             className="w-full h-full"
           >
             {images.map((image, index) => (
-              <SwiperSlide key={index}>
+              <SwiperSlide key={index} virtualIndex={index}>
                 <div
                   className="w-full h-full relative"
                   onTouchStart={handleTouchStart}
                   onTouchEnd={handleSwipeUp}
                 >
-                  {loadedImages.has(index) ? (
-                    <GalleryImage
-                      image={image}
-                      priority={Math.abs(index - currentIndex) <= 1}
-                      sizes="100vw"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-neutral-800/50 flex items-center justify-center">
-                      <div className="text-white/30 text-sm">Loading...</div>
-                    </div>
-                  )}
+                  <GalleryImage
+                    image={image}
+                    priority={Math.abs(index - currentIndex) <= 1}
+                    sizes="100vw"
+                  />
                 </div>
               </SwiperSlide>
             ))}
