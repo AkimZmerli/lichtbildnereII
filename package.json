@@ -29,7 +29,7 @@
     "gsap": "^3.13.0",
     "lucide": "^0.542.0",
     "lucide-react": "^0.542.0",
-    "next": "15.3.0",
+    "next": "^16.0.7",
     "pdf2pic": "^3.2.0",
     "postcss": "^8.5.3",
     "react": "^18.2.0",
@@ -47,7 +47,6 @@
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "eslint": "^9.16.0",
-    "eslint-config-next": "15.3.0",
     "prettier": "^3.4.2",
     "tsx": "^4.20.6",
     "typescript": "5.7.3"
