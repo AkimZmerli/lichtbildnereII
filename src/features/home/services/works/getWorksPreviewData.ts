@@ -20,13 +20,13 @@ export const getWorksPreviewData = async (): Promise<WorksPreviewData> => {
   if (isProduction) {
     return {
       human: {
-        url: getImageUrl('works-preview/WorksPreviewHuman.png'),
+        url: getImageUrl('works-preview/WorksPreviewHuman.webp'),
         alt: 'Human Gallery Preview',
         width: 430,
         height: 333
       },
       nonHuman: {
-        url: getImageUrl('works-preview/WorksPreviewNonHuman.png'),
+        url: getImageUrl('works-preview/WorksPreviewNonHuman.webp'),
         alt: 'Non-Human Gallery Preview',
         width: 430,
         height: 333
@@ -36,13 +36,13 @@ export const getWorksPreviewData = async (): Promise<WorksPreviewData> => {
     // Local development - use local files
     return {
       human: {
-        url: `/media/works-preview/WorksPreviewHuman.png${cacheBuster}`,
+        url: `/media/works-preview/WorksPreviewHuman.webp${cacheBuster}`,
         alt: 'Human Gallery Preview',
         width: 430,
         height: 333
       },
       nonHuman: {
-        url: `/media/works-preview/WorksPreviewNonHuman.png${cacheBuster}`,
+        url: `/media/works-preview/WorksPreviewNonHuman.webp${cacheBuster}`,
         alt: 'Non-Human Gallery Preview',
         width: 430,
         height: 333

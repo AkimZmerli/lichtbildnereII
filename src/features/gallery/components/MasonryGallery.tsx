@@ -69,28 +69,22 @@ const MasonryGallery = ({
           <Link
             href={
               type === 'exhibition'
-                ? alternateGalleryLink || '/about-exhibition#exhibition'
+                ? '/gallery/exhibition'
                 : type === 'human'
-                  ? '/works#human'
-                  : '/works#nonhuman'
+                  ? '/gallery/human'
+                  : '/gallery/non-human'
             }
             onClick={createSmoothLink(
               type === 'exhibition'
-                ? alternateGalleryLink || '/about-exhibition#exhibition'
+                ? '/gallery/exhibition'
                 : type === 'human'
-                  ? '/works#human'
-                  : '/works#nonhuman',
+                  ? '/gallery/human'
+                  : '/gallery/non-human',
             )}
             className="group inline-flex items-center px-4 py-2 text-hot-pink hover:text-white-rose hover:scale-105 active:scale-95 transition-all duration-300 ease-out text-sm font-light tracking-wider uppercase whitespace-nowrap"
           >
             <span className="flex items-center gap-1">
-              {type === 'exhibition' ? (
-                <>
-                  Go Back <> ↗ </>
-                </>
-              ) : (
-                'Go Back ↗'
-              )}
+              Go Back ↗
             </span>
           </Link>
         </div>
