@@ -54,8 +54,8 @@ export default function CinematicHeroScroll({
 
   // Smooth the scroll progress for better performance
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: isMobile ? 120 : 200,
-    damping: isMobile ? 40 : 25,
+    stiffness: isMobile ? 80 : 200,  // Reduced stiffness for smoother mobile
+    damping: isMobile ? 50 : 25,      // Increased damping for less bounce
     restDelta: 0.0001,
   })
 
@@ -72,10 +72,10 @@ export default function CinematicHeroScroll({
   const containerHeight = useTransform(
     smoothProgress,
     isMobile 
-      ? [0, 0.1, 0.2, 0.35, 0.5, 0.65, 0.8, 1] // Mobile: more steps for smoother animation
+      ? [0, 0.15, 0.3, 0.5, 0.7, 0.85, 1] // Mobile: adjusted for 200vh scroll
       : [0, 0.15, 0.35, 0.55, 0.75, 1], // Desktop: original timing
     isMobile
-      ? ['30vh', '42vh', '56vh', '72vh', '85vh', '94vh', '100vh', '100vh'] // Mobile: smoother progression
+      ? ['30vh', '45vh', '65vh', '85vh', '95vh', '100vh', '100vh'] // Mobile: faster progression
       : ['30vh', '50vh', '75vh', '100vh', '100vh', '100vh'], // Desktop: original values
   )
 
@@ -90,10 +90,10 @@ export default function CinematicHeroScroll({
   const containerWidth = useTransform(
     smoothProgress,
     isMobile
-      ? [0, 0.08, 0.18, 0.3, 0.45, 0.6, 0.75, 0.9, 1] // Mobile: more steps for smoother width expansion
+      ? [0, 0.1, 0.25, 0.4, 0.6, 0.8, 1] // Mobile: simplified for 200vh
       : [0, 0.12, 0.25, 0.4, 0.6, 0.75, 1], // Desktop: original timing
     isMobile
-      ? ['40%', '50%', '60%', '70%', '80%', '90%', '95%', '100%', '100%'] // Mobile: smoother width progression
+      ? ['40%', '55%', '70%', '85%', '95%', '100%', '100%'] // Mobile: faster width progression
       : ['40%', '55%', '70%', '85%', '100%', '100%', '100%'], // Desktop: original values
   )
 
@@ -121,21 +121,11 @@ export default function CinematicHeroScroll({
       <div
         ref={containerRef}
         className={`relative w-full ${className}`}
+        data-hero-scroll
         style={{ 
-          height: isMobile ? '300vh' : '280vh', // Longer scroll distance on mobile to lock hero longer
-          ...(isMobile && {
-            scrollBehavior: 'auto',
-            overscrollBehavior: 'none',
-          })
+          height: isMobile ? '250vh' : '280vh', // Balanced scroll distance on mobile for smoother experience
+          WebkitOverflowScrolling: 'touch',     // iOS smooth scrolling
         }}
-        onWheel={isMobile ? (e) => {
-          // Accelerate scroll on mobile
-          e.preventDefault()
-          window.scrollBy({
-            top: e.deltaY * 4, // 4x scroll speed
-            behavior: 'auto'
-          })
-        } : undefined}
       >
         {/* Fixed hero container */}
         <div
@@ -191,10 +181,10 @@ export default function CinematicHeroScroll({
               height: useTransform(
                 smoothProgress,
                 isMobile
-                  ? [0, 0.08, 0.18, 0.3, 0.45, 0.65, 0.8, 1] // Mobile: smoother curve
+                  ? [0, 0.15, 0.3, 0.5, 0.7, 0.85, 1] // Mobile: adjusted for 200vh
                   : [0, 0.15, 0.35, 0.55, 0.75, 1], // Desktop: original
                 isMobile
-                  ? ['35vh', '28vh', '22vh', '16vh', '10vh', '4vh', '0vh', '0vh'] // Mobile: gradual reduction
+                  ? ['35vh', '27vh', '18vh', '9vh', '3vh', '0vh', '0vh'] // Mobile: faster reduction
                   : ['35vh', '25vh', '12.5vh', '0vh', '0vh', '0vh'], // Desktop: original
               ),
             }}
@@ -207,10 +197,10 @@ export default function CinematicHeroScroll({
               height: useTransform(
                 smoothProgress,
                 isMobile
-                  ? [0, 0.08, 0.18, 0.3, 0.45, 0.65, 0.8, 1] // Mobile: smoother curve
+                  ? [0, 0.15, 0.3, 0.5, 0.7, 0.85, 1] // Mobile: adjusted for 200vh
                   : [0, 0.15, 0.35, 0.55, 0.75, 1], // Desktop: original
                 isMobile
-                  ? ['35vh', '28vh', '22vh', '16vh', '10vh', '4vh', '0vh', '0vh'] // Mobile: gradual reduction
+                  ? ['35vh', '27vh', '18vh', '9vh', '3vh', '0vh', '0vh'] // Mobile: faster reduction
                   : ['35vh', '25vh', '12.5vh', '0vh', '0vh', '0vh'], // Desktop: original
               ),
             }}
@@ -223,10 +213,10 @@ export default function CinematicHeroScroll({
               width: useTransform(
                 smoothProgress,
                 isMobile
-                  ? [0, 0.08, 0.18, 0.3, 0.45, 0.6, 0.75, 0.9, 1] // Mobile: smoother curve
+                  ? [0, 0.1, 0.25, 0.4, 0.6, 0.8, 1] // Mobile: adjusted for 200vh
                   : [0, 0.12, 0.25, 0.4, 0.6, 0.75, 1], // Desktop: original
                 isMobile
-                  ? ['45vw', '40vw', '34vw', '28vw', '20vw', '12vw', '6vw', '2vw', '0vw'] // Mobile: gradual width reduction
+                  ? ['45vw', '38vw', '28vw', '18vw', '8vw', '2vw', '0vw'] // Mobile: faster width reduction
                   : ['25vw', '20vw', '12.5vw', '5vw', '0vw', '0vw', '0vw'], // Desktop: original values
               ),
             }}
@@ -239,10 +229,10 @@ export default function CinematicHeroScroll({
               width: useTransform(
                 smoothProgress,
                 isMobile
-                  ? [0, 0.08, 0.18, 0.3, 0.45, 0.6, 0.75, 0.9, 1] // Mobile: smoother curve
+                  ? [0, 0.1, 0.25, 0.4, 0.6, 0.8, 1] // Mobile: adjusted for 200vh
                   : [0, 0.12, 0.25, 0.4, 0.6, 0.75, 1], // Desktop: original
                 isMobile
-                  ? ['23vw', '20vw', '17vw', '14vw', '10vw', '6vw', '3vw', '1vw', '0vw'] // Mobile: gradual width reduction
+                  ? ['23vw', '19vw', '14vw', '9vw', '4vw', '1vw', '0vw'] // Mobile: faster width reduction
                   : ['25vw', '20vw', '12.5vw', '5vw', '0vw', '0vw', '0vw'], // Desktop: original values
               ),
             }}
@@ -257,10 +247,10 @@ export default function CinematicHeroScroll({
               top: useTransform(
                 smoothProgress,
                 isMobile
-                  ? [0, 0.08, 0.18, 0.3, 0.45, 0.65, 0.8, 1] // Mobile: smoother curve
+                  ? [0, 0.15, 0.3, 0.5, 0.7, 0.85, 1] // Mobile: adjusted for 200vh
                   : [0, 0.15, 0.35, 0.55, 0.75, 1], // Desktop: original
                 isMobile
-                  ? ['35vh', '28vh', '22vh', '16vh', '10vh', '4vh', '0vh', '0vh'] // Mobile: gradual movement up
+                  ? ['35vh', '27vh', '18vh', '9vh', '3vh', '0vh', '0vh'] // Mobile: faster movement up
                   : ['35vh', '25vh', '12.5vh', '0vh', '0vh', '0vh'], // Desktop: original
               ),
               ...(isMobile
