@@ -1,10 +1,10 @@
 'use client'
 import { useState, useCallback, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { FreeMode, Navigation, A11y, Virtual } from 'swiper/modules'
 import GalleryImage from './GalleryImage'
-import MasonryGallery from './MasonryGallery'
 import Header from '@/shared/layout/Header'
 import Footer from '@/shared/layout/Footer'
 import LoadingSpinner from '@/shared/ui/LoadingSpinner'
@@ -19,9 +19,8 @@ import 'swiper/css/free-mode'
 import 'swiper/css/virtual'
 
 const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
+  const router = useRouter()
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [showMasonryView, setShowMasonryView] = useState(false)
-  const [isTransitioningToMasonry, setIsTransitioningToMasonry] = useState(false)
   const [showMetadata, setShowMetadata] = useState(false)
   const [showSwipeHint, setShowSwipeHint] = useState(true)
   const [isClient, setIsClient] = useState(false)
@@ -101,33 +100,9 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
     )
   }
 
-  // Show transition loading spinner
-  if (isTransitioningToMasonry) {
-    return (
-      <div className="min-h-screen bg-grainy flex flex-col">
-        <Header />
-        <div className="flex-1 flex items-center justify-center">
-          <LoadingSpinner size="lg" showText={true} />
-        </div>
-        <Footer />
-      </div>
-    )
-  }
-
-  // Show masonry view
-  if (showMasonryView) {
-    return (
-      <MasonryGallery
-        images={images}
-        title={title}
-        type={galleryType}
-        alternateGalleryLink={staticAlternateLink}
-        onBack={() => {
-          setShowMasonryView(false)
-          setCurrentIndex(images.length - 1)
-        }}
-      />
-    )
+  // Navigate to masonry page
+  const navigateToMasonry = () => {
+    router.push(`/masonry?type=${galleryType}`)
   }
 
   return (
@@ -162,11 +137,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
 
                 if (diff < threshold) {
                   // User is pulling past the last slide
-                  setIsTransitioningToMasonry(true)
-                  setTimeout(() => {
-                    setShowMasonryView(true)
-                    setIsTransitioningToMasonry(false)
-                  }, 300)
+                  navigateToMasonry()
                 }
               }
             }}
@@ -250,7 +221,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
           <button
             onClick={() => {
               if (currentIndex === images.length - 1) {
-                setShowMasonryView(true)
+                navigateToMasonry()
               } else if (swiperRef.current) {
                 swiperRef.current.slideNext()
               }

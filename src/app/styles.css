@@ -1,10 +1,26 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
-
 /* Smooth scrolling for anchor links */
 html {
   scroll-behavior: smooth;
+  /* Mobile-specific smooth scrolling */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Performance optimizations for mobile scrolling */
+@media (max-width: 768px) {
+  body {
+    /* Reduce scroll jank on mobile */
+    overscroll-behavior-y: contain;
+  }
+  
+  /* Optimize hero animation performance */
+  .hero-container,
+  [data-hero-scroll] {
+    will-change: transform;
+    transform: translateZ(0); /* Force GPU acceleration */
+    backface-visibility: hidden;
+  }
 }
 
 
