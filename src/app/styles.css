@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
-
 /* Smooth scrolling for anchor links */
 html {
   scroll-behavior: smooth;

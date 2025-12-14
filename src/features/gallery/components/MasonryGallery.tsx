@@ -34,7 +34,8 @@ const MasonryGallery = ({
     alt: '',
   })
 
-  // Removed blocking load states
+  // Track loading state for each image
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set())
 
   const openPopup = (imageIndex: number) => {
     const image = images[imageIndex]
@@ -53,6 +54,18 @@ const MasonryGallery = ({
     })
   }
 
+  const handleImageLoad = (index: number) => {
+    setLoadedImages(prev => new Set(prev).add(index))
+  }
+
+  // Determine the go back link based on gallery type
+  const getGoBackLink = () => {
+    if (type === 'exhibition') {
+      return '/about-exhibition#exhibition'
+    }
+    return '/works'
+  }
+
   return (
     <div className="min-h-screen bg-grainy flex flex-col">
       <Header />
@@ -67,20 +80,8 @@ const MasonryGallery = ({
           </h2>
 
           <Link
-            href={
-              type === 'exhibition'
-                ? '/gallery/exhibition'
-                : type === 'human'
-                  ? '/gallery/human'
-                  : '/gallery/non-human'
-            }
-            onClick={createSmoothLink(
-              type === 'exhibition'
-                ? '/gallery/exhibition'
-                : type === 'human'
-                  ? '/gallery/human'
-                  : '/gallery/non-human',
-            )}
+            href={getGoBackLink()}
+            onClick={createSmoothLink(getGoBackLink())}
             className="group inline-flex items-center px-4 py-2 text-hot-pink hover:text-white-rose hover:scale-105 active:scale-95 transition-all duration-300 ease-out text-sm font-light tracking-wider uppercase whitespace-nowrap"
           >
             <span className="flex items-center gap-1">
@@ -103,6 +104,11 @@ const MasonryGallery = ({
                 className="relative overflow-hidden rounded-sm bg-neutral-800 cursor-pointer"
                 onClick={() => openPopup(index)}
               >
+                {!loadedImages.has(index) && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-neutral-800 z-10">
+                    <LoadingSpinner size="sm" />
+                  </div>
+                )}
                 <Image
                   src={image.url}
                   alt={image.alt || ''}
@@ -111,7 +117,7 @@ const MasonryGallery = ({
                   className="w-full h-auto object-cover"
                   sizes="(max-width: 768px) 50vw, 33vw"
                   priority={index < 4}
-                  onLoad={() => {}}
+                  onLoad={() => handleImageLoad(index)}
                 />
               </div>
             </motion.div>

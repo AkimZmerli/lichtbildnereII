@@ -1,13 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { getHumanImages, getNonHumanImages, getExhibitionImages } from '@/features/gallery/services/galleryData'
+import { getHumanImages, getNonHumanImages } from '@/features/gallery/services/galleryData'
+import { getExhibitionImages } from '@/features/exhibition/services/getExhibitionImages'
 import MasonryGallery from '@/features/gallery/components/MasonryGallery'
 import { GalleryImage } from '@/types/gallery'
 import LoadingSpinner from '@/shared/ui/LoadingSpinner'
 
-export default function MasonryPage() {
+function MasonryPageContent() {
   const searchParams = useSearchParams()
   const galleryType = searchParams.get('type') as 'human' | 'non-human' | 'exhibition'
   
@@ -100,5 +101,19 @@ export default function MasonryPage() {
       type={galleryType}
       alternateGalleryLink={getAlternateGalleryLink()}
     />
+  )
+}
+
+export default function MasonryPage() {
+  return (
+    <Suspense 
+      fallback={
+        <div className="min-h-screen bg-grainy flex flex-col items-center justify-center">
+          <LoadingSpinner size="lg" showText={true} />
+        </div>
+      }
+    >
+      <MasonryPageContent />
+    </Suspense>
   )
 }
