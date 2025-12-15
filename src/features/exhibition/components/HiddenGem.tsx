@@ -19,7 +19,7 @@ export default function HiddenGem() {
           <div className="pt-4">
             <Link
               href="/zwoelftausend"
-              className="inline-flex items-center gap-2 px-6 py-3 border border-hot-pink/30 text-hot-pink hover:bg-hot-pink hover:text-grainy hover:border-hot-pink transition-all duration-300 ease-out hover:scale-105 active:scale-95 bg-grainy/80 backdrop-blur-sm rounded-md"
+              className="inline-block text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px] bg-grainy/80 backdrop-blur-sm px-4 py-2 rounded-md border border-hot-pink/30"
             >
               press play ↗
             </Link>
