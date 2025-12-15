@@ -30,7 +30,7 @@ export async function getExhibitionImages(): Promise<GalleryImage[]> {
       exhibition: 'Lichtbildnerei • Tankstellenprojektraum • 2023',
     },
     {
-      url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/6%20-%20Lichtbildnerei.webp',
+      url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/v1765809039/6_-_Lichtbildnerei_d5lfpm.webp',
       alt: 'do a kickflip - exhibition photograph',
       name: 'do a kickflip',
       physicalWidth: 50,
