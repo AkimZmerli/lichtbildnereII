@@ -14,7 +14,7 @@ export const getWorksPreviewData = async (): Promise<WorksPreviewData> => {
   // Use Cloudinary CDN URLs for optimized delivery
   return {
     human: {
-      url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765803220/portfolio/works-preview/WorksPreviewHuman.webp',
+      url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/new-front-Human_mqg4xm',
       alt: 'Human Gallery Preview',
       width: 430,
       height: 333

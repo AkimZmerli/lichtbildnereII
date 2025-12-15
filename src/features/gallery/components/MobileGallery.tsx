@@ -3,7 +3,7 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { FreeMode, Navigation, A11y, Virtual } from 'swiper/modules'
+import { Navigation, A11y, Virtual } from 'swiper/modules'
 import GalleryImage from './GalleryImage'
 import Header from '@/shared/layout/Header'
 import Footer from '@/shared/layout/Footer'
@@ -22,7 +22,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
   const router = useRouter()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [showMetadata, setShowMetadata] = useState(false)
-  const [showSwipeHint, setShowSwipeHint] = useState(true)
+  const [showSwipeHint, setShowSwipeHint] = useState(false)
   const [isClient, setIsClient] = useState(false)
   const swiperRef = useRef<any>(null)
 
@@ -47,6 +47,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
       // 50px minimum swipe distance
       setShowMetadata(true)
       setShowSwipeHint(false) // Hide hint when user opens metadata
+      localStorage.setItem('hasSeenSwipeHint', 'true') // Mark as seen when user actually uses it
     }
   }, [])
 
@@ -60,13 +61,21 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
     setIsClient(true)
   }, [])
 
-  // Hide swipe hint after 4 seconds
+  // Check if user has seen swipe hint before and show it only once
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSwipeHint(false)
-    }, 4000)
+    const hasSeenSwipeHint = localStorage.getItem('hasSeenSwipeHint')
+    
+    if (!hasSeenSwipeHint) {
+      setShowSwipeHint(true)
+      
+      // Hide swipe hint after 4 seconds
+      const timer = setTimeout(() => {
+        setShowSwipeHint(false)
+        localStorage.setItem('hasSeenSwipeHint', 'true')
+      }, 4000)
 
-    return () => clearTimeout(timer)
+      return () => clearTimeout(timer)
+    }
   }, [])
 
   // Keyboard handler for spacebar
@@ -265,67 +274,59 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
       {/* Metadata Drawer */}
       {showMetadata && images[currentIndex] && (
         <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setShowMetadata(false)}>
-          <Swiper
-            direction="vertical"
-            modules={[FreeMode]}
-            freeMode={true}
-            spaceBetween={0}
-            slidesPerView={1}
-            className="h-full"
-            initialSlide={1}
-            onSlideChange={(swiper) => {
-              if (swiper.activeIndex === 0) {
+          <motion.div
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed bottom-0 left-0 right-0 w-full bg-grainy text-white-rose p-6 rounded-t-2xl z-60"
+            style={{ minHeight: '200px', maxHeight: '70vh' }}
+            onClick={(e) => e.stopPropagation()}
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={0.2}
+            onDragEnd={(_, { offset, velocity }) => {
+              if (offset.y > 100 || velocity.y > 500) {
                 setShowMetadata(false)
               }
             }}
           >
-            {/* Empty slide for swipe down to close */}
-            <SwiperSlide className="h-full" />
+            {/* Swipe indicator */}
+            <div className="w-12 h-1 bg-white-rose/30 rounded-full mx-auto mb-4" />
 
-            {/* Modal content slide */}
-            <SwiperSlide className="h-full flex items-end">
-              <div
-                className="w-full bg-grainy text-white-rose p-6 rounded-t-2xl transform transition-transform duration-300 ease-out"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Swipe indicator */}
-                <div className="w-12 h-1 bg-white-rose/30 rounded-full mx-auto mb-4" />
-
-                {/* Metadata content */}
-                <div className="space-y-3">
-                  {images[currentIndex].name && (
-                    <div className="text-white-rose font-medium text-lg mb-2">
-                      {images[currentIndex].name}
-                    </div>
-                  )}
-
-                  {images[currentIndex].physicalWidth && images[currentIndex].physicalHeight && (
-                    <div className="flex justify-between">
-                      <span className="text-white-rose/70">Dimensions:</span>
-                      <span>
-                        {images[currentIndex].physicalWidth} × {images[currentIndex].physicalHeight}{' '}
-                        {images[currentIndex].unit}
-                      </span>
-                    </div>
-                  )}
-
-                  {images[currentIndex].material && (
-                    <div className="flex justify-between">
-                      <span className="text-white-rose/70">Media:</span>
-                      <span>{images[currentIndex].material}</span>
-                    </div>
-                  )}
-
-                  {images[currentIndex].exhibition && (
-                    <div className="flex justify-between">
-                      <span className="text-white-rose/70">Exhibition:</span>
-                      <span>{images[currentIndex].exhibition}</span>
-                    </div>
-                  )}
+            {/* Metadata content */}
+            <div className="space-y-3">
+              {images[currentIndex].name && (
+                <div className="text-white-rose font-medium text-lg mb-2">
+                  {images[currentIndex].name}
                 </div>
-              </div>
-            </SwiperSlide>
-          </Swiper>
+              )}
+
+              {images[currentIndex].physicalWidth && images[currentIndex].physicalHeight && (
+                <div className="flex justify-between">
+                  <span className="text-white-rose/70">Dimensions:</span>
+                  <span>
+                    {images[currentIndex].physicalWidth} × {images[currentIndex].physicalHeight}{' '}
+                    {images[currentIndex].unit}
+                  </span>
+                </div>
+              )}
+
+              {images[currentIndex].material && (
+                <div className="flex justify-between">
+                  <span className="text-white-rose/70">Media:</span>
+                  <span>{images[currentIndex].material}</span>
+                </div>
+              )}
+
+              {images[currentIndex].exhibition && (
+                <div className="flex justify-between">
+                  <span className="text-white-rose/70">Exhibition:</span>
+                  <span>{images[currentIndex].exhibition}</span>
+                </div>
+              )}
+            </div>
+          </motion.div>
         </div>
       )}
 

@@ -115,10 +115,10 @@ export default function Works() {
     <section
       ref={sectionRef}
       id="works"
-      className="bg-grainy text-white-rose py-16 md:py-24 space-y-24 h-full md:pb-68"
+      className="bg-grainy text-white-rose py-16 md:py-24 space-y-24 h-full md:pb-8 "
     >
       {/* WORKS */}
-      <div className="text-center">
+      <div className="text-center ">
         <motion.div
           className="flex items-center justify-center gap-4 mb-20"
           variants={headerVariants}
@@ -142,7 +142,7 @@ export default function Works() {
           />
         </motion.div>
 
-        <div className="px-6">
+        <div className="px-6 pt-10">
           {/* Mobile layout (visible only on small screens) */}
           <motion.div
             className="md:hidden"
@@ -160,10 +160,13 @@ export default function Works() {
                       className="block hover:opacity-90 transition-opacity duration-200"
                     >
                       <Image
-                        src={previewData?.nonHuman.url || 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765803222/portfolio/works-preview/WorksPreviewNonHuman.webp'}
+                        src={
+                          previewData?.nonHuman.url ||
+                          'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765803222/portfolio/works-preview/WorksPreviewNonHuman.webp'
+                        }
                         alt={previewData?.nonHuman.alt || 'Non-Human Gallery'}
                         width={309}
-                        height={485}
+                        height={463}
                         className="object-cover "
                       />
                     </Link>
@@ -194,20 +197,25 @@ export default function Works() {
                       id="human"
                       className="block hover:opacity-90 transition-opacity duration-200"
                     >
-                      <Image
-                        src={previewData?.human.url || 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765803220/portfolio/works-preview/WorksPreviewHuman.webp'}
-                        alt={previewData?.human.alt || 'Human Gallery'}
-                        width={331}
-                        height={463}
-                        className="object-cover "
-                      />
+                      <div className="scale-[0.8] origin-top">
+                        <Image
+                          src={
+                            previewData?.human.url ||
+                            'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/new-front-Human_mqg4xm'
+                          }
+                          alt={previewData?.human.alt || 'Human Gallery'}
+                          width={331}
+                          height={370}
+                          className="object-cover"
+                        />
+                      </div>
                     </Link>
                   </div>
                   <div
-                    className="mt-3 flex justify-between items-center"
-                    style={{ maxWidth: '331px', margin: '12px auto 0' }}
+                    className="-mt-32 flex justify-between items-center"
+                    style={{ maxWidth: '265px', margin: '-128px auto 0' }}
                   >
-                    <h3 className="uppercase text-xl tracking-[0.25em]">HUMAN</h3>
+                    <h3 className="uppercase text-2xl tracking-[0.25em]">HUMAN</h3>
                     <Link
                       href="/gallery/human"
                       className="text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px]"
@@ -229,30 +237,41 @@ export default function Works() {
               initial="hidden"
               animate={isInView ? 'visible' : 'hidden'}
             >
-              <h3 className="flex justify-start uppercase text-2xl tracking-[0.5em]">HUMAN</h3>
-              <Link
-                href="/gallery/human"
-                className="block hover:opacity-90 transition-opacity duration-200"
-              >
-                <Image
-                  src={previewData?.human.url || 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765803220/portfolio/works-preview/WorksPreviewHuman.webp'}
-                  alt={previewData?.human.alt || 'Human Gallery'}
-                  width={300}
-                  height={333}
-                  className="object-cover "
-                />
-              </Link>
-              <Link
-                href="/gallery/human"
-                className="text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px] flex justify-end"
-              >
-                view gallery ↗
-              </Link>
+              <div className="scale-[0.8] origin-top" style={{ width: '300px' }}>
+                <h3
+                  className="flex justify-start uppercase text-2xl tracking-[0.5em] mb-4"
+                  style={{ fontSize: '1.875rem' }}
+                >
+                  HUMAN
+                </h3>
+                <Link
+                  href="/gallery/human"
+                  className="block hover:opacity-90 transition-opacity duration-200"
+                >
+                  <Image
+                    src={
+                      previewData?.human.url ||
+                      'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/new-front-Human_mqg4xm'
+                    }
+                    alt={previewData?.human.alt || 'Human Gallery'}
+                    width={300}
+                    height={320}
+                    className="object-cover "
+                  />
+                </Link>
+                <Link
+                  href="/gallery/human"
+                  className="text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px] flex justify-end mt-3"
+                  style={{ fontSize: '1.25rem' }}
+                >
+                  view gallery ↗
+                </Link>
+              </div>
             </motion.div>
 
             {/* NON-HUMAN - Desktop */}
             <motion.div
-              className="text-center space-y-4 md:translate-y-50"
+              className="text-center space-y-4 -mt-40"
               variants={desktopRightVariants}
               initial="hidden"
               animate={isInView ? 'visible' : 'hidden'}
@@ -263,10 +282,13 @@ export default function Works() {
                 className="block hover:opacity-90 transition-opacity duration-200"
               >
                 <Image
-                  src={previewData?.nonHuman.url || 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765803222/portfolio/works-preview/WorksPreviewNonHuman.webp'}
+                  src={
+                    previewData?.nonHuman.url ||
+                    'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765803222/portfolio/works-preview/WorksPreviewNonHuman.webp'
+                  }
                   alt={previewData?.nonHuman.alt || 'Non-Human Gallery'}
-                  width={280}
-                  height={333}
+                  width={300}
+                  height={400}
                   className="object-cover "
                 />
               </Link>
