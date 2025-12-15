@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import ImageWithLoader from '@/shared/ui/ImageWithLoader'
+import LazyImage from '@/shared/ui/LazyImage'
 import { GalleryImageProps } from '@/types/gallery'
 
 const GalleryImage = ({ image, priority, onLoad, sizes }: GalleryImageProps) => {
@@ -10,7 +10,13 @@ const GalleryImage = ({ image, priority, onLoad, sizes }: GalleryImageProps) => 
       exit={{ opacity: 0 }}
       className="w-full h-full relative"
     >
-      <ImageWithLoader image={image} priority={priority} onLoad={onLoad} sizes={sizes} />
+      <LazyImage 
+        image={image} 
+        priority={priority} 
+        onLoad={onLoad} 
+        sizes={sizes}
+        threshold={200} // Start loading 200px before viewport
+      />
     </motion.div>
   )
 }

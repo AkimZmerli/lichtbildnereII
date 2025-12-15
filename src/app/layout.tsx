@@ -18,6 +18,9 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
           href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap"
           rel="stylesheet"
         />
+        {/* Preconnect to Cloudinary for faster image loading */}
+        <link rel="preconnect" href="https://res.cloudinary.com" />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
       </head>
       <body>
         <RecaptchaProvider>

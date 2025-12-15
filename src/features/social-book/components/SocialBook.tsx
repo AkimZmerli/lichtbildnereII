@@ -3,7 +3,7 @@ import { useInView } from 'framer-motion'
 import { useRef, useState } from 'react'
 import Image from 'next/image'
 import { FlipbookModal } from '../flipbook/components/FlipbookModal'
-import { getImageUrl } from '../../../lib/blob'
+import { getImageUrl } from '../../../lib/cloudinary'
 
 export default function SocialBook() {
   const sectionRef = useRef(null)

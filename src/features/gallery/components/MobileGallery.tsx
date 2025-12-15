@@ -174,8 +174,8 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
                 >
                   <GalleryImage
                     image={image}
-                    priority={Math.abs(index - currentIndex) <= 1}
-                    sizes="100vw"
+                    priority={index === 0 || Math.abs(index - currentIndex) <= 1}
+                    sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 100vw"
                   />
                 </div>
               </SwiperSlide>

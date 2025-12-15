@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { getImageUrl } from '../../../../lib/blob';
+import { getImageUrl } from '../../../../lib/cloudinary';
 
 export const ImageComparison: React.FC = () => {
   const [showComparison, setShowComparison] = useState(false);

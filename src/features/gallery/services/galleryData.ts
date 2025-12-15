@@ -1,9 +1,9 @@
 import { GalleryImage } from '../../../types/gallery'
 
-// Static gallery data extracted from PDF
+// Gallery data with Cloudinary URLs and blur placeholders
 const humanImages: GalleryImage[] = [
   {
-    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/human/7%20-%20Human.webp',
+    url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765800236/portfolio/human/hiking.webp',
     alt: 'hiking',
     width: 800,
     height: 1000,
@@ -12,9 +12,10 @@ const humanImages: GalleryImage[] = [
     physicalHeight: 50,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper',
+    blurDataUrl: 'https://res.cloudinary.com/dnnnchnqv/image/upload/e_blur:1000,w_10,q_auto:low,f_webp/f_auto,q_auto/v1765800236/portfolio/human/hiking.webp',
   },
   {
-    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/human/8%20-%20Human.webp',
+    url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765800253/portfolio/human/summer.webp',
     alt: 'summer',
     width: 800,
     height: 1000,
@@ -23,9 +24,10 @@ const humanImages: GalleryImage[] = [
     physicalHeight: 50,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper',
+    blurDataUrl: 'https://res.cloudinary.com/dnnnchnqv/image/upload/e_blur:1000,w_10,q_auto:low,f_webp/f_auto,q_auto/v1765800253/portfolio/human/summer.webp',
   },
   {
-    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/human/13%20-%20Human.webp',
+    url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765800268/portfolio/human/hungry.webp',
     alt: 'hungry',
     width: 800,
     height: 1000,
@@ -34,9 +36,10 @@ const humanImages: GalleryImage[] = [
     physicalHeight: 50,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper',
+    blurDataUrl: 'https://res.cloudinary.com/dnnnchnqv/image/upload/e_blur:1000,w_10,q_auto:low,f_webp/f_auto,q_auto/v1765800268/portfolio/human/hungry.webp',
   },
   {
-    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/human/15%20-%20Human.webp',
+    url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765800284/portfolio/human/bogey.webp',
     alt: 'bogey',
     width: 800,
     height: 1000,
@@ -45,9 +48,10 @@ const humanImages: GalleryImage[] = [
     physicalHeight: 50,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper',
+    blurDataUrl: 'https://res.cloudinary.com/dnnnchnqv/image/upload/e_blur:1000,w_10,q_auto:low,f_webp/f_auto,q_auto/v1765800284/portfolio/human/bogey.webp',
   },
   {
-    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/human/23%20-%20Human.webp',
+    url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765800304/portfolio/human/dieter.webp',
     alt: 'dieter',
     width: 800,
     height: 1200,
@@ -56,9 +60,10 @@ const humanImages: GalleryImage[] = [
     physicalHeight: 24,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper',
+    blurDataUrl: 'https://res.cloudinary.com/dnnnchnqv/image/upload/e_blur:1000,w_10,q_auto:low,f_webp/f_auto,q_auto/v1765800304/portfolio/human/dieter.webp',
   },
   {
-    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/human/24%20-%20Human.webp',
+    url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765800309/portfolio/human/another_day.webp',
     alt: 'another day',
     width: 800,
     height: 1200,
@@ -67,9 +72,10 @@ const humanImages: GalleryImage[] = [
     physicalHeight: 24,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper',
+    blurDataUrl: 'https://res.cloudinary.com/dnnnchnqv/image/upload/e_blur:1000,w_10,q_auto:low,f_webp/f_auto,q_auto/v1765800309/portfolio/human/another_day.webp',
   },
   {
-    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/human/26%20-%20Human.webp',
+    url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765800314/portfolio/human/thomas.webp',
     alt: 'thomas',
     width: 800,
     height: 1200,
@@ -78,10 +84,10 @@ const humanImages: GalleryImage[] = [
     physicalHeight: 24,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper',
+    blurDataUrl: 'https://res.cloudinary.com/dnnnchnqv/image/upload/e_blur:1000,w_10,q_auto:low,f_webp/f_auto,q_auto/v1765800314/portfolio/human/thomas.webp',
   },
-  // Former inverted image integrated into human
   {
-    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/human/20%20-%20Human.webp',
+    url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765800318/portfolio/human/waiting.webp',
     alt: 'waiting',
     width: 800,
     height: 1000,
@@ -90,12 +96,13 @@ const humanImages: GalleryImage[] = [
     physicalHeight: 50,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper',
-  },
+    blurDataUrl: 'https://res.cloudinary.com/dnnnchnqv/image/upload/e_blur:1000,w_10,q_auto:low,f_webp/f_auto,q_auto/v1765800318/portfolio/human/waiting.webp',
+  }
 ]
 
 const nonHumanImages: GalleryImage[] = [
   {
-    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/non-human/9%20-%20No%20Human.webp',
+    url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765800323/portfolio/non-human/flowers.webp',
     alt: 'flowers',
     width: 800,
     height: 1000,
@@ -104,9 +111,10 @@ const nonHumanImages: GalleryImage[] = [
     physicalHeight: 50,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper',
+    blurDataUrl: 'https://res.cloudinary.com/dnnnchnqv/image/upload/e_blur:1000,w_10,q_auto:low,f_webp/f_auto,q_auto/v1765800323/portfolio/non-human/flowers.webp',
   },
   {
-    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/non-human/10%20-%20No%20Human.webp',
+    url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765800340/portfolio/non-human/mood_II.webp',
     alt: 'mood II',
     width: 800,
     height: 1000,
@@ -115,9 +123,10 @@ const nonHumanImages: GalleryImage[] = [
     physicalHeight: 50,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper',
+    blurDataUrl: 'https://res.cloudinary.com/dnnnchnqv/image/upload/e_blur:1000,w_10,q_auto:low,f_webp/f_auto,q_auto/v1765800340/portfolio/non-human/mood_II.webp',
   },
   {
-    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/non-human/11%20-%20No%20Human.webp',
+    url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765800356/portfolio/non-human/curtains_II.webp',
     alt: 'curtains II',
     width: 800,
     height: 1000,
@@ -126,9 +135,10 @@ const nonHumanImages: GalleryImage[] = [
     physicalHeight: 50,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper',
+    blurDataUrl: 'https://res.cloudinary.com/dnnnchnqv/image/upload/e_blur:1000,w_10,q_auto:low,f_webp/f_auto,q_auto/v1765800356/portfolio/non-human/curtains_II.webp',
   },
   {
-    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/non-human/12%20-%20No%20Human.webp',
+    url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765800373/portfolio/non-human/bubbles.webp',
     alt: 'bubbles',
     width: 800,
     height: 1000,
@@ -137,9 +147,10 @@ const nonHumanImages: GalleryImage[] = [
     physicalHeight: 50,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper',
+    blurDataUrl: 'https://res.cloudinary.com/dnnnchnqv/image/upload/e_blur:1000,w_10,q_auto:low,f_webp/f_auto,q_auto/v1765800373/portfolio/non-human/bubbles.webp',
   },
   {
-    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/non-human/14%20-%20No%20Human.webp',
+    url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765800391/portfolio/non-human/be_careful.webp',
     alt: 'be careful',
     width: 800,
     height: 1000,
@@ -148,9 +159,10 @@ const nonHumanImages: GalleryImage[] = [
     physicalHeight: 50,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper',
+    blurDataUrl: 'https://res.cloudinary.com/dnnnchnqv/image/upload/e_blur:1000,w_10,q_auto:low,f_webp/f_auto,q_auto/v1765800391/portfolio/non-human/be_careful.webp',
   },
   {
-    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/non-human/17%20-%20No%20Human.webp',
+    url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765800406/portfolio/non-human/humans.webp',
     alt: 'humans',
     width: 800,
     height: 1200,
@@ -159,9 +171,10 @@ const nonHumanImages: GalleryImage[] = [
     physicalHeight: 24,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper',
+    blurDataUrl: 'https://res.cloudinary.com/dnnnchnqv/image/upload/e_blur:1000,w_10,q_auto:low,f_webp/f_auto,q_auto/v1765800406/portfolio/non-human/humans.webp',
   },
   {
-    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/non-human/22%20-%20No%20Human.webp',
+    url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765800411/portfolio/non-human/arrangement.webp',
     alt: 'arrangement',
     width: 800,
     height: 1080,
@@ -170,9 +183,10 @@ const nonHumanImages: GalleryImage[] = [
     physicalHeight: 108,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper',
+    blurDataUrl: 'https://res.cloudinary.com/dnnnchnqv/image/upload/e_blur:1000,w_10,q_auto:low,f_webp/f_auto,q_auto/v1765800411/portfolio/non-human/arrangement.webp',
   },
   {
-    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/non-human/27%20-%20No%20Human.webp',
+    url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765800433/portfolio/non-human/alex.webp',
     alt: 'alex',
     width: 800,
     height: 1000,
@@ -181,9 +195,10 @@ const nonHumanImages: GalleryImage[] = [
     physicalHeight: 50,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper',
+    blurDataUrl: 'https://res.cloudinary.com/dnnnchnqv/image/upload/e_blur:1000,w_10,q_auto:low,f_webp/f_auto,q_auto/v1765800433/portfolio/non-human/alex.webp',
   },
   {
-    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/non-human/18%20-%20No%20Human.webp',
+    url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765807344/portfolio/non-human/mood.webp',
     alt: 'mood',
     width: 800,
     height: 1000,
@@ -192,9 +207,10 @@ const nonHumanImages: GalleryImage[] = [
     physicalHeight: 50,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper',
+    blurDataUrl: 'https://res.cloudinary.com/dnnnchnqv/image/upload/e_blur:1000,w_10,q_auto:low,f_webp/f_auto,q_auto/v1765807344/portfolio/non-human/mood.webp',
   },
   {
-    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/non-human/19%20-%20No%20Human.webp',
+    url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765800459/portfolio/non-human/curtains.webp',
     alt: 'curtains',
     width: 800,
     height: 1000,
@@ -203,9 +219,10 @@ const nonHumanImages: GalleryImage[] = [
     physicalHeight: 50,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper',
+    blurDataUrl: 'https://res.cloudinary.com/dnnnchnqv/image/upload/e_blur:1000,w_10,q_auto:low,f_webp/f_auto,q_auto/v1765800459/portfolio/non-human/curtains.webp',
   },
   {
-    url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/non-human/21%20-%20No%20Human.webp',
+    url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765800478/portfolio/non-human/Dark_flowers.webp',
     alt: 'Dark flowers',
     width: 800,
     height: 1080,
@@ -214,7 +231,8 @@ const nonHumanImages: GalleryImage[] = [
     physicalHeight: 42,
     unit: 'cm',
     material: 'silver gelatin print on baryta paper',
-  },
+    blurDataUrl: 'https://res.cloudinary.com/dnnnchnqv/image/upload/e_blur:1000,w_10,q_auto:low,f_webp/f_auto,q_auto/v1765800478/portfolio/non-human/Dark_flowers.webp',
+  }
 ]
 
 // Individual functions for each gallery type

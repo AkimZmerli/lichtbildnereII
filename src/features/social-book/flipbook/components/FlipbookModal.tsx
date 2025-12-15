@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { X, Info } from 'lucide-react'
 import { CSSFlipbook } from './CSSFlipbook'
 import LoadingSpinner from '@/shared/ui/LoadingSpinner'
-import { getImageUrl } from '../../../../lib/blob'
+import { flipbookImages } from '../cloudinaryUrls'
 
 interface FlipbookModalProps {
   isOpen: boolean
@@ -16,11 +16,7 @@ interface FlipbookModalProps {
 export const FlipbookModal: React.FC<FlipbookModalProps> = ({
   isOpen,
   onClose,
-  images = [
-    getImageUrl('flipbook-images/front.webp'),
-    ...Array.from({ length: 62 }, (_, i) => getImageUrl(`flipbook-images/${i + 1}.webp`)),
-    getImageUrl('flipbook-images/back.webp'),
-  ],
+  images = flipbookImages,
 }) => {
   const [currentPage, setCurrentPage] = useState(0)
   const [initialImagesLoaded, setInitialImagesLoaded] = useState(false)

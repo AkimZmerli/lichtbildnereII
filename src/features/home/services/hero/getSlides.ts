@@ -1,4 +1,4 @@
-import { getImageUrl } from '../../../../lib/blob'
+import { getImageUrl } from '../../../../lib/cloudinary'
 
 export interface Slide {
   id: string

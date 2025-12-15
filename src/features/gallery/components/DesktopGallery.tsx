@@ -110,17 +110,27 @@ const DesktopGallery = ({ images, title, galleryType }: GalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [uiVisible, setUiVisible] = useState(true)
   const [isTransitioning, setIsTransitioning] = useState(false)
-  // Static alternate links - same as exhibition gallery
-  const staticAlternateLink = 
-    galleryType === 'exhibition' 
-      ? '/about-exhibition#exhibition'
-      : galleryType === 'human' 
-        ? '/gallery/non-human' 
-        : '/gallery/human'
-
-  // Track gallery viewing for analytics (no dynamic navigation changes)
-  useGalleryTracking(galleryType)
+  const [loadedIndices, setLoadedIndices] = useState<Set<number>>(
+    () => new Set([0, 1, 2]) // Start with first 3 images
+  )
   const [showWelcomeHint, setShowWelcomeHint] = useState(false)
+
+  // Track gallery viewing for analytics and get tracking functions
+  const { hasViewedBothMainGalleries } = useGalleryTracking(galleryType)
+  
+  // Dynamic navigation based on viewed galleries
+  const getAlternateLink = () => {
+    if (galleryType === 'exhibition') {
+      return '/about-exhibition#exhibition'
+    }
+    // If user has viewed both galleries, go back to works
+    if (hasViewedBothMainGalleries()) {
+      return '/works'
+    }
+    return galleryType === 'human' ? '/gallery/non-human' : '/gallery/human'
+  }
+  
+  const staticAlternateLink = getAlternateLink()
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
@@ -161,10 +171,23 @@ const DesktopGallery = ({ images, title, galleryType }: GalleryProps) => {
       setIsTransitioning(true)
       setCurrentIndex(clampedIndex)
 
+      // Progressively load images around the new position
+      setLoadedIndices(prev => {
+        const newSet = new Set(prev)
+        // Load current and 2 images in each direction
+        for (let i = -2; i <= 2; i++) {
+          const idx = clampedIndex + i
+          if (idx >= 0 && idx < images.length) {
+            newSet.add(idx)
+          }
+        }
+        return newSet
+      })
+
       // CRITICAL: Match CSS transition timing exactly
       setTimeout(() => {
         setIsTransitioning(false)
-      }, 2000) // EXACTLY match the CSS transition duration
+      }, 2000) // Match the CSS transition duration of 2000ms
     },
     [currentIndex, images.length, isTransitioning],
   )
@@ -346,10 +369,11 @@ const DesktopGallery = ({ images, title, galleryType }: GalleryProps) => {
                   <GalleryImage
                     image={image}
                     priority={
-                      index === currentIndex ||
-                      index === currentIndex + 1 ||
-                      index === currentIndex - 1
+                      // Only first 3 images get true priority for faster initial load
+                      // Others use lazy loading even if in loadedIndices
+                      index < 3 && loadedIndices.has(index)
                     }
+                    sizes="(max-width: 768px) 100vw, 90vw"
                   />
                 </div>
               </div>
@@ -445,11 +469,11 @@ const DesktopGallery = ({ images, title, galleryType }: GalleryProps) => {
           )}
         </AnimatePresence>
 
-        {/* Sliding gallery link - bottom right (appears on last photo with 6s delay) */}
+        {/* Sliding gallery link - top right (appears on last photo with 6s delay) */}
         <AnimatePresence>
           {currentIndex === images.length - 1 && (
             <motion.div
-              className="fixed bottom-8 right-4"
+              className="fixed top-24 right-4"
               initial={{ x: 300, opacity: 0 }}
               animate={{
                 x: 0,
@@ -484,6 +508,8 @@ const DesktopGallery = ({ images, title, galleryType }: GalleryProps) => {
                     ? 'social book ↗'
                     : staticAlternateLink.includes('#exhibition')
                       ? 'Go Back ↗'
+                      : staticAlternateLink.includes('/works')
+                        ? 'Go Back ↗'
                       : staticAlternateLink.includes('non-human')
                         ? 'view non-human ↗'
                         : 'view human ↗'}

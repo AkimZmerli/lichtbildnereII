@@ -160,7 +160,7 @@ export default function Works() {
                       className="block hover:opacity-90 transition-opacity duration-200"
                     >
                       <Image
-                        src={previewData?.nonHuman.url || '/images/Hanoi.jpg'}
+                        src={previewData?.nonHuman.url || 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765803222/portfolio/works-preview/WorksPreviewNonHuman.webp'}
                         alt={previewData?.nonHuman.alt || 'Non-Human Gallery'}
                         width={309}
                         height={485}
@@ -195,7 +195,7 @@ export default function Works() {
                       className="block hover:opacity-90 transition-opacity duration-200"
                     >
                       <Image
-                        src={previewData?.human.url || '/images/worksplaceholderII.jpg'}
+                        src={previewData?.human.url || 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765803220/portfolio/works-preview/WorksPreviewHuman.webp'}
                         alt={previewData?.human.alt || 'Human Gallery'}
                         width={331}
                         height={463}
@@ -235,7 +235,7 @@ export default function Works() {
                 className="block hover:opacity-90 transition-opacity duration-200"
               >
                 <Image
-                  src={previewData?.human.url || '/images/worksplaceholderII.jpg'}
+                  src={previewData?.human.url || 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765803220/portfolio/works-preview/WorksPreviewHuman.webp'}
                   alt={previewData?.human.alt || 'Human Gallery'}
                   width={300}
                   height={333}
@@ -263,7 +263,7 @@ export default function Works() {
                 className="block hover:opacity-90 transition-opacity duration-200"
               >
                 <Image
-                  src={previewData?.nonHuman.url || '/images/Hanoi.jpg'}
+                  src={previewData?.nonHuman.url || 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765803222/portfolio/works-preview/WorksPreviewNonHuman.webp'}
                   alt={previewData?.nonHuman.alt || 'Non-Human Gallery'}
                   width={280}
                   height={333}

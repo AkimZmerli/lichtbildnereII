@@ -3,7 +3,7 @@ import { GalleryImage } from '@/types/gallery'
 export async function getExhibitionImages(): Promise<GalleryImage[]> {
   return [
     {
-      url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/3%20-%20Amore.webp',
+      url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765802744/portfolio/exhibition/3_-_Amore.webp',
       alt: 'Amore III - exhibition photograph',
       name: 'Amore III',
       physicalWidth: 24,
@@ -12,7 +12,7 @@ export async function getExhibitionImages(): Promise<GalleryImage[]> {
       exhibition: 'Amore • Galerie Borssenanger • 2024',
     },
     {
-      url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/4%20-%20Lichtbildnerei.webp',
+      url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765802754/portfolio/exhibition/4_-_Lichtbildnerei.webp',
       alt: 'Covid-19 - exhibition photograph',
       name: 'Covid-19',
       physicalWidth: 30,
@@ -21,7 +21,7 @@ export async function getExhibitionImages(): Promise<GalleryImage[]> {
       exhibition: 'Lichtbildnerei • Tankstellenprojektraum • 2023',
     },
     {
-      url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/5%20-%20Lichtbildnerei.webp',
+      url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765802763/portfolio/exhibition/5_-_Lichtbildnerei.webp',
       alt: 'an expression of wealth - exhibition photograph',
       name: 'an expression of wealth',
       physicalWidth: 30,
@@ -30,7 +30,7 @@ export async function getExhibitionImages(): Promise<GalleryImage[]> {
       exhibition: 'Lichtbildnerei • Tankstellenprojektraum • 2023',
     },
     {
-      url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/6%20-%20Lichtbildnerei.webp',
+      url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/6_-_Lichtbildnerei_d5lfpm',
       alt: 'do a kickflip - exhibition photograph',
       name: 'do a kickflip',
       physicalWidth: 50,
@@ -39,7 +39,7 @@ export async function getExhibitionImages(): Promise<GalleryImage[]> {
       exhibition: 'Platz da! • Tankstellenprojektraum • 2022',
     },
     {
-      url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/2%20-%20Amore.webp',
+      url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765802721/portfolio/exhibition/2_-_Amore.webp',
       alt: 'Europa - exhibition photograph',
       name: 'Europa',
       physicalWidth: 18,
@@ -48,7 +48,7 @@ export async function getExhibitionImages(): Promise<GalleryImage[]> {
       exhibition: 'Amore Europa • Galerie Borssenanger • 2025',
     },
     {
-      url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/25%20-%20Momentum.webp',
+      url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765802726/portfolio/exhibition/25_-_Momentum.webp',
       alt: 'Industrie und Landschaft des Bezirkes Karl-Marx-Stadt - exhibition photograph',
       name: 'Industrie und Landschaft - Karl-Marx-Stadt',
       physicalWidth: 24,
@@ -57,14 +57,14 @@ export async function getExhibitionImages(): Promise<GalleryImage[]> {
       exhibition: 'Momentum x Betrieb.kollektiv • Momentum • 2025',
     },
     {
-      url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/28%20-%20Best%20of%20II%20-%20Visitors%20Choise.webp',
+      url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765802731/portfolio/exhibition/28_-_Best_of_II_-_Visitors_Choise.webp',
       alt: 'sinteză - mixed media installation',
       name: 'sinteză',
       material: 'Mixed media installation',
       exhibition: 'Best of II - Visitors Choice • Museum Gunzenhauser • 2025',
     },
     {
-      url: 'https://ckr77j2dv5dhtnev.public.blob.vercel-storage.com/exhibition/29%20-%20Best%20of%20II%20-%20Visitors%20Choise.webp',
+      url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765802736/portfolio/exhibition/29_-_Best_of_II_-_Visitors_Choise.webp',
       alt: 'self potrait - photogram artwork',
       name: 'self potrait',
       physicalWidth: 108,

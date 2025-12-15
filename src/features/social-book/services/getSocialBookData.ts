@@ -1,5 +1,3 @@
-import { getImageUrl } from '../../../lib/blob'
-
 interface SocialBookData {
   coverImage: {
     url: string
@@ -12,13 +10,8 @@ interface SocialBookData {
 export const getSocialBookData = async (): Promise<SocialBookData> => {
   console.log('Getting social book data - static implementation')
   
-  // Use blob URLs in production, local paths in development
-  const isProduction = process.env.NODE_ENV === 'production'
-  const cacheBuster = `?v=${Date.now()}`
-  
-  const imageUrl = isProduction 
-    ? getImageUrl('flipbook-images/Social.webp')
-    : `/media/flipbook-images/Social.webp${cacheBuster}`
+  // Use Cloudinary CDN URL for optimized delivery
+  const imageUrl = 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto:good/v1765803191/portfolio/flipbook/Social.webp'
   
   return {
     coverImage: {

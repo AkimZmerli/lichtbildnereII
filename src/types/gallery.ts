@@ -38,6 +38,7 @@ export interface GalleryImage {
   material?: string
   fabrication?: string
   exhibition?: string
+  blurDataUrl?: string
 }
 
 export interface GalleryHeaderProps {
