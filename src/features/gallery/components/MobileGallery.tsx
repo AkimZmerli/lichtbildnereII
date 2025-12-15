@@ -34,8 +34,8 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
         ? '/gallery/non-human'
         : '/gallery/human'
 
-  // Track gallery viewing for analytics (no dynamic navigation changes)
-  useGalleryTracking(galleryType)
+  // Track gallery viewing for analytics and get tracking functions
+  const { hasViewedBothMainGalleries } = useGalleryTracking(galleryType)
 
   // Generic swipe up handler for opening metadata
   const handleSwipeUp = useCallback((e: React.TouchEvent) => {
@@ -100,9 +100,28 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
     )
   }
 
-  // Navigate to masonry page
-  const navigateToMasonry = () => {
-    router.push(`/masonry?type=${galleryType}`)
+  // Navigate to opposite gallery or back to exhibition/works
+  const getNextDestination = () => {
+    if (galleryType === 'exhibition') {
+      return '/about-exhibition#exhibition'
+    }
+    // If user has viewed both galleries, go back to works
+    if (hasViewedBothMainGalleries()) {
+      return '/works'
+    }
+    return galleryType === 'human' ? '/gallery/non-human' : '/gallery/human'
+  }
+
+  // Get button text for last photo
+  const getLastPhotoButtonText = () => {
+    if (galleryType === 'exhibition') {
+      return 'Go Back ↗'
+    }
+    // If user has viewed both galleries, show go back
+    if (hasViewedBothMainGalleries()) {
+      return 'Go Back ↗'
+    }
+    return galleryType === 'human' ? 'View Non-Human →' : 'View Human →'
   }
 
   return (
@@ -137,7 +156,7 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
 
                 if (diff < threshold) {
                   // User is pulling past the last slide
-                  navigateToMasonry()
+                  router.push(getNextDestination())
                 }
               }
             }}
@@ -221,16 +240,24 @@ const MobileGallery = ({ images, title, galleryType }: GalleryProps) => {
           <button
             onClick={() => {
               if (currentIndex === images.length - 1) {
-                navigateToMasonry()
+                router.push(getNextDestination())
               } else if (swiperRef.current) {
                 swiperRef.current.slideNext()
               }
             }}
-            className="p-2 rounded-full bg-neutral-700/60 text-white-rose/70 hover:bg-neutral-600 hover:text-white-rose active:scale-95 transition-all duration-200"
+            className={`${
+              currentIndex === images.length - 1
+                ? 'px-4 py-2 bg-hot-pink text-grainy font-medium hover:bg-hot-pink/90 animate-pulse'
+                : 'p-2 bg-neutral-700/60 text-white-rose/70 hover:bg-neutral-600 hover:text-white-rose'
+            } rounded-full active:scale-95 transition-all duration-200 flex items-center gap-2`}
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
+            {currentIndex === images.length - 1 ? (
+              <span className="text-sm uppercase tracking-wider">{getLastPhotoButtonText()}</span>
+            ) : (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            )}
           </button>
         </div>
       </div>

@@ -235,7 +235,7 @@ function TankstelleExhibition({ index }: { index: number }) {
                 href="/tankstelle"
                 className="inline-block text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px]"
               >
-                visit Projektraum ↗
+                visit projektraum ↗
               </Link>
             </motion.div>
           </motion.div>

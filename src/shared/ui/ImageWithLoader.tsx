@@ -43,6 +43,7 @@ const ImageWithLoader = ({
         }`}
         priority={priority}
         sizes={sizes}
+        unoptimized={true}
         onLoad={() => {
           setIsLoading(false)
           onLoad?.()
