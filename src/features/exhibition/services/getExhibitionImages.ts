@@ -30,7 +30,7 @@ export async function getExhibitionImages(): Promise<GalleryImage[]> {
       exhibition: 'Lichtbildnerei • Tankstellenprojektraum • 2023',
     },
     {
-      url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/portfolio/exhibition/6%20-%20Platz%20Da.webp',
+      url: 'https://res.cloudinary.com/dnnnchnqv/image/upload/f_auto,q_auto/v1765876830/portfolio/exhibition/bjpygzyhuj3rtwehdkfs.webp',
       alt: 'do a kickflip - exhibition photograph',
       name: 'do a kickflip',
       physicalWidth: 50,
