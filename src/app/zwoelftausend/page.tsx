@@ -44,8 +44,8 @@ export default function DisplayScan() {
       <Header />
 
       <div className="flex-1 flex items-center justify-center bg-grainy text-white-rose px-4 md:px-8 relative pt-20 md:pt-24">
-        {/* Back Link - positioned at top left on desktop */}
-        <div className="absolute top-26 left-8 hidden md:block">
+        {/* Back Link - positioned at top right on desktop */}
+        <div className="absolute top-24 right-4 hidden md:block">
           <Link
             href="/about-exhibition#closing-words"
             className="inline-block text-hot-pink hover:underline underline-offset-4 transition-all duration-200 hover:translate-y-[-2px] bg-grainy/80 backdrop-blur-sm px-4 py-2 rounded-md border border-hot-pink/30"
