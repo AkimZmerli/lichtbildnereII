@@ -1,4 +1,7 @@
 <svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+  <!-- Square background to prevent white corners in Google search -->
+  <rect width="192" height="192" fill="#2A2323"/>
   <circle cx="96" cy="96" r="96" fill="#2A2323"/>
+  <circle cx="96" cy="96" r="88" stroke="white" stroke-width="3" fill="none"/>
   <text x="96" y="144" font-family="Georgia, serif" font-size="168" fill="white" text-anchor="middle">v</text>
 </svg>
