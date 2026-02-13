@@ -42,7 +42,7 @@ export default function Footer() {
       </div>
 
       <div className="flex gap-6 justify-center flex-wrap">
-        <span>© 2025 Valentin Mici</span>
+        <span>© {new Date().getFullYear()} Valentin Mici</span>
         <Link href="/impressum" className="hover:opacity-80">
           Impressum
         </Link>
